@@ -63,13 +63,15 @@ Everything is idempotent, so a failed run can simply run again.
 ### Install (not yet installed; Keiran's call)
 
 ```
-mkdir -p ~/.config/systemd/user
-ln -sf "$PWD/deploy/airep-social.service" ~/.config/systemd/user/
-ln -sf "$PWD/deploy/airep-social.timer" ~/.config/systemd/user/
+# Same style as linux-setup/install.sh: copy the units, reload, enable the timer.
+install -m 644 deploy/airep-social.service deploy/airep-social.timer ~/.config/systemd/user/
 systemctl --user daemon-reload
 systemctl --user enable --now airep-social.timer
 systemctl --user list-timers airep-social.timer     # next Sunday 18:00
 ```
+
+Keep `linux-setup/systemd/` in step if you want the box rebuilt from there: copy the two
+units into it as well.
 
 The first run is worth watching: `systemctl --user start airep-social.service` then
 `journalctl --user -u airep-social.service -f`. The plan's own step 7 is a dry run of one

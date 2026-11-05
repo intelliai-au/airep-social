@@ -159,12 +159,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--state", type=Path, default=state_mod.STATE_PATH)
     parser.add_argument("--content", type=Path, default=posts_mod.CONTENT_DIR)
     parser.add_argument("--channels", action="store_true", help="list Buffer channels and exit")
+    parser.add_argument(
+        "--sent", action="store_true", help="list posts already published on both pages and exit"
+    )
     parser.add_argument("--skip-head", action="store_true", help="do not HEAD-check assets")
     parser.add_argument("--no-notify", action="store_true", help="live, but no Telegram")
     args = parser.parse_args(argv)
 
     try:
-        env = load_env(args.env, require_secrets=args.live or args.channels)
+        env = load_env(args.env, require_secrets=args.live or args.channels or args.sent)
     except EnvError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
@@ -176,6 +179,19 @@ def main(argv: list[str] | None = None) -> int:
             print(
                 f"{ch['service']:<10} {ch['id']}  {ch['name']}{flag}  org {ch['organization_id']}"
             )
+        return 0
+
+    if args.sent:
+        # The legacy import's question: which 2026 captions already ran on each page.
+        ids = [env["BUFFER_LINKEDIN_CHANNEL_ID"], env["BUFFER_FACEBOOK_CHANNEL_ID"]]
+        orgs = {ch["organization_id"] for ch in buffer_api.list_channels(env["BUFFER_API_KEY"])}
+        for org_id in sorted(orgs):
+            for post in buffer_api.sent_posts(env["BUFFER_API_KEY"], org_id, ids):
+                service = (post.get("channel") or {}).get("service", "?")
+                first_line = (post.get("text") or "").strip().splitlines()[:1]
+                print(
+                    f"{(post.get('dueAt') or '')[:10]} {service:<9} {post.get('id')}  {first_line}"
+                )
         return 0
 
     try:
