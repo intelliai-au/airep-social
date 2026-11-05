@@ -18,10 +18,17 @@ if ! git diff --quiet -- site/images || [ -n "$(git ls-files --others --exclude-
   sleep 90  # GitHub Pages usually rebuilds within a minute of a push
 fi
 
-"$PY" push.py --live
+# push.py exits 1 whenever the run had an alert (a HEAD miss, a page that needs
+# reconnecting), but Buffer already holds every post it created, so the state file
+# must be committed whatever the exit code; the code is re-raised at the end so the
+# unit still shows as failed and the alert is seen.
+status=0
+"$PY" push.py --live || status=$?
 
 if ! git diff --quiet -- state/pushed.json; then
   git add state/pushed.json
   git commit -q -m "chore(state): Buffer posts scheduled $(date +%F)"
   git push origin main
 fi
+
+exit "$status"
