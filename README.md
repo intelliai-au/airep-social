@@ -49,7 +49,7 @@ runs `deploy/run.sh`:
    Astrid's venv, 1080 CSS px at device scale 2). Commit and push `site/images/`, wait
    for Pages.
 3. `push.py --live`: for every post dated in the next 14 days whose channel is not yet
-   in `state/pushed.json`, HEAD-check the asset URL, then `createPost` with
+   in `state/pushed.json`, HEAD-check the asset URL (retrying for ~3.5 min while Pages rebuilds), then `createPost` with
    `mode: customScheduled` and the slot's `dueAt`. At most **6 posts a channel** per
    run, so Buffer's Free plan (10 queued a channel) never overflows. Both channels are
    checked for `isDisconnected` first.
