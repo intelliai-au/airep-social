@@ -165,3 +165,34 @@ class TelegramTextTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class HeadRetryTests(unittest.TestCase):
+    """Pages may still be rebuilding when push.py runs, so a HEAD miss is retried."""
+
+    def test_succeeds_after_pages_catches_up(self) -> None:
+        answers = iter([False, False, True])
+        slept: list[float] = []
+        logged: list[str] = []
+        with unittest.mock.patch.object(push, "head_once", lambda _u: next(answers)):
+            ok = push.head_ok("https://x/a.png", sleep=slept.append, log=logged.append)
+        self.assertTrue(ok)
+        self.assertEqual(slept, [30, 60])
+        self.assertEqual(len(logged), 2)
+        self.assertIn("attempt 1/4", logged[0])
+
+    def test_gives_up_after_a_bounded_wait(self) -> None:
+        calls = 0
+
+        def never(_url: str) -> bool:
+            nonlocal calls
+            calls += 1
+            return False
+
+        slept: list[float] = []
+        with unittest.mock.patch.object(push, "head_once", never):
+            ok = push.head_ok("https://x/a.png", sleep=slept.append, log=lambda _m: None)
+        self.assertFalse(ok)
+        self.assertEqual(calls, len(push.HEAD_RETRY_DELAYS) + 1)
+        self.assertLessEqual(sum(slept), 240)  # ~4 minutes at most
+        self.assertEqual(slept, list(push.HEAD_RETRY_DELAYS))

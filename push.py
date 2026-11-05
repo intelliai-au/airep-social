@@ -11,8 +11,10 @@ import hmac
 import json
 import stat
 import sys
+from collections.abc import Callable
 from datetime import date, datetime, time, timedelta
 from pathlib import Path
+from time import sleep as _sleep
 
 import requests
 
@@ -30,6 +32,9 @@ REQUIRED_KEYS = (
     "ASTRID_WEBHOOK_URL",
 )
 CHANNEL_LABEL = {"linkedin": "LI", "facebook": "FB"}
+# Pauses between HEAD attempts: ~3.5 min in all, long enough for a slow GitHub Pages
+# rebuild after run.sh's push, short enough that the Sunday job still finishes.
+HEAD_RETRY_DELAYS = (30, 60, 120)
 VETO_LINE = "Veto: delete the post in Buffer (Publishing > Queue) before it goes out."
 
 
@@ -133,13 +138,37 @@ def notify(url: str, secret: str, text: str) -> None:
     response.raise_for_status()
 
 
-def head_ok(url: str) -> bool:
-    """Buffer HEAD-checks every asset before publishing, so we do first."""
+def head_once(url: str) -> bool:
+    """One HEAD request; False on any non-200 or network error."""
     try:
         response = requests.head(url, allow_redirects=True, timeout=20)
     except requests.RequestException:
         return False
     return response.status_code == 200
+
+
+def head_ok(
+    url: str,
+    *,
+    delays: tuple[int, ...] = HEAD_RETRY_DELAYS,
+    sleep: Callable[[float], None] = _sleep,
+    log: Callable[[str], None] = print,
+) -> bool:
+    """Buffer HEAD-checks every asset before publishing, so we do first, with retries.
+
+    A fresh image is pushed minutes before this runs and Pages may not have rebuilt yet;
+    giving up on the first miss would skip the post, and once its date is behind us it
+    would never be scheduled. `sleep` is injectable so tests do not wait.
+    """
+    attempts = len(delays) + 1
+    for attempt, delay in enumerate((*delays, None), start=1):
+        if head_once(url):
+            return True
+        if delay is None:
+            break
+        log(f"  HEAD {url} not 200 yet (attempt {attempt}/{attempts}); retrying in {delay}s")
+        sleep(delay)
+    return False
 
 
 def _now(today: str | None) -> datetime:
