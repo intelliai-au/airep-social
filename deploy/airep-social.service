@@ -9,6 +9,7 @@ Type=oneshot
 # Secrets come from ~/.config/airep-social/env (mode 600), never from the unit.
 WorkingDirectory=/home/keiran/Documents/Github Projects/airep-social
 ExecStart=/usr/bin/env bash "/home/keiran/Documents/Github Projects/airep-social/deploy/run.sh"
-# Playwright + Chromium live in Astrid's venv; run.sh honours this override.
-Environment=AIREP_SOCIAL_PYTHON=/home/keiran/Documents/Github Projects/nova/Nova/venv/bin/python
+# Playwright + Chromium live in Astrid's venv; run.sh honours this override. Quoted: systemd
+# splits an unquoted Environment= line on spaces, and this path has one ("Github Projects").
+Environment="AIREP_SOCIAL_PYTHON=/home/keiran/Documents/Github Projects/nova/Nova/venv/bin/python"
 TimeoutStartSec=20min
