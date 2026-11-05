@@ -20,6 +20,9 @@ LINK_HOST = "intelliai.au"
 MAX_HASHTAGS = 3
 
 _FILENAME = re.compile(r"^(\d{4}-\d{2}-\d{2})-[a-z0-9-]+\.yaml$")
+# One word per tag: caption() adds the "#", and a space or a second "#" would publish a
+# broken tag. A bare string here (hashtags: ERP) would otherwise become "#E #R #P".
+_HASHTAG = re.compile(r"^[A-Za-z0-9_]+$")
 
 
 class ContentError(ValueError):
@@ -103,9 +106,14 @@ def parse_post(path: Path) -> Post:
     if template and video:
         errors.append("a video post has no template")
 
-    hashtags = list(raw.get("hashtags", schedule.DEFAULT_HASHTAGS))
-    if len(hashtags) > MAX_HASHTAGS:
+    raw_tags = raw.get("hashtags", list(schedule.DEFAULT_HASHTAGS))
+    hashtags = [str(t) for t in raw_tags] if isinstance(raw_tags, list) else []
+    if not isinstance(raw_tags, list):
+        errors.append("hashtags must be a list, e.g. [ERP, SmallBusiness, Australia]")
+    elif len(hashtags) > MAX_HASHTAGS:
         errors.append(f"{len(hashtags)} hashtags, max {MAX_HASHTAGS}")
+    elif any(not isinstance(t, str) or not _HASHTAG.match(t) for t in raw_tags):
+        errors.append("each hashtag is one word without the #, e.g. SmallBusiness")
 
     linkedin = str(raw.get("linkedin", ""))
     facebook = str(raw.get("facebook", ""))

@@ -79,6 +79,22 @@ class ValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(posts.ContentError, "hashtags go in"):
             posts.parse_post(_write(self.tmp, "2026-11-18-x.yaml", inline_tag))
 
+    def test_hashtags_are_a_list_of_single_words(self) -> None:
+        # A bare string is iterated letter by letter and would post "#E #R #P".
+        bare = GOOD.replace("template: field_note", "template: field_note\nhashtags: ERP")
+        with self.assertRaisesRegex(posts.ContentError, "must be a list"):
+            posts.parse_post(_write(self.tmp, "2026-11-18-x.yaml", bare))
+        for bad in ('["#ERP"]', '["Small Business"]', "[42]", '[""]'):
+            body = GOOD.replace("template: field_note", f"template: field_note\nhashtags: {bad}")
+            with self.assertRaisesRegex(posts.ContentError, "one word without the #", msg=bad):
+                posts.parse_post(_write(self.tmp, "2026-11-18-x.yaml", body))
+        none = GOOD.replace("template: field_note", "template: field_note\nhashtags: []")
+        post = posts.parse_post(_write(self.tmp, "2026-11-18-x.yaml", none))
+        self.assertNotIn("#", post.caption("linkedin"))
+        good = GOOD.replace("template: field_note", "template: field_note\nhashtags: [ERP, AU_ERP]")
+        post = posts.parse_post(_write(self.tmp, "2026-11-18-x.yaml", good))
+        self.assertTrue(post.caption("linkedin").endswith("#ERP #AU_ERP"))
+
     def test_exactly_one_asset(self) -> None:
         both = GOOD.replace("template: field_note", "video: video/x.mp4")
         with self.assertRaisesRegex(posts.ContentError, "exactly one"):
