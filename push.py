@@ -165,6 +165,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--skip-head", action="store_true", help="do not HEAD-check assets")
     parser.add_argument("--no-notify", action="store_true", help="live, but no Telegram")
     args = parser.parse_args(argv)
+    if args.live and args.today:
+        # A pretend date makes plan() keep posts whose real due time has passed, and
+        # Buffer would get customScheduled posts with a dueAt already behind us.
+        print("error: --today is for dry runs; --live always uses the real clock", file=sys.stderr)
+        return 2
 
     try:
         env = load_env(args.env, require_secrets=args.live or args.channels or args.sent)

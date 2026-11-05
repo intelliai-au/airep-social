@@ -7,6 +7,7 @@ import io
 import os
 import tempfile
 import unittest
+import unittest.mock
 from datetime import date
 from pathlib import Path
 
@@ -49,6 +50,31 @@ class DryRunTests(unittest.TestCase):
             with contextlib.redirect_stdout(out):
                 push.main(["--today", "2026-11-15", "--state", str(state_path)])
         self.assertIn("0 createPost call(s) planned", out.getvalue())
+
+
+class LiveGuardTests(unittest.TestCase):
+    def test_live_refuses_a_pretend_date_before_touching_buffer(self) -> None:
+        # --today is a dry-run aid: with --live it would createPost with past dueAts.
+        with tempfile.TemporaryDirectory() as tmp:
+            env_path = Path(tmp) / "env"
+            env_path.write_text(
+                "BUFFER_API_KEY=k\nBUFFER_LINKEDIN_CHANNEL_ID=l\n"
+                "BUFFER_FACEBOOK_CHANNEL_ID=f\nASTRID_WEBHOOK_URL=u\n"
+            )
+            os.chmod(env_path, 0o600)
+
+            def boom(*_a, **_k):
+                raise AssertionError("Buffer was called")
+
+            err = io.StringIO()
+            with (
+                unittest.mock.patch.object(buffer_api, "list_channels", boom),
+                unittest.mock.patch.object(buffer_api, "create_post", boom),
+                contextlib.redirect_stderr(err),
+            ):
+                code = push.main(["--live", "--today", "2026-11-15", "--env", str(env_path)])
+        self.assertEqual(code, 2)
+        self.assertIn("--today is for dry runs", err.getvalue())
 
 
 class EnvTests(unittest.TestCase):

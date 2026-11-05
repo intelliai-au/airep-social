@@ -85,7 +85,8 @@ python push.py                      # today; prints the plan and the Telegram te
 python push.py --today 2026-11-15   # pretend it is that Sunday
 ```
 
-Only `python push.py --live` talks to Buffer and Telegram.
+Only `python push.py --live` talks to Buffer and Telegram, and it refuses `--today`: a
+pretend date would hand Buffer posts whose `dueAt` is already behind us.
 
 ## Vetoing a post
 
