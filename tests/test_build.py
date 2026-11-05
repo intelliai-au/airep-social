@@ -73,6 +73,19 @@ class BuildTests(unittest.TestCase):
         build.build([b], self.site, renderer=self._renderer, force=True, log=lambda _: None)
         self.assertEqual((self.site / "images" / "b.png").read_bytes(), b"png")
 
+    def test_force_keeps_a_hand_placed_image_with_no_template(self) -> None:
+        # --force used to say the file "is missing" when it plainly existed.
+        c = _post("c", "images/c.png", template=None)
+        (self.site / "images").mkdir(parents=True)
+        (self.site / "images" / "c.png").write_bytes(b"hand")
+        logged: list[str] = []
+        written = build.build(
+            [c], self.site, renderer=self._renderer, force=True, log=logged.append
+        )
+        self.assertEqual(written, [])
+        self.assertEqual((self.site / "images" / "c.png").read_bytes(), b"hand")
+        self.assertIn("hand-placed", logged[0])
+
     def test_pain_is_landscape(self) -> None:
         p = _post("p", "images/p.png", template="pain")
         p.slot = "pain"

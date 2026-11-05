@@ -196,3 +196,33 @@ class HeadRetryTests(unittest.TestCase):
         self.assertEqual(calls, len(push.HEAD_RETRY_DELAYS) + 1)
         self.assertLessEqual(sum(slept), 240)  # ~4 minutes at most
         self.assertEqual(slept, list(push.HEAD_RETRY_DELAYS))
+
+
+class SentListingTests(unittest.TestCase):
+    def test_first_line_prints_plainly_not_as_a_list(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            env_path = Path(tmp) / "env"
+            env_path.write_text(
+                "BUFFER_API_KEY=k\nBUFFER_LINKEDIN_CHANNEL_ID=l\n"
+                "BUFFER_FACEBOOK_CHANNEL_ID=f\nASTRID_WEBHOOK_URL=u\n"
+            )
+            os.chmod(env_path, 0o600)
+            channels = [{"organization_id": "o", "id": "l", "service": "linkedin"}]
+            sent = [
+                {
+                    "id": "p1",
+                    "dueAt": "2026-01-02T07:30:00Z",
+                    "channel": {"service": "linkedin"},
+                    "text": "First line\nsecond line",
+                }
+            ]
+            out = io.StringIO()
+            with (
+                unittest.mock.patch.object(buffer_api, "list_channels", lambda _k: channels),
+                unittest.mock.patch.object(buffer_api, "sent_posts", lambda *_a: sent),
+                contextlib.redirect_stdout(out),
+            ):
+                code = push.main(["--sent", "--env", str(env_path)])
+        self.assertEqual(code, 0)
+        self.assertIn("2026-01-02 linkedin  p1  First line", out.getvalue())
+        self.assertNotIn("['First line']", out.getvalue())

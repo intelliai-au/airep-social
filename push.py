@@ -222,7 +222,8 @@ def main(argv: list[str] | None = None) -> int:
         for org_id in sorted(orgs):
             for post in buffer_api.sent_posts(env["BUFFER_API_KEY"], org_id, ids):
                 service = (post.get("channel") or {}).get("service", "?")
-                first_line = (post.get("text") or "").strip().splitlines()[:1]
+                # A plain string, not a one-element list repr.
+                first_line = next(iter((post.get("text") or "").strip().splitlines()), "")
                 print(
                     f"{(post.get('dueAt') or '')[:10]} {service:<9} {post.get('id')}  {first_line}"
                 )
@@ -290,8 +291,10 @@ def main(argv: list[str] | None = None) -> int:
         if not args.skip_head:
             if url not in checked:
                 checked[url] = head_ok(url)
+                if not checked[url]:
+                    # Once per URL, not once per channel: both channels share the asset.
+                    alerts.append(f"{item.slug}: {url} did not answer HEAD 200; not scheduled")
             if not checked[url]:
-                alerts.append(f"{item.slug}: {url} did not answer HEAD 200; not scheduled")
                 continue
         create_input = buffer_api.build_create_input(
             channel_ids[item.channel],

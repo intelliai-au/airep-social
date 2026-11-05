@@ -148,6 +148,10 @@ def build(
                 raise BuildError(f"{post.slug}: needs rendering but no renderer was given")
             renderer(render_html(post.template, post.fields, templates_dir), out, _size(post))
             log(f"render  {post.image} ({post.template})")
+        elif out.exists():
+            # Only reachable with --force: a hand-placed PNG has nothing to re-render from.
+            log(f"keep    {post.image} (hand-placed, no template to re-render)")
+            continue
         else:
             raise BuildError(f"{post.slug}: {post.image} is missing and the post has no template")
         written.append(out)
