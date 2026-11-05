@@ -1,0 +1,27 @@
+date: 2026-11-18
+slot: field_note
+image: images/2026-11-18-field-note-reorder-point.png
+template: field_note
+alt: "Field note: a reorder point that knows it's December. Daily use times lead time plus shutdown plus safety."
+fields:
+  kicker_left: "Field notes · stock"
+  kicker_right: "Operations · AU"
+  headline: "A reorder point that *knows it's December.*"
+  sub: "Lead time, plus the shutdown, plus a margin for the late truck. Five numbers per item, worked out before the supplier's cut-off."
+  rows:
+    - { label: "Daily use", text: "What you sell or consume on a normal day, from the last 90 days, not from memory.", tag: "units/day" }
+    - { label: "Lead time", text: "Days from PO sent to stock on the shelf. Per supplier, not per catalogue.", tag: "days" }
+    - { label: "Cut-off", text: "The supplier's last dispatch before Christmas. Ask; it moves every year.", tag: "date" }
+    - { label: "Shutdown", text: "Your closed days plus theirs. Two weeks is normal. Count them.", tag: "days" }
+    - { label: "Safety", text: "A buffer for the truck that doesn't come: three to five days of use.", tag: "days" }
+    - { label: "Reorder point", text: "Daily use × (lead time + shutdown + safety). Set it per item, now.", tag: "formula" }
+  test: "Test: does your reorder point change in December, or is it the same number it was in May?"
+linkedin: |
+  A reorder point that knows it's December.
+  Daily use × (lead time + shutdown + safety). Five numbers per item, worked out before your supplier's cut-off, not after.
+  AIREP keeps the lead time on each supplier's item record, so the reorder report already knows.
+  https://intelliai.au
+facebook: |
+  A reorder point that knows it's December.
+  Daily use × (lead time + shutdown + safety). Work it out per item before the supplier cut-off.
+  https://intelliai.au

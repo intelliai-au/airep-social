@@ -1,0 +1,30 @@
+date: 2026-11-19
+slot: pain
+image: images/2026-11-19-pain-friday-spreadsheet.png
+template: pain
+alt: "The stock sheet somebody updates on Fridays, beside a spreadsheet full of question marks."
+fields:
+  kicker: "Pain · the Friday sheet"
+  headline: "The stock sheet *somebody updates on Fridays.*"
+  sub: "Right for about an hour. Wrong by Monday. A shortage by December."
+  button: "One live count"
+  sheet_title: "STOCK_COUNT_FINAL_v7.xlsx"
+  sheet_meta: "last saved Fri 4:52 pm"
+  columns: ["Item", "Qty", "Counted", "Note"]
+  # Illustrative cells, not statistics: the item names mirror AIREP's seeded demo catalogue.
+  rows:
+    - { c1: "GN pans 1/1 100mm", c2: "14?", c2_class: "warn", c3: "Fri", c4: "ask Dave", c4_class: "scrawl" }
+    - { c1: "Chef knives 240mm", c2: "—", c2_class: "", c3: "2 wks ago", c4: "on order??", c4_class: "warn" }
+    - { c1: "Degreaser 5L", c2: "6", c2_class: "", c3: "Fri", c4: "Dave took 2", c4_class: "scrawl" }
+    - { c1: "Sanitiser 750ml x12", c2: "0", c2_class: "warn", c3: "", c4: "URGENT", c4_class: "warn" }
+    - { c1: "Stainless 304 1.2mm", c2: "3 sheets", c2_class: "", c3: "last month", c4: "check yard", c4_class: "scrawl" }
+    - { c1: "Trolley wheels", c2: "lots", c2_class: "", c3: "", c4: "", c4_class: "" }
+linkedin: |
+  The stock sheet somebody updates on Fridays is right for about an hour.
+  In AIREP the count moves when the stock moves: a sale, a receipt, a production order, a stocktake.
+  One number, live, on every screen that needs it.
+  https://intelliai.au
+facebook: |
+  The stock sheet somebody updates on Fridays is right for about an hour.
+  In AIREP the count moves when the stock moves. One number, live.
+  https://intelliai.au

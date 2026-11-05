@@ -1,0 +1,30 @@
+date: 2026-11-24
+slot: feature
+image: images/2026-11-24-feature-reorder-report.png
+template: feature
+alt: "AIREP's reorder report filtered to one supplier, with a Reorder this supplier button."
+fields:
+  kicker: "Feature · reorder report"
+  headline: "Every item under its minimum, *counted from live stock.*"
+  screen_title: "Reorder report · ChefSupply Australia"
+  screen_status: "live"
+  columns: ["Item", "Description", "Lead", "Last cost", "Supplier code"]
+  # Real rows from the seeded Northwind Commercial Kitchens demo tenant
+  # (core/management/commands/seed_demo_data.py: ITEMS_RESELL + SUPPLIER_ITEMS).
+  rows:
+    - { code: "RESELL-043", name: "GN Pan 1/1 100mm Deep", c1: "7 d", c2: "$19.20", c3: "CS-GN-11-100" }
+    - { code: "RESELL-044", name: "GN Pan 1/2 65mm Deep", c1: "7 d", c2: "$13.20", c3: "CS-GN-12-65" }
+    - { code: "RESELL-042", name: "Chef Knife 240mm Forged", c1: "7 d", c2: "$117.00", c3: "CS-KN-240" }
+    - { code: "RESELL-041", name: "Saute Pan 32cm Tri-Ply", c1: "7 d", c2: "$87.00", c3: "CS-SAU-32" }
+    - { code: "RESELL-040", name: "Stockpot 40L Stainless", c1: "7 d", c2: "$111.00", c3: "CS-SP-40L" }
+  button: "Reorder this supplier"
+  footer: "Suggested quantity is maximum minus available, so committed sales and incoming POs are already netted off. The POs are drafts until a buyer sends them."
+linkedin: |
+  Every item under its minimum, counted from live stock, not a Friday spreadsheet.
+  Filter the reorder report to one supplier, press Reorder this supplier, and the draft POs are written from each item's own min and max.
+  Draft, so a buyer still checks the price before anything leaves the building.
+  https://intelliai.au
+facebook: |
+  Every item under its minimum, counted from live stock.
+  One supplier, one button, draft purchase orders ready to check and send.
+  https://intelliai.au

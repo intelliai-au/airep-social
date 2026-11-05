@@ -1,0 +1,6 @@
+# The timer runs on Astrid's venv (nova/Nova/venv), which already has all of these
+# plus Chromium for Playwright. Listed for a fresh machine only.
+pyyaml>=6
+requests>=2.32
+playwright>=1.45
+Pillow>=10

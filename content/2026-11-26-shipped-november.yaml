@@ -1,0 +1,23 @@
+date: 2026-11-26
+slot: shipped
+image: images/2026-11-26-shipped-november.png
+template: shipped
+alt: "Shipped in AIREP in November 2026: expense claims, a fixed-asset register, supplier pay-run ABA files."
+fields:
+  kicker: "Shipped · November 2026"
+  headline: "Three things that shipped *this month.*"
+  sub: "From the AIREP change log, dated. Every one of them is in every subscription."
+  # Source: airep main, commits 04badc04, 4cb46759/d41af254, 4d67eb91 (all 2026-11-03).
+  rows:
+    - { when: "3 Nov", title: "Expense claims", text: "Receipt capture, an approval queue on the accounting dashboard, and ABA batches to reimburse staff from your bank." }
+    - { when: "3 Nov", title: "Fixed-asset register", text: "Depreciation runs and disposals, and the register lands in the accountant pack." }
+    - { when: "3 Nov", title: "Supplier pay-run ABA file", text: "Pay a supplier run with one bank upload, with the accountant exports page beside it." }
+  footer: "No add-on pricing. A feature that ships is in your subscription the same day."
+linkedin: |
+  Shipped in AIREP this month: expense claims with receipt capture and ABA reimbursements, a fixed-asset register with depreciation runs, and ABA files for supplier pay runs.
+  All of it is in every subscription. Nothing is an add-on.
+  https://intelliai.au
+facebook: |
+  Shipped this month: expense claims, a fixed-asset register, and ABA files for supplier pay runs.
+  All in every subscription, no add-ons.
+  https://intelliai.au

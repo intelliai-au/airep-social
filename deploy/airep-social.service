@@ -1,0 +1,14 @@
+[Unit]
+Description=AIREP social: render this fortnight's images and schedule them in Buffer
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# The repo's own script: git pull, build.py, push.py --live, commit state/, git push.
+# Secrets come from ~/.config/airep-social/env (mode 600), never from the unit.
+WorkingDirectory=/home/keiran/Documents/Github Projects/airep-social
+ExecStart=/usr/bin/env bash "/home/keiran/Documents/Github Projects/airep-social/deploy/run.sh"
+# Playwright + Chromium live in Astrid's venv; run.sh honours this override.
+Environment=AIREP_SOCIAL_PYTHON=/home/keiran/Documents/Github Projects/nova/Nova/venv/bin/python
+TimeoutStartSec=20min

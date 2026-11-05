@@ -1,0 +1,12 @@
+[Unit]
+Description=Sunday run of AIREP social (render + schedule the next fortnight)
+
+[Timer]
+# Sunday 18:00 local (the box is AEST). Persistent so a box that was asleep still
+# runs once on wake instead of skipping the week; the push is idempotent either way.
+OnCalendar=Sun *-*-* 18:00:00
+Persistent=true
+AccuracySec=1m
+
+[Install]
+WantedBy=timers.target

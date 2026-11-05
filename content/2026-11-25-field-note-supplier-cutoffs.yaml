@@ -1,0 +1,27 @@
+date: 2026-11-25
+slot: field_note
+image: images/2026-11-25-field-note-supplier-cutoffs.png
+template: field_note
+alt: "Field note: six dates to get from every supplier before December."
+fields:
+  kicker_left: "Field notes · suppliers"
+  kicker_right: "Operations · AU"
+  headline: "Six dates to get *from every supplier* before December."
+  sub: "Christmas cut-offs move every year and nobody emails them. Ask once, write them on the supplier record, and plan the last PO backwards."
+  rows:
+    - { label: "Last order", text: "The last day they accept a PO for dispatch before Christmas.", tag: "ask" }
+    - { label: "Last dispatch", text: "The day the last truck leaves their dock, which is not the last order day.", tag: "ask" }
+    - { label: "Carrier cut-off", text: "Your freight company's own last pickup. Often earlier than the supplier's.", tag: "ask" }
+    - { label: "Closed", text: "Their first closed day, and whether orders bank up or bounce while they're away.", tag: "ask" }
+    - { label: "Reopen", text: "The day they are back. Not the day they dispatch.", tag: "ask" }
+    - { label: "First delivery", text: "Reopen plus lead time: the first date new stock can land on your floor.", tag: "work out" }
+  test: "Test: can you list every open purchase order due after its supplier's cut-off, today, without a phone call?"
+linkedin: |
+  Six dates to get from every supplier before December: last order, last dispatch, carrier cut-off, closed, reopen, first delivery.
+  Ask once, write them on the supplier record, and plan the last PO backwards from them.
+  AIREP keeps a promised date on every purchase order, so the gap shows before it is a shortage.
+  https://intelliai.au
+facebook: |
+  Six dates to get from every supplier before December.
+  Ask once, write them down, plan the last PO backwards from them.
+  https://intelliai.au

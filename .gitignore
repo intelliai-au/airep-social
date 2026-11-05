@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.ruff_cache/
+# Rendering scratch
+build/
+# Never: the env file lives in ~/.config/airep-social/, not here
+env
+.env
