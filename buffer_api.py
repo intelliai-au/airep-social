@@ -13,16 +13,22 @@ import requests
 ENDPOINT = "https://api.buffer.com"
 TIMEOUT_SECONDS = 30
 
-LIST_CHANNELS_QUERY = """
+# Two steps, as the API docs show them. The one-shot form that nested `channels` under
+# `account.organizations` is answered with "Not authorized to access this resource" for
+# a personal key that can read channels perfectly well through `channels(input:)`
+# (live 2026-11-08, the AIREP key).
+LIST_ORGANIZATIONS_QUERY = """
 query {
   account {
     id
-    organizations {
-      id
-      name
-      channels { id service name displayName isDisconnected }
-    }
+    organizations { id name }
   }
+}
+"""
+
+LIST_CHANNELS_QUERY = """
+query Channels($id: OrganizationId!) {
+  channels(input: { organizationId: $id }) { id service name displayName isDisconnected }
 }
 """
 
@@ -77,11 +83,14 @@ def _post_graphql(token: str, payload: dict[str, Any]) -> dict[str, Any]:
 
 def list_channels(token: str) -> list[dict[str, Any]]:
     """Every channel the key can see, flattened: id, service, name, org id, isDisconnected."""
-    body = _post_graphql(token, {"query": LIST_CHANNELS_QUERY})
+    body = _post_graphql(token, {"query": LIST_ORGANIZATIONS_QUERY})
     account = ((body.get("data") or {}).get("account")) or {}
     flat: list[dict[str, Any]] = []
     for org in account.get("organizations") or []:
-        for channel in org.get("channels") or []:
+        org_body = _post_graphql(
+            token, {"query": LIST_CHANNELS_QUERY, "variables": {"id": org.get("id", "")}}
+        )
+        for channel in (org_body.get("data") or {}).get("channels") or []:
             flat.append(
                 {
                     "id": channel.get("id", ""),
