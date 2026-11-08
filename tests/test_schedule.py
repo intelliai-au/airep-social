@@ -16,19 +16,23 @@ class FakePost:
 
 
 class CadenceTests(unittest.TestCase):
-    def test_year_has_tue_wed_thu_minus_the_christmas_gap(self) -> None:
+    def test_year_has_tue_to_fri_minus_the_christmas_gap(self) -> None:
         days = schedule.cadence()
-        # 52 Tuesdays, 52 Wednesdays, 52 Thursdays from 17 Nov 2026 to 11 Nov 2027,
-        # minus the four Wed/Thu inside 22 Dec - 4 Jan.
-        self.assertEqual(len(days), 156 - 4)
+        # 52 Tuesdays, 52 Wednesdays, 52 Thursdays and 51 Fridays from 17 Nov 2026 to
+        # 11 Nov 2027 (a Thursday), minus the four Wed/Thu and two Fridays inside
+        # 22 Dec - 4 Jan.
+        self.assertEqual(len(days), 156 - 4 + 51 - 2)
         self.assertEqual(days[0], date(2026, 11, 17))
         self.assertEqual(days[-1], date(2027, 11, 11))
-        self.assertTrue(all(d.weekday() in (1, 2, 3) for d in days))
+        self.assertTrue(all(d.weekday() in (1, 2, 3, 4) for d in days))
+        self.assertEqual(sum(1 for d in days if d.weekday() == 4), 49)
 
     def test_christmas_gap_keeps_only_tuesday(self) -> None:
         self.assertEqual(schedule.allowed_slots(date(2026, 12, 22)), {"feature"})
         self.assertEqual(schedule.allowed_slots(date(2026, 12, 23)), frozenset())
         self.assertEqual(schedule.allowed_slots(date(2026, 12, 31)), frozenset())
+        self.assertEqual(schedule.allowed_slots(date(2026, 12, 25)), frozenset())  # Friday
+        self.assertEqual(schedule.allowed_slots(date(2027, 1, 1)), frozenset())  # Friday
         self.assertEqual(schedule.allowed_slots(date(2026, 12, 29)), {"feature"})
         # 5 Jan 2027 is a Tuesday, 6 Jan the first Wednesday back.
         self.assertEqual(schedule.allowed_slots(date(2027, 1, 6)), {"field_note"})
@@ -39,8 +43,17 @@ class CadenceTests(unittest.TestCase):
         self.assertEqual(
             schedule.allowed_slots(date(2026, 11, 19)), {"pain", "price", "shipped", "date_post"}
         )
+        self.assertEqual(schedule.allowed_slots(date(2026, 11, 20)), {"website"})  # Friday
         self.assertEqual(schedule.allowed_slots(date(2026, 11, 21)), frozenset())  # Saturday
         self.assertEqual(schedule.allowed_slots(date(2026, 11, 16)), frozenset())  # Monday
+
+
+class HashtagTests(unittest.TestCase):
+    def test_website_posts_get_their_own_default_tags(self) -> None:
+        self.assertEqual(schedule.default_hashtags("feature"), schedule.DEFAULT_HASHTAGS)
+        self.assertEqual(
+            schedule.default_hashtags("website"), ("WebDesign", "SmallBusiness", "Australia")
+        )
 
 
 class DueAtTests(unittest.TestCase):
@@ -62,14 +75,16 @@ class PlanTests(unittest.TestCase):
         self.posts = [FakePost(d.isoformat(), d) for d in schedule.cadence()[:12]]  # 4 weeks
         self.sunday = datetime(2026, 11, 15, 18, 0, tzinfo=schedule.AEST)
 
-    def test_fortnight_is_six_posts_a_channel(self) -> None:
+    def test_fortnight_is_eight_posts_a_channel(self) -> None:
         plan = schedule.plan(self.posts, self.sunday, {})
-        self.assertEqual(len(plan), 12)
+        self.assertEqual(len(plan), 16)
         for channel in schedule.CHANNELS:
-            self.assertEqual(sum(1 for p in plan if p.channel == channel), 6)
+            self.assertEqual(sum(1 for p in plan if p.channel == channel), 8)
         self.assertEqual(plan[0].slug, "2026-11-17")
-        self.assertEqual(plan[-1].date, date(2026, 11, 26))
+        self.assertEqual(plan[-1].date, date(2026, 11, 27))  # the second Friday
         self.assertTrue(all(p.date <= date(2026, 11, 29) for p in plan))
+        # Eight queued a channel stays under the Free plan's ten.
+        self.assertLessEqual(schedule.CHANNEL_CAP, 9)
 
     def test_cap_limits_each_channel(self) -> None:
         plan = schedule.plan(self.posts, self.sunday, {}, cap=4)
@@ -82,9 +97,9 @@ class PlanTests(unittest.TestCase):
         plan = schedule.plan(self.posts, self.sunday, pushed)
         self.assertNotIn(("2026-11-17", "linkedin"), [(p.slug, p.channel) for p in plan])
         self.assertIn(("2026-11-17", "facebook"), [(p.slug, p.channel) for p in plan])
-        # Only six posts sit inside the fortnight, so LinkedIn has five left to make.
-        self.assertEqual(sum(1 for p in plan if p.channel == "linkedin"), 5)
-        self.assertEqual(sum(1 for p in plan if p.channel == "facebook"), 6)
+        # Only eight posts sit inside the fortnight, so LinkedIn has seven left to make.
+        self.assertEqual(sum(1 for p in plan if p.channel == "linkedin"), 7)
+        self.assertEqual(sum(1 for p in plan if p.channel == "facebook"), 8)
 
     def test_past_due_times_are_not_scheduled(self) -> None:
         tuesday_10am = datetime(2026, 11, 17, 10, 0, tzinfo=schedule.AEST)

@@ -1,0 +1,29 @@
+date: 2026-11-27
+slot: website
+image: images/2026-11-27-website-note-what-2500-buys.png
+template: field_note
+alt: "Field note: what a $2,500 + GST website includes. Up to ten pages, built for phones first, an enquiry form, set up for Google, your address and email kept, yours to keep, from $30 + GST a month to run."
+fields:
+  kicker_left: "Field notes · websites"
+  kicker_right: "Small business · AU"
+  headline: "What a $2,500 website *actually includes.*"
+  sub: "One flat price, plus GST, for the whole site. Here is what is inside it, so any quote can be compared line by line."
+  # Source: docs/WEBSITES.md, which mirrors intelliai.au/websites/ ("What's included").
+  rows:
+    - { label: "Pages", text: "Up to ten, designed around your business, not a template.", tag: "included" }
+    - { label: "Phones first", text: "Built for a phone screen first, where most customers look.", tag: "included" }
+    - { label: "Enquiries", text: "A form that lands in your inbox, a number that dials on tap.", tag: "included" }
+    - { label: "Google", text: "Page titles, a sitemap and the local-business details.", tag: "included" }
+    - { label: "Your address", text: "Your web address and email kept; old links still land.", tag: "included" }
+    - { label: "Running it", text: "Hosting, backups, padlock and fixes from $30 + GST a month.", tag: "$30/mo" }
+  test: "Test: ask any quote what happens to the site, the domain and the email if you stop paying. The answer should be: you keep them."
+  foot_link: "intelliai.au/websites →"
+linkedin: |
+  A website for your business, for one flat price: $2,500 + GST.
+  Up to ten pages, built for phones first, an enquiry form, set up for Google, your address and email kept working, and live in about two weeks once we have your content.
+  Then from $30 + GST a month to run it, no contract, and the words, photos and web address stay yours.
+  https://intelliai.au/websites/
+facebook: |
+  A website for your business, for one flat price: $2,500 + GST.
+  Up to ten pages, built for phones first, live in about two weeks. Yours to keep, from $30 + GST a month to run.
+  https://intelliai.au/websites/

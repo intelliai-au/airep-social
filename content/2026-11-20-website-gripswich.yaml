@@ -1,0 +1,31 @@
+date: 2026-11-20
+slot: website
+image: images/2026-11-20-website-gripswich.png
+template: website
+hashtags: [WebDesign, SmallBusiness, Ipswich]
+alt: "The GRIPswich Bouldering website on a phone, built by Intelli AI: memberships, direct debit, check-in, class bookings, point of sale and a member portal in one system."
+fields:
+  kicker: "Websites · built by Intelli AI"
+  headline: "Memberships, check-in, bookings and the till, *in one system.*"
+  # Facts from sites.yaml (intelliai.au/work/): nothing here the client has not already let us say.
+  sub: "GRIPswich Bouldering in Ipswich opened on an off-the-shelf system and moved to one we built: direct debit, front-desk check-in, class bookings, point of sale, rostering and a member portal. Cut over in August 2026."
+  rows:
+    - { text: "Memberships" }
+    - { text: "Direct debit" }
+    - { text: "Check-in" }
+    - { text: "Class bookings" }
+    - { text: "Point of sale" }
+    - { text: "Member portal" }
+  shot: shots/gripswich-phone.png
+  frame: phone
+  site_url: gripswich.au
+  footer: "A business website is $2,500 + GST, live in about two weeks. A full online system like this one is quoted in writing before we start, and runs from $110 + GST a month."
+linkedin: |
+  GRIPswich Bouldering in Ipswich runs memberships, direct debit, check-in, class bookings, point of sale and rostering in one system we built, cut over in August 2026.
+  The members' side is the website: book, pay and see your progress from a phone.
+  A business website is $2,500 + GST. A full system like this one is quoted in writing before we start.
+  https://intelliai.au/websites/
+facebook: |
+  GRIPswich Bouldering's memberships, check-in, bookings and till run in one system we built.
+  A business website is $2,500 + GST; a full system like this is quoted in writing first.
+  https://intelliai.au/websites/

@@ -33,6 +33,7 @@ from string import Template
 import posts as posts_mod
 import push
 import schedule
+import shots as shots_mod
 import state as state_mod
 
 ROOT = Path(__file__).resolve().parent
@@ -50,9 +51,13 @@ MAX_TURNS = {"write": 160, "review": 60, "film": 320, "shipped": 40}
 TIMEOUT_S = {"write": 60 * 60, "review": 25 * 60, "film": 120 * 60, "shipped": 20 * 60}
 
 # What a session may change in this repo. Everything else (tests, templates, the Python,
-# the units) is the caller's; a session that touches it has drifted off its brief, as the
-# first December writer did when it rewrote two tests to fit the content it had added.
+# the units, the site screenshots shots.py takes) is the caller's; a session that touches
+# it has drifted off its brief, as the first December writer did when it rewrote two
+# tests to fit the content it had added.
 ALLOWED_PREFIXES = ("content/", "site/images/", "site/video/")
+
+# shots.py (the public web, three sites, a film each the first time) gets this long.
+SHOTS_TIMEOUT_S = 25 * 60
 
 # Only these may reach the child session's environment with a value. Anything that looks
 # like a credential is blanked, and ANTHROPIC_API_KEY always is: with no key the CLI
@@ -71,6 +76,7 @@ class MonthBrief:
     theme: str
     films: str
     hooks: str
+    web: str = ""  # the Friday website angle (fourth column, added 2026-11-08)
 
     @property
     def key(self) -> str:
@@ -156,7 +162,8 @@ def year_rows(text: str) -> dict[tuple[int, int], MonthBrief]:
         if len(cells) < 3:
             continue
         year, month = int(m.group(1)), int(m.group(2))
-        rows[(year, month)] = MonthBrief(year, month, cells[0], cells[1], cells[2])
+        web = cells[3] if len(cells) > 3 else ""
+        rows[(year, month)] = MonthBrief(year, month, cells[0], cells[1], cells[2], web)
     return rows
 
 
@@ -177,6 +184,20 @@ def existing_films(site_dir: Path) -> list[str]:
     if not video_dir.is_dir():
         return []
     return sorted(p.name for p in video_dir.glob("*.mp4"))
+
+
+def site_lines(site_dir: Path, sites: list[shots_mod.Site] | None = None) -> str:
+    """One line per site in sites.yaml naming the shots and film that exist, for the brief."""
+    lines = []
+    for site in shots_mod.load_sites() if sites is None else sites:
+        have = [
+            rel
+            for rel in (site.phone_shot, site.laptop_shot, site.film)
+            if (site_dir / rel).is_file()
+        ]
+        files = ", ".join(have) if have else "no screenshots yet: do not write a showcase for it"
+        lines.append(f"- {site.name} ({site.display_url}; {site.sector}; {site.plan}): {files}")
+    return "\n".join(lines) or "- none"
 
 
 def date_lines(days: Iterable[date]) -> str:
@@ -211,6 +232,8 @@ def render_brief(
         theme=brief.theme,
         films=brief.films,
         hooks=brief.hooks or "none",
+        web=brief.web or "(no angle in docs/YEAR.md: pick one from docs/WEBSITES.md)",
+        sites=site_lines(ROOT / "site"),
         dates=date_lines(days),
         film_rule=film_rule,
         python=quoted,
@@ -478,6 +501,34 @@ def shipped_refresh_due(
     return None
 
 
+def refresh_shots(python: str, report: RunReport) -> None:
+    """Retake the site screenshots on main before a writing run, so a showcase shows the
+    site as it is this month; a film is made only for a site that has none yet.
+
+    Runs here, outside the writer's network-less sandbox, and commits straight to main:
+    the worktree is cut after this, so the session sees the fresh files. A failure (a
+    site down, no network) is reported and the run carries on with last month's shots.
+    """
+    try:
+        proc = subprocess.run(
+            [python, "shots.py"], cwd=ROOT, text=True, capture_output=True, timeout=SHOTS_TIMEOUT_S
+        )
+    except subprocess.TimeoutExpired:
+        report.say("⚠ shots.py timed out; keeping last month's screenshots")
+        return
+    if proc.returncode != 0:
+        tail = (proc.stdout + proc.stderr).strip().splitlines()[-4:]
+        report.say("⚠ shots.py had failures; keeping what it could take:\n" + "\n".join(tail))
+    changed = sh(["git", "status", "--porcelain", "--", "site/shots", "site/video"], ROOT).strip()
+    if not changed:
+        report.say("site screenshots unchanged")
+        return
+    sh(["git", "add", "site/shots", "site/video"], ROOT)
+    sh(["git", "commit", "-q", "-m", "chore(shots): refresh the site screenshots"], ROOT)
+    sh(["git", "push", "origin", "main"], ROOT)
+    report.say(f"site screenshots refreshed ({len(changed.splitlines())} file(s))")
+
+
 def land(wt: Path, branch: str, base: str, report: RunReport) -> bool:
     """Merge the worktree's commits into main and push; tidy the worktree."""
     count = int(sh(["git", "rev-list", "--count", f"{base}..HEAD"], wt).strip() or 0)
@@ -547,6 +598,8 @@ def phase_write(
         until = calendar.month_name[add_months(today, MONTHS_AHEAD)[1]]
         report.say(f"content already written to the end of {until}")
         return
+    if not dry_run:
+        refresh_shots(python, report)  # before render_brief, which lists the shots present
     films = existing_films(ROOT / "site")
     for (year, month), days in months.items():
         brief = month_brief(year, month)

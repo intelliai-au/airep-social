@@ -1,0 +1,49 @@
+# The websites a Friday post may show. Only sites Intelli AI built, that are live under
+# the client's own name, and that the client already lets intelliai.au/work/ list: the
+# "Sites we've built" strip there is the consent line. A concept site for a business that
+# has not said yes (the pitch demos) never appears here, however good it looks.
+#
+# shots.py screenshots `url` (and each extra `pages` path) at phone and laptop size into
+# site/shots/<slug>-phone.png / <slug>-laptop.png, and films a phone scroll-through into
+# site/video/website_<slug>_scroll.mp4. Facts under `facts` are what the writer may say;
+# they mirror intelliai.au/work/ (airep core/views/public.py `_CASE_STUDIES`). A writer
+# that wants to say more checks the live site, not its memory.
+sites:
+  - slug: gripswich
+    name: GRIPswich Bouldering
+    url: https://gripswich.au
+    display_url: gripswich.au
+    sector: Indoor climbing gym, Ipswich QLD
+    plan: Full online system
+    hide: [".site-notice"]  # the day's busy/announcement bar; true today, stale by Friday
+    facts:
+      - A complete gym management platform, replacing the off-the-shelf system the gym opened on
+      - Memberships and direct debit, front-desk check-in, point of sale, class bookings, staff rostering and a member portal in one system instead of four
+      - Cut over from the previous platform in August 2026
+      - Direct debit and card billing run in-house
+      - Members self-serve bookings, payments and progress
+  - slug: ascot-vale-driving
+    name: Ascot Vale Driving School
+    url: https://ascotvaledrivingschool.au
+    display_url: ascotvaledrivingschool.au
+    sector: Driving instruction, Melbourne VIC
+    plan: Site with a database
+    facts:
+      - A booking-led website for a driving school
+      - Live instructor availability and online lesson booking
+      - Transparent package pricing
+      - The structured data search engines need to surface a local service business; built for local search from day one
+  - slug: mike-trace-engineering
+    name: Mike Trace Engineering
+    url: https://miketraceeng.au
+    display_url: miketraceeng.au
+    sector: Road sweeper specialists, Brisbane QLD
+    plan: Simple site
+    facts:
+      - A trading business operating since 2002 that had no meaningful web presence
+      - A fast, mobile-first site that explains the service range and puts the workshop's contact details one tap away
+      - Servicing Brisbane and the Gold Coast
+      - 24/7 emergency support surfaced site-wide
+# Not yet: Koala Music (koalamusic.au still serves the old Wix site until launch; add it
+# the week the new site goes live). Never: the unsolicited pitch demos (RB Electrical,
+# HFR Sweeping, the Ipswich and climbing-gym concepts) until that owner has signed off.

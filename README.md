@@ -1,7 +1,8 @@
 # airep-social
 
 A year of organic LinkedIn and Facebook posts for [AIREP](https://intelliai.au), Intelli
-AI's ERP, with no weekly step for anyone. One YAML file per post in `content/`, images
+AI's ERP, and (Fridays, since 2026-11-08) for Intelli AI's
+[website-build service](https://intelliai.au/websites/), with no weekly step for anyone. One YAML file per post in `content/`, images
 rendered from HTML templates, films from the AIREP film rig, everything scheduled through
 Buffer by a Sunday timer on the home box. The plan behind it is the
 [AIREP Organic Social Plan](https://claude.ai/artifact/27LBWaY3iycCT6Nd321GGQ) (2026-11-03).
@@ -16,25 +17,35 @@ early, which is fine.
 | Path | What |
 |------|------|
 | `content/YYYY-MM-DD-slug.yaml` | One post: date, slot, both captions, the asset (image + template fields, or a film) |
-| `templates/` | The HTML templates (`field_note`, `feature`, `pain`, `shipped`, `price`, `date_post`) and `base.css` |
+| `templates/` | The HTML templates (`field_note`, `feature`, `pain`, `shipped`, `price`, `date_post`, `website`) and `base.css` |
 | `site/images/` | Rendered PNGs (2160 × 2160; the pain series is 2160 × 1130), committed |
-| `site/video/` | The six scored 4:5 films from 2026-09-06 |
+| `site/shots/` | Phone and laptop screenshots of the client sites in `sites.yaml`, retaken by `shots.py` before each writing run |
+| `site/video/` | The six scored 4:5 films from 2026-09-06, plus a silent phone scroll-through per client site (`website_<slug>_scroll.mp4`) |
+| `sites.yaml` | The sites a Friday post may show (live client sites listed on intelliai.au/work/; never a pitch demo) |
+| `docs/WEBSITES.md` | The website offer as a post may state it: a mirror of intelliai.au/websites/ |
 | `assets/legacy/` | The 2026 PNG series (Field Notes, Feature Posts, Switcher, LinkedIn ads, trial). No Founder image |
 | `state/pushed.json` | Every Buffer post id `push.py` has created, by slug and channel |
 | `schedule.py` | Cadence, AEST due times, the fortnight plan (pure) |
 | `posts.py` | Loads and validates `content/` |
 | `build.py` | Renders missing PNGs with Playwright; flattens legacy PNGs to RGB |
+| `shots.py` | Screenshots and films the client sites for the website showcase posts |
 | `push.py` | Schedules the next 14 days in Buffer; dry run by default |
 | `deploy/` | The systemd user units and the script the timer runs |
 
 ## Cadence
 
-Three slots a week, the same asset on both pages, LinkedIn at 07:30 and Facebook at
+Four slots a week, the same asset on both pages, LinkedIn at 07:30 and Facebook at
 18:30 AEST (Brisbane has no daylight saving):
 
 - **Tuesday** `feature`: a feature image, or one of the films twice a month
 - **Wednesday** `field_note`: one AU compliance or operations fact as a card
 - **Thursday** `pain`, `price`, `shipped` (this month's changes from the airep log) or `date_post`
+- **Friday** `website`: the website-build service, for a different reader (a trade, a
+  studio, a shop). A real screenshot of a site we built in a phone or laptop frame, a
+  web Field Note, a phone scroll-through film, or the offer card ($2,500 + GST, from
+  $30 + GST a month), each linking intelliai.au/websites/. Only the sites in
+  `sites.yaml` are shown; facts come from `docs/WEBSITES.md`. No paid ads (Keiran,
+  2026-11-08: organic only).
 
 22 Dec to 4 Jan keeps only the Tuesday post. The calendar runs Tue 17 Nov 2026 to
 Thu 11 Nov 2027. `posts.py` refuses a file whose slot does not match its weekday.
@@ -50,8 +61,8 @@ runs `deploy/run.sh`:
    for Pages.
 3. `push.py --live`: for every post dated in the next 14 days whose channel is not yet
    in `state/pushed.json`, HEAD-check the asset URL (retrying for ~3.5 min while Pages rebuilds), then `createPost` with
-   `mode: customScheduled` and the slot's `dueAt`. At most **6 posts a channel** per
-   run, so Buffer's Free plan (10 queued a channel) never overflows. Both channels are
+   `mode: customScheduled` and the slot's `dueAt`. At most **8 posts a channel** per
+   run (four a week), so Buffer's Free plan (10 queued a channel) never overflows. Both channels are
    checked for `isDisconnected` first.
 4. Commit and push `state/pushed.json`.
 5. A Telegram message arrives through Astrid: what was queued, each asset's link, the

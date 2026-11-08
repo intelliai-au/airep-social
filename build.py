@@ -6,6 +6,7 @@ Idempotent: an image that already exists under site/ is left alone unless --forc
 from __future__ import annotations
 
 import argparse
+import base64
 import html
 import re
 import sys
@@ -26,6 +27,19 @@ SIZES: dict[str, tuple[int, int]] = {"pain": (1080, 565)}
 DEVICE_SCALE = 2
 
 Renderer = Callable[[str, Path, tuple[int, int]], None]
+
+# A template's placeholders that get a value when the post names none, so the AIREP
+# formats keep their footer and a Friday website post can point the same template at
+# intelliai.au/websites instead.
+TEMPLATE_DEFAULTS: dict[str, dict[str, str]] = {
+    "field_note": {"foot_link": "by AIREP · save this →"},
+    "price": {"foot_link": "intelliai.au/pricing →"},
+    "website": {"foot_link": "intelliai.au/websites →", "frame": "phone"},
+}
+
+# Fields that name an image under site/ (a screenshot from shots.py). Playwright renders
+# from a string, so the file is inlined as a data URI rather than linked.
+IMAGE_FIELDS = frozenset({"shot"})
 
 _PLACEHOLDER = re.compile(r"\{\{(\w+)\}\}")
 _EMPHASIS = re.compile(r"\*(.+?)\*")
@@ -54,8 +68,22 @@ def _rows(template: str, rows: list[dict], templates_dir: Path) -> str:
     return "".join(out)
 
 
-def render_html(template: str, fields: dict, templates_dir: Path = TEMPLATES_DIR) -> str:
-    """The self-contained HTML for one image: CSS and the logo inlined, fields substituted."""
+def _data_uri(rel: str, site_dir: Path) -> str:
+    """``data:image/png;base64,…`` for a PNG under site/; a missing file is a BuildError."""
+    path = site_dir / rel
+    if not path.is_file():
+        raise BuildError(f"screenshot {rel} is not in site/ (run shots.py)")
+    return "data:image/png;base64," + base64.b64encode(path.read_bytes()).decode("ascii")
+
+
+def render_html(
+    template: str,
+    fields: dict,
+    templates_dir: Path = TEMPLATES_DIR,
+    site_dir: Path = SITE_DIR,
+) -> str:
+    """The self-contained HTML for one image: CSS, logo and screenshots inlined, fields
+    substituted."""
     path = templates_dir / f"{template}.html"
     if not path.exists():
         raise BuildError(f"no template {template!r} in {templates_dir}")
@@ -63,12 +91,15 @@ def render_html(template: str, fields: dict, templates_dir: Path = TEMPLATES_DIR
     ctx: dict[str, str] = {
         "base_css": (templates_dir / "base.css").read_text(encoding="utf-8"),
         "logo_svg": (templates_dir / "assets" / "intelli-ai.svg").read_text(encoding="utf-8"),
+        **TEMPLATE_DEFAULTS.get(template, {}),
     }
     for key, value in fields.items():
         if key == "rows":
             ctx[key] = _rows(template, list(value or []), templates_dir)
         elif key == "columns":
             ctx[key] = _columns(list(value or []))
+        elif key in IMAGE_FIELDS:
+            ctx[key] = _data_uri(str(value), site_dir)
         else:
             ctx[key] = _value(value)
     return _PLACEHOLDER.sub(lambda m: ctx.get(m.group(1), ""), src)
@@ -146,7 +177,11 @@ def build(
         elif post.template:
             if renderer is None:
                 raise BuildError(f"{post.slug}: needs rendering but no renderer was given")
-            renderer(render_html(post.template, post.fields, templates_dir), out, _size(post))
+            renderer(
+                render_html(post.template, post.fields, templates_dir, site_dir),
+                out,
+                _size(post),
+            )
             log(f"render  {post.image} ({post.template})")
         elif out.exists():
             # Only reachable with --force: a hand-placed PNG has nothing to re-render from.

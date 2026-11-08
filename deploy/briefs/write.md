@@ -22,6 +22,30 @@ $dates
 dated, no internal refactors); a `date_post` for each dated hook above; `price` once;
 `pain` on the rest.
 
+## The Fridays: Intelli AI's website-build service (slot `website`)
+
+Fridays sell websites, not AIREP: a different reader (a tradie, a studio, a shop wanting
+a site) and a different link. This month's angle: $web
+
+- Facts and prices come from `docs/WEBSITES.md` only ($2,500 + GST build, from $30 + GST
+  a month, live in about two weeks, you own it, no lock-in). Every Friday caption links
+  `https://intelliai.au/websites/` exactly once; never `/pricing/`.
+- The only sites a post may show, and the screenshots and films that exist for them:
+$sites
+  A site not on that list is never shown or named, whatever you know about it.
+- The mix: first Friday a showcase (`template: website`, `fields.shot:` one of the
+  screenshots above, `fields.frame: phone` or `laptop`, chips in `rows: [{text: …}]`, a
+  footer line, and `sub` from that site's facts in `sites.yaml`); second Friday a web
+  Field Note (`template: field_note` with `foot_link: "intelliai.au/websites →"`); third
+  Friday the scroll film of a site that has one (`video: video/website_<slug>_scroll.mp4`,
+  `thumbnail_offset_ms: 0`), else a showcase; fourth Friday the offer card
+  (`template: price` with `foot_link: "intelliai.au/websites →"` and the three plans);
+  a fifth Friday a showcase. Rotate the sites so none appears twice in the month.
+- Hashtags default to `[WebDesign, SmallBusiness, Australia]` for this slot; a post about
+  one site may swap the third for its city (`Ipswich`, `Brisbane`, `Melbourne`).
+- Voice stays the company's. Say what the site does for the business and what it cost
+  to build, never "stunning", never adjectives about design.
+
 ## How
 
 0. If `content/` already holds files for this month, an earlier attempt wrote them and

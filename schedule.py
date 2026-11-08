@@ -18,32 +18,44 @@ CHANNELS: tuple[str, ...] = ("linkedin", "facebook")
 POST_TIMES: dict[str, time] = {"linkedin": time(7, 30), "facebook": time(18, 30)}
 
 # Monday is 0. Tue = feature (image or film), Wed = Field Note, Thu = one of the four
-# Thursday formats. Weekends and Mon/Fri never post.
+# Thursday formats, Fri = the website-build service (added 2026-11-08: Keiran wants more
+# website clients, and the same pages, pipeline and veto card serve both offers).
+# Weekends and Monday never post.
 WEEKDAY_SLOTS: dict[int, frozenset[str]] = {
     1: frozenset({"feature"}),
     2: frozenset({"field_note"}),
     3: frozenset({"pain", "price", "shipped", "date_post"}),
+    4: frozenset({"website"}),
 }
 SLOTS: frozenset[str] = frozenset().union(*WEEKDAY_SLOTS.values())
 
 PLAN_START = date(2026, 11, 17)
 PLAN_END = date(2027, 11, 11)
 
-# push.py schedules the next fortnight: six posts a channel at most, which fits the
-# Free plan's ten queued posts a channel with room for a hand-made one.
+# push.py schedules the next fortnight: four posts a week, so eight a channel at most,
+# which fits the Free plan's ten queued posts a channel with room for a hand-made one.
 HORIZON_DAYS = 14
-CHANNEL_CAP = 6
+CHANNEL_CAP = 8
 
 # Fewer than six weeks of unpushed calendar left means the author run (author.py, on
 # the box's Max login) is overdue for the next month (plan doc, "Writing ahead").
 WRITE_AHEAD_WEEKS = 6
 
-# The plan's recommended LinkedIn hashtags; Facebook gets none.
+# The plan's recommended LinkedIn hashtags; Facebook gets none. The Friday website posts
+# are not about the ERP, so they carry their own set unless the file says otherwise.
 DEFAULT_HASHTAGS: tuple[str, ...] = ("ERP", "SmallBusiness", "Australia")
+SLOT_HASHTAGS: dict[str, tuple[str, ...]] = {
+    "website": ("WebDesign", "SmallBusiness", "Australia"),
+}
+
+
+def default_hashtags(slot: str) -> tuple[str, ...]:
+    """The LinkedIn hashtags a post of *slot* gets when its file names none."""
+    return SLOT_HASHTAGS.get(slot, DEFAULT_HASHTAGS)
 
 
 def christmas_quiet(day: date) -> bool:
-    """True inside the 22 Dec to 4 Jan window, when only Tuesday posts."""
+    """True inside the 22 Dec to 4 Jan window, when only Tuesday posts (no Friday either)."""
     year = day.year
     return date(year, 12, 22) <= day <= date(year, 12, 31) or date(year, 1, 1) <= day <= date(
         year, 1, 4

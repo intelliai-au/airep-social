@@ -63,6 +63,15 @@ class ValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(posts.ContentError, "Thu 19 Nov allows"):
             posts.parse_post(_write(self.tmp, "2026-11-19-x.yaml", body))
 
+    def test_friday_is_the_website_slot_with_its_own_hashtags(self) -> None:
+        body = GOOD.replace("2026-11-18", "2026-11-20").replace("slot: field_note", "slot: website")
+        post = posts.parse_post(_write(self.tmp, "2026-11-20-x.yaml", body))
+        self.assertEqual(post.slot, "website")
+        self.assertTrue(post.caption("linkedin").endswith("#WebDesign #SmallBusiness #Australia"))
+        wrong = GOOD.replace("2026-11-18", "2026-11-20")  # a field_note on a Friday
+        with self.assertRaisesRegex(posts.ContentError, "Fri 20 Nov allows \\['website'\\]"):
+            posts.parse_post(_write(self.tmp, "2026-11-20-x.yaml", wrong))
+
     def test_christmas_wednesday_is_refused(self) -> None:
         body = GOOD.replace("2026-11-18", "2026-12-23")
         with self.assertRaisesRegex(posts.ContentError, "no post"):

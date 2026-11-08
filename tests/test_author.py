@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sys
+import tempfile
 import unittest
 import unittest.mock
 from datetime import date
@@ -18,8 +19,9 @@ class PlanningTests(unittest.TestCase):
     def test_missing_days_cover_the_month_after_next_and_skip_what_exists(self) -> None:
         have = {date(2026, 11, 17), date(2026, 11, 18), date(2026, 11, 19)}
         days = author.missing_days(have, date(2026, 11, 8))
-        self.assertEqual(days[0], date(2026, 11, 24))  # the next unwritten Tuesday
-        self.assertEqual(days[-1], date(2027, 1, 28))  # last Thursday of January
+        self.assertEqual(days[0], date(2026, 11, 20))  # the next unwritten day: a Friday
+        self.assertEqual(days[1], date(2026, 11, 24))  # then the Tuesday
+        self.assertEqual(days[-1], date(2027, 1, 29))  # last Friday of January
         self.assertTrue(all(schedule.allowed_slots(d) for d in days))
         self.assertNotIn(date(2026, 11, 17), days)
         # Christmas keeps Tuesdays only: 22 and 29 Dec, nothing on 23/24 or 30/31.
@@ -46,6 +48,9 @@ class YearTableTests(unittest.TestCase):
         self.assertIn("BAS", rows[(2027, 2)].theme)
         self.assertIn("28 Feb", rows[(2027, 2)].hooks)
         self.assertEqual(len([k for k in rows if k[0] == 2027]), 11)
+        # The fourth column is the Friday website angle; every month has one.
+        self.assertIn("Ascot Vale", rows[(2027, 3)].web)
+        self.assertTrue(all(row.web for row in rows.values()))
 
     def test_existing_films_are_named_for_the_first_three_months(self) -> None:
         rows = author.year_rows(author.YEAR_MD.read_text())
@@ -75,7 +80,24 @@ class BriefTests(unittest.TestCase):
         self.assertIn("Get paid before the break", text)
         self.assertIn('"/opt/venv/bin/python" build.py', text)
         self.assertIn("first and third Tuesday", text)  # both films exist
-        self.assertNotIn("$", text)  # every placeholder filled
+        self.assertIn("holiday hours", text)  # the month's website angle
+        self.assertIn("GRIPswich Bouldering (gripswich.au", text)  # the sites a post may show
+        self.assertNotIn("$web", text)
+        self.assertNotIn("$sites", text)
+        self.assertNotIn("$dates", text)  # every placeholder filled ($2,500 is a price)
+
+    def test_site_lines_name_only_the_shots_that_exist(self) -> None:
+        import shots
+
+        site = shots.Site("x", "X Pty Ltd", "https://x.au", "x.au", "Plumbing", "Simple site")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.assertIn("no screenshots yet", author.site_lines(root, [site]))
+            (root / "shots").mkdir()
+            (root / "shots" / "x-phone.png").write_bytes(b"png")
+            text = author.site_lines(root, [site])
+        self.assertIn("X Pty Ltd (x.au; Plumbing; Simple site): shots/x-phone.png", text)
+        self.assertNotIn("laptop", text)
 
     def test_write_brief_falls_back_to_images_when_films_are_missing(self) -> None:
         brief = author.month_brief(2027, 2)
@@ -159,10 +181,20 @@ class GuardTests(unittest.TestCase):
                 "site/video/airep_x_music.mp4",
                 "tests/test_push.py",
                 "templates/feature.html",
+                "site/shots/gripswich-phone.png",  # shots.py's, taken before the session
+                "sites.yaml",
                 "",
             ]
         )
-        self.assertEqual(bad, ["templates/feature.html", "tests/test_push.py"])
+        self.assertEqual(
+            bad,
+            [
+                "site/shots/gripswich-phone.png",
+                "sites.yaml",
+                "templates/feature.html",
+                "tests/test_push.py",
+            ],
+        )
 
 
 class ShippedRefreshTests(unittest.TestCase):

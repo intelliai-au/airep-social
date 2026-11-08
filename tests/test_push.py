@@ -37,12 +37,14 @@ class DryRunTests(unittest.TestCase):
             text = out.getvalue()
         self.assertEqual(code, 0)
         self.assertIn("DRY RUN", text)
-        self.assertIn("12 createPost call(s) planned", text)
+        # Four posts a week (the Friday website post since 2026-11-08), two weeks ahead.
+        self.assertIn("16 createPost call(s) planned", text)
         self.assertIn("Tue 17 Nov 07:30 LI", text)
-        self.assertIn("Thu 26 Nov 18:30 FB", text)
+        self.assertIn("Fri 27 Nov 18:30 FB", text)
         self.assertIn("video/airep_reorder_music.mp4", text)
+        self.assertIn("images/2026-11-20-website-gripswich.png", text)
         self.assertIn(push.VETO_LINE, text)
-        self.assertIn("LinkedIn 6, Facebook 6", text)
+        self.assertIn("LinkedIn 8, Facebook 8", text)
         self.assertIn("the author timer writes December", text)
 
     def test_second_run_after_a_push_plans_nothing_new(self) -> None:
@@ -159,14 +161,15 @@ class TelegramTextTests(unittest.TestCase):
             plan,
             by_slug,
             "https://pages/site/",
-            scheduled=12,
+            scheduled=16,
             alerts=["facebook page is no longer authorised"],
             runs_out=date(2026, 11, 26),
             write_ahead=True,
             dry_run=False,
         )
         self.assertEqual(text.count("airep_reorder_music.mp4"), 1)
-        self.assertIn("Scheduled 12 of 12", text)
+        self.assertIn("Scheduled 16 of 16", text)
+        self.assertIn("Fri 20 Nov · website", text)
         self.assertIn("⚠ facebook page is no longer authorised", text)
         self.assertIn("Content runs out Thu 26 Nov", text)
         self.assertLessEqual(len(text), 3500)

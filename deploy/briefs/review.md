@@ -13,6 +13,10 @@ Nobody will answer a question. Check each file against CLAUDE.md and `docs/YEAR.
   the seeded Northwind data.
 - Open each rendered PNG with the Read tool: no clipped or overflowing text, one italic
   emphasis phrase in the headline, the kicker labels short.
+- Friday `website` posts: every price and promise matches `docs/WEBSITES.md`; the caption
+  links `intelliai.au/websites/` once; the site shown is in `sites.yaml` and its facts
+  come from there; `fields.shot` names a file that exists under `site/shots/`; no
+  design adjectives, no claims about the client's results.
 
 Fix what you can in place, then re-render that post with
 $python build.py --force --only <slug> (if Chromium cannot start inside this

@@ -42,7 +42,7 @@ class Post:
     image: str | None = None  # path under site/, e.g. images/2026-11-18-x.png
     video: str | None = None  # path under site/, e.g. video/airep_reorder_music.mp4
     template: str | None = None  # templates/<name>.html, rendered by build.py
-    fields: dict = field(default_factory=dict)
+    fields: dict = field(default_factory=dict)  # a `shot:` names a PNG under site/shots/
     alt: str = ""
     thumbnail_offset_ms: int | None = None
 
@@ -106,7 +106,7 @@ def parse_post(path: Path) -> Post:
     if template and video:
         errors.append("a video post has no template")
 
-    raw_tags = raw.get("hashtags", list(schedule.DEFAULT_HASHTAGS))
+    raw_tags = raw.get("hashtags", list(schedule.default_hashtags(slot)))
     hashtags = [str(t) for t in raw_tags] if isinstance(raw_tags, list) else []
     if not isinstance(raw_tags, list):
         errors.append("hashtags must be a list, e.g. [ERP, SmallBusiness, Australia]")

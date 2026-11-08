@@ -37,6 +37,30 @@ class RenderHtmlTests(unittest.TestCase):
         out = build.render_html("field_note", {"rows": [{"label": "L", "text": "T", "tag": "G"}]})
         self.assertIn('<div class="label">L</div>', out)
 
+    def test_foot_link_defaults_per_template_and_can_be_overridden(self) -> None:
+        self.assertIn("by AIREP · save this →", build.render_html("field_note", {"rows": []}))
+        self.assertIn("intelliai.au/pricing →", build.render_html("price", {"rows": []}))
+        out = build.render_html("field_note", {"rows": [], "foot_link": "intelliai.au/websites →"})
+        self.assertIn("intelliai.au/websites →", out)
+        self.assertNotIn("by AIREP", out)
+
+    def test_website_template_inlines_the_screenshot(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            site = Path(tmp)
+            (site / "shots").mkdir()
+            (site / "shots" / "x-phone.png").write_bytes(b"\x89PNG\r\n")
+            out = build.render_html(
+                "website",
+                {"shot": "shots/x-phone.png", "rows": [{"text": "Bookings"}]},
+                site_dir=site,
+            )
+            self.assertIn('src="data:image/png;base64,iVBORw0K', out)
+            self.assertIn('class="page site-phone"', out)  # frame defaults to phone
+            self.assertIn('<span class="chip">Bookings</span>', out)
+            self.assertIn("intelliai.au/websites →", out)
+            with self.assertRaisesRegex(build.BuildError, "run shots.py"):
+                build.render_html("website", {"shot": "shots/missing.png"}, site_dir=site)
+
     def test_unknown_template_is_an_error(self) -> None:
         with self.assertRaises(build.BuildError):
             build.render_html("nope", {})
