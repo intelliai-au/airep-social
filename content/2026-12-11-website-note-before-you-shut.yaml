@@ -1,0 +1,29 @@
+date: 2026-12-11
+slot: website
+image: images/2026-12-11-website-note-before-you-shut.png
+template: field_note
+alt: "Field note: what your website should say before you shut for the break. Holiday hours on the site and on your Google listing, a tested enquiry form, the call-out number on every page, and when enquiries get answered."
+fields:
+  kicker_left: "Field notes · websites"
+  kicker_right: "Small business · AU"
+  headline: "Before you shut: what *your site should say.*"
+  sub: "People still look you up while you are closed. Five things to check on your website and your Google listing before the break, so they know when you are back."
+  # Source: docs/WEBSITES.md (enquiry form and Google setup included; Google Business
+  # Profile add-on; changes on a simple site; the database plan's login to edit hours).
+  rows:
+    - { label: "Holiday hours", text: "Closing and reopening dates on the home and contact pages.", tag: "the site" }
+    - { label: "Google listing", text: "The same dates set as holiday hours on your free Google profile.", tag: "Google" }
+    - { label: "Enquiry form", text: "Send yourself a test. It should land in an inbox someone reads.", tag: "test it" }
+    - { label: "Call-outs", text: "If you take emergency work, the number on every page.", tag: "if 24/7" }
+    - { label: "Reply time", text: "Say when enquiries get answered, so nobody waits in silence.", tag: "the site" }
+  test: "Test: search your business on your phone today. What it says about 25 December is what your customers will see."
+  foot_link: "intelliai.au/websites →"
+linkedin: |
+  Before you shut for Christmas, put your closing and reopening dates on your website and your Google listing, and say when enquiries will be answered.
+  Then send a test through your enquiry form and check it lands in an inbox someone reads.
+  Our websites are $2,500 + GST to build, enquiry form and Google setup included, then from $30 + GST a month.
+  https://intelliai.au/websites/
+facebook: |
+  Before you shut: holiday hours on your website and Google listing, and a test through your enquiry form.
+  A site from us is $2,500 + GST, enquiry form and Google setup included.
+  https://intelliai.au/websites/

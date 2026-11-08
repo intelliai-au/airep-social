@@ -1,0 +1,15 @@
+date: 2026-12-18
+slot: website
+video: video/website_ascot-vale-driving_scroll.mp4
+thumbnail_offset_ms: 0
+hashtags: [WebDesign, SmallBusiness, Melbourne]
+# Facts from sites.yaml (intelliai.au/work/); prices from docs/WEBSITES.md.
+linkedin: |
+  Ascot Vale Driving School's website takes lesson bookings from live instructor availability, with the package prices shown up front.
+  A learner can pick a time while the office is closed, without a phone call.
+  Online bookings are a $750 + GST add-on to a $2,500 + GST site, and run on the $60 + GST a month database plan.
+  https://intelliai.au/websites/
+facebook: |
+  Ascot Vale Driving School takes lesson bookings online, from live instructor availability.
+  Learners book while the office is shut. Online bookings: $750 + GST on top of a $2,500 + GST site.
+  https://intelliai.au/websites/

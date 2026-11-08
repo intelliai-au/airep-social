@@ -1,0 +1,30 @@
+date: 2026-12-04
+slot: website
+image: images/2026-12-04-website-mike-trace.png
+template: website
+hashtags: [WebDesign, SmallBusiness, Brisbane]
+alt: "The Mike Trace Engineering website on a phone, built by Intelli AI: the road sweeper service range, the workshop's number one tap away, and 24/7 emergency support shown on every page."
+fields:
+  kicker: "Websites · built by Intelli AI"
+  headline: "The emergency number, *on every page.*"
+  # Facts from sites.yaml (intelliai.au/work/): nothing here the client has not already let us say.
+  sub: "Mike Trace Engineering has looked after road sweepers in Brisbane and the Gold Coast since 2002, with no real website. Now the service range is explained, the workshop is one tap away, and 24/7 emergency support shows site-wide."
+  rows:
+    - { text: "Service range" }
+    - { text: "Tap to call" }
+    - { text: "24/7 emergency support" }
+    - { text: "Brisbane & Gold Coast" }
+    - { text: "Built for phones" }
+  shot: shots/mike-trace-engineering-phone.png
+  frame: phone
+  site_url: miketraceeng.au
+  footer: "A simple site like this one is $2,500 + GST to build, live in about two weeks, then $30 + GST a month to run. You own it, and there is no lock-in."
+linkedin: |
+  Mike Trace Engineering has serviced road sweepers since 2002 without a real website. The one we built puts the workshop one tap away and shows 24/7 emergency support on every page.
+  When the office is closed, that number is what a customer with a stopped sweeper needs to find.
+  A simple site like this is $2,500 + GST to build, then $30 + GST a month, and it stays yours.
+  https://intelliai.au/websites/
+facebook: |
+  Mike Trace Engineering's site puts the workshop one tap away and 24/7 emergency support on every page.
+  A simple site like this is $2,500 + GST to build, then $30 + GST a month.
+  https://intelliai.au/websites/
