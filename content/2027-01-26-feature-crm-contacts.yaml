@@ -1,0 +1,29 @@
+date: 2027-01-26
+slot: feature
+image: images/2027-01-26-feature-crm-contacts.png
+template: feature
+alt: "AIREP's email recipients for Southern Star Restaurants: Aisha Bashir in Accounts Payable, the head chef and the primary contact, with an Add new contact button."
+fields:
+  kicker: "Feature · CRM contacts"
+  headline: "Send the invoice to *the person who pays it.*"
+  screen_title: "Email recipients · Southern Star Restaurants"
+  screen_status: "contacts"
+  columns: ["Source", "Name", "Position", "Email", "Phone"]
+  # Seeded Northwind demo data (seed_demo_data.py): the two CRM contacts are
+  # CONTACTS rows for Southern Star; the primary contact is its CUSTOMERS row.
+  # Order follows crm/email_recipients.py: CRM contacts by surname, then the
+  # customer's own primary-contact slot.
+  rows:
+    - { code: "CRM", name: "Aisha Bashir", c1: "Accounts Payable", c2: "aisha@southernstar.com.au", c3: "0412 333 444" }
+    - { code: "CRM", name: "Vince Calabrese", c1: "Head Chef", c2: "vince@southernstar.com.au", c3: "0419 888 999" }
+    - { code: "PRIMARY", name: "Michael O'Brien", c1: "Primary", c2: "michael@southernstar.com.au", c3: "03 9650 2200" }
+  button: "Add new contact"
+  footer: "Quotes, order confirmations and tax invoices pick To and CC from the customer's contacts, so the invoice reaches accounts, not whoever placed the order."
+linkedin: |
+  Send the invoice to the person who pays it, not the person who ordered.
+  In AIREP every person at a customer is a CRM contact on that customer, and the email window for quotes, order confirmations and tax invoices lists them all for To and CC.
+  Someone missing? Add them from the same window without leaving it.
+  https://intelliai.au
+facebook: |
+  Send the invoice to the person who pays it. Every contact at the customer, in the email window.
+  https://intelliai.au

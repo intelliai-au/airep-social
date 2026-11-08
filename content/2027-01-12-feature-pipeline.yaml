@@ -1,0 +1,32 @@
+date: 2027-01-12
+slot: feature
+image: images/2027-01-12-feature-pipeline.png
+template: feature
+alt: "AIREP's deal list: four open deals from Prospecting to Negotiation, each with a customer, a value and a probability, and a New Deal button."
+fields:
+  kicker: "Feature · CRM pipeline"
+  headline: "The pipeline, *not a spreadsheet.*"
+  screen_title: "Deals · 4 open"
+  screen_status: "live"
+  columns: ["Deal", "Customer", "Stage", "Value", "Probability"]
+  # Customers are seeded Northwind demo customers (seed_demo_data.py: CUSTOMERS).
+  # The seed has no deals, so each value is one demo job priced from seeded sell
+  # prices, ex GST: Southern Star RESELL-002 + SVC-004; Northbridge RESELL-020 +
+  # SVC-002; Carlton RESELL-011 + SVC-002; Coastal Plate MFG-021 + SVC-005.
+  # Probabilities are illustrative; a user sets them on each deal. Stage names
+  # are crm.models.Deal.Stage.
+  rows:
+    - { code: "DL-0004", name: "Southern Star Restaurants", c1: "Negotiation", c2: "$15,350", c3: "75%" }
+    - { code: "DL-0003", name: "Northbridge Kitchen Co", c1: "Proposal", c2: "$11,950", c3: "50%" }
+    - { code: "DL-0002", name: "Carlton Street Bistro", c1: "Qualification", c2: "$9,400", c3: "25%" }
+    - { code: "DL-0001", name: "Coastal Plate Restaurant", c1: "Prospecting", c2: "$6,400", c3: "10%" }
+  button: "New Deal"
+  footer: "Drag a deal across the pipeline board to move its stage. Closed Won sets the probability to 100% and stamps the close date."
+linkedin: |
+  The sales pipeline does not need its own spreadsheet. In AIREP every deal has a stage, a value and a probability, on the customer it is for.
+  Drag it across the pipeline board; Closed Won sets 100% and stamps the close date.
+  And that customer is the same record the quote and the invoice are written to.
+  https://intelliai.au
+facebook: |
+  The pipeline, not a spreadsheet. Every deal has a stage, a value and a probability, on the customer it belongs to.
+  https://intelliai.au

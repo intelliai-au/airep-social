@@ -1,0 +1,21 @@
+date: 2027-01-07
+slot: date_post
+image: images/2027-01-07-date-post-close-december.png
+template: date_post
+alt: "Thursday 31 December, the last day of 2026: draw a line under December before January lands on top of it."
+fields:
+  kicker: "Date · new-year reset"
+  date_label: "Thu · last day of 2026"
+  date: "31 Dec"
+  headline: "Draw a line *under December.*"
+  action: "Reconcile the bank to 31 December, then run aged receivables and the trial balance to that date, before January's transactions land on top."
+  # Quarterly BAS: October to December is due 28 February (ATO).
+  footer: "31 December closes the October to December quarter, the BAS due on 28 February."
+linkedin: |
+  Draw a line under December before January lands on top of it.
+  Reconcile the bank to 31 December, then run aged receivables and the trial balance to that date. In AIREP both reports run for any date you pick.
+  That closes the October to December quarter, the one whose BAS is due on 28 February.
+  https://intelliai.au
+facebook: |
+  Draw a line under December: reconcile the bank to 31 December before January piles on top.
+  https://intelliai.au

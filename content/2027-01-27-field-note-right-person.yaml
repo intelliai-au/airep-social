@@ -1,0 +1,26 @@
+date: 2027-01-27
+slot: field_note
+image: images/2027-01-27-field-note-right-person.png
+template: field_note
+alt: "Field note: every document has a right person, from the quote to the overdue reminder."
+fields:
+  kicker_left: "Field notes · customers"
+  kicker_right: "Operations · AU"
+  headline: "Every document has *a right person.*"
+  sub: "The person who orders is rarely the person who pays. Send each document to whoever acts on it, and payments stop waiting in the wrong inbox."
+  rows:
+    - { label: "Quote", text: "The buyer, and whoever signs off the spend.", tag: "buyer" }
+    - { label: "Confirmation", text: "The buyer, to check lines and dates before anything ships.", tag: "buyer" }
+    - { label: "Delivery", text: "Whoever is on site to receive it, with the delivery address.", tag: "site" }
+    - { label: "Tax invoice", text: "Accounts payable. Sent to the buyer, it gets forwarded late or not at all.", tag: "accounts" }
+    - { label: "Statement", text: "Accounts payable, monthly, with every open invoice on one page.", tag: "accounts" }
+    - { label: "Reminder", text: "Accounts payable, with the buyer in CC once it is a month late.", tag: "accounts + cc" }
+  test: "Test: who at your biggest customer gets your invoices, and are they the person who pays them?"
+linkedin: |
+  The person who orders is rarely the person who pays. Quotes and confirmations go to the buyer, delivery details to site, and invoices, statements and reminders to accounts payable.
+  Send each document to whoever acts on it.
+  In AIREP each person at a customer is a CRM contact, so every quote, confirmation and invoice email can go to the right one.
+  https://intelliai.au
+facebook: |
+  The person who orders is rarely the person who pays. Send the invoice to accounts payable.
+  https://intelliai.au

@@ -1,0 +1,26 @@
+date: 2027-01-13
+slot: field_note
+image: images/2027-01-13-field-note-one-home.png
+template: field_note
+alt: "Field note: every number has one home, from the sell price on the item to the deal value on the deal."
+fields:
+  kicker_left: "Field notes · records"
+  kicker_right: "Operations · AU"
+  headline: "Every number *has one home.*"
+  sub: "A price kept in three spreadsheets is three prices. Decide where each number lives, keep it there, and have everything else read it."
+  rows:
+    - { label: "Sell price", text: "On the item. Quotes and invoices copy it from there.", tag: "item" }
+    - { label: "Cost, lead", text: "On the supplier's item, one row for each supplier you buy it from.", tag: "supplier item" }
+    - { label: "Terms", text: "On the customer. Every due date is worked out from them.", tag: "customer" }
+    - { label: "Bank", text: "On the supplier, where the pay run reads them.", tag: "supplier" }
+    - { label: "Stock", text: "Counted from movements: receipts, sales, production, stocktakes. Never typed in.", tag: "counted" }
+    - { label: "Deal value", text: "On the deal, against the customer it is for.", tag: "deal" }
+  test: "Test: when a supplier's price changes, how many files does someone have to update?"
+linkedin: |
+  A price kept in three spreadsheets is three prices. Every number needs one home: sell price on the item, cost and lead time on the supplier's item, terms on the customer, bank details on the supplier.
+  Everything else reads it from there instead of keeping its own copy.
+  That is how AIREP is built: one record for each, and every quote, order and pay run reads from it.
+  https://intelliai.au
+facebook: |
+  A price kept in three spreadsheets is three prices. Give every number one home.
+  https://intelliai.au

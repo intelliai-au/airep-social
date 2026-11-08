@@ -1,0 +1,27 @@
+date: 2027-01-20
+slot: field_note
+image: images/2027-01-20-field-note-pipeline-stages.png
+template: field_note
+alt: "Field note: six pipeline stages, one test each, from Prospecting to Closed Lost."
+fields:
+  kicker_left: "Field notes · sales"
+  kicker_right: "Operations · AU"
+  headline: "Six pipeline stages, *one test each.*"
+  sub: "A stage only helps if everyone moves a deal for the same reason. Write the test down once, and the pipeline stops being a mood."
+  # The six stages are AIREP's own (crm.models.Deal.Stage).
+  rows:
+    - { label: "Prospecting", text: "You know who they are and why they might buy. Nothing more yet.", tag: "who" }
+    - { label: "Qualification", text: "They have a need, a budget and a date, and you have spoken to whoever decides.", tag: "fit" }
+    - { label: "Proposal", text: "A priced quote has gone to them in writing.", tag: "quote" }
+    - { label: "Negotiation", text: "They are talking about price, terms or scope, not whether.", tag: "terms" }
+    - { label: "Closed Won", text: "A signed order or a deposit. A verbal yes is still Negotiation.", tag: "order" }
+    - { label: "Closed Lost", text: "Write down why, in one line. Next year's pipeline learns from it.", tag: "reason" }
+  test: "Test: would two people on your team put the same deal in the same stage without asking each other?"
+linkedin: |
+  Six pipeline stages, one test each: you know who they are, they have a need and a budget, a priced quote has gone, they are talking terms, there is a signed order, or you have written down why you lost it.
+  Without the tests, a pipeline is a mood.
+  AIREP's pipeline uses these six stages, and a lost deal keeps its reason on the record.
+  https://intelliai.au
+facebook: |
+  Six pipeline stages, one test each. Write the tests down once.
+  https://intelliai.au

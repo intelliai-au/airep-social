@@ -1,0 +1,25 @@
+date: 2027-01-28
+slot: shipped
+image: images/2027-01-28-shipped-change-log.png
+template: shipped
+alt: "Shipped in AIREP: Nova cards you finish by typing, supplier bank details on the supplier page, timesheet hours as H:MM."
+fields:
+  kicker: "Shipped · Oct to Nov 2026"
+  headline: "Three more from *the change log.*"
+  sub: "From the AIREP change log, dated. Every one of them is in every subscription."
+  # Source: airep main, commits fa6f543a and 63e74d12 (both 2026-11-03) and
+  # 5e9d1597 (2026-10-30). None is in an earlier Shipped post. Written on
+  # 2026-11-08, when airep had no commits after 1 Dec 2026 to draw from.
+  rows:
+    - { when: "3 Nov", title: "Finish a Nova card by typing", text: "Reply yes or no to settle a draft, or name the right customer to redraft it. Money and invoicing still need the button." }
+    - { when: "3 Nov", title: "Supplier bank details", text: "BSB and account on the supplier page, and a plain warning when they are blank: no ABA payment for that supplier." }
+    - { when: "30 Oct", title: "Timesheet hours as H:MM", text: "A 9:50 to 2:00 shift reads 4:10, not 4.17, by day, by week and in total." }
+  footer: "No add-on pricing. A feature that ships is in your subscription the same day."
+linkedin: |
+  Three more that shipped in AIREP: Nova draft cards you finish by typing yes, no or the right customer; supplier bank details on the supplier page, with a warning when a pay run can't include them; and timesheet hours shown as H:MM.
+  All of it is in every subscription. Nothing is an add-on.
+  https://intelliai.au
+facebook: |
+  Shipped: Nova cards you finish by typing, supplier bank details on the supplier page, and timesheet hours as H:MM.
+  All in every subscription, no add-ons.
+  https://intelliai.au

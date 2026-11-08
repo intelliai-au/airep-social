@@ -1,0 +1,26 @@
+date: 2027-01-06
+slot: field_note
+image: images/2027-01-06-field-note-first-week-back.png
+template: field_note
+alt: "Field note: six resets for the first week back, from supplier prices to every open deal's next step."
+fields:
+  kicker_left: "Field notes · new year"
+  kicker_right: "Operations · AU"
+  headline: "Six resets for *the first week back.*"
+  sub: "The break moved prices, dates and people. Fix these in the first week, before the first wrong quote of the year goes out."
+  rows:
+    - { label: "Prices", text: "Check each supplier's new-year price list against your item costs before you quote.", tag: "items" }
+    - { label: "Bank", text: "Reconcile to 31 December, so January starts from a balance you trust.", tag: "books" }
+    - { label: "Debtors", text: "Chase everything that fell due over the break, oldest first.", tag: "ageing" }
+    - { label: "Open POs", text: "Every purchase order due while you were closed: delivered, late, or lost.", tag: "POs" }
+    - { label: "Leave", text: "Leave taken over the break goes on timesheets before the first pay run.", tag: "payroll" }
+    - { label: "Pipeline", text: "Every open deal gets a next step and a close date. Stale ones are closed lost.", tag: "CRM" }
+  test: "Test: do your item costs match your suppliers' new-year price lists?"
+linkedin: |
+  Six resets for the first week back: supplier prices, the bank reconciliation, debts that fell due over the break, purchase orders due while you were closed, leave on timesheets, and a next step on every open deal.
+  Do them before the first quote of the year, not after the first wrong one.
+  In AIREP all six live in one system, so it is one checklist, not six files.
+  https://intelliai.au
+facebook: |
+  Six resets for the first week back, before the first quote of the year goes out.
+  https://intelliai.au

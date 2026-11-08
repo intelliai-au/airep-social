@@ -1,0 +1,21 @@
+date: 2027-01-21
+slot: date_post
+image: images/2027-01-21-date-post-bas-q2.png
+template: date_post
+alt: "Sunday 28 February: the quarterly BAS for October to December is due. Start the reconciliation while January is quiet."
+fields:
+  kicker: "Date · BAS Q2"
+  date_label: "Sun · quarterly BAS due"
+  date: "28 Feb"
+  headline: "Start the BAS *while January is quiet.*"
+  action: "Reconcile October to December now: the bank, GST on every invoice and bill, wages and PAYG withheld. Then the BAS is a check, not a scramble."
+  # ATO: a due date on a weekend or public holiday moves to the next business day.
+  footer: "28 February 2027 is a Sunday, so lodging and paying on Monday 1 March is on time."
+linkedin: |
+  The BAS for October to December is due 28 February. That is a Sunday this year, so Monday 1 March is on time.
+  Reconcile the quarter now, while January is quiet: the bank, GST on every invoice and bill, wages and PAYG withheld.
+  AIREP's BAS report works out the GST labels for the quarter, lists any invoice missing its journal, and locks the period once it is lodged.
+  https://intelliai.au
+facebook: |
+  Quarterly BAS for October to December is due 28 February. Start the reconciliation while January is quiet.
+  https://intelliai.au
