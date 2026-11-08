@@ -1,0 +1,13 @@
+date: 2026-12-15
+slot: feature
+video: video/airep_payment_music.mp4
+# The headline caption lands just after the trimmed lead-in.
+thumbnail_offset_ms: 3000
+linkedin: |
+  A payment lands. In AIREP it is allocated to the invoice it pays, the receipt posts debit Bank, credit Trade Debtors, and the aged receivables report moves.
+  No second system to update and no spreadsheet to reconcile at month end.
+  Getting paid is only finished when the books say so.
+  https://intelliai.au
+facebook: |
+  Paid, allocated, posted. One receipt in AIREP clears the invoice and moves the ageing report.
+  https://intelliai.au

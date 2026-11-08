@@ -1,0 +1,30 @@
+date: 2026-12-29
+slot: feature
+image: images/2026-12-29-feature-statement-run.png
+template: feature
+alt: "An AIREP statement run as at 31 December in draft: four customers pending, each with a recipient email, and a Send Now button."
+fields:
+  kicker: "Feature · statement runs"
+  headline: "January's statements, *staged and checked.*"
+  screen_title: "Statement run · as at 31 Dec 2026"
+  screen_status: "draft"
+  columns: ["Status", "Customer", "Recipient email", "Outstanding", "Sent at"]
+  # Customers and emails are seeded Northwind demo data (seed_demo_data.py:
+  # CUSTOMERS); a statement goes to the customer's contact email. Outstanding
+  # carries the same demo balances as the 22 Dec aged receivables post.
+  rows:
+    - { code: "PENDING", name: "Bondi Bay Café Pty Ltd", c1: "sophie@bondibaycafe.com.au", c2: "$5,043.50", c3: "—" }
+    - { code: "PENDING", name: "Carlton Street Bistro", c1: "marco@carltonbistro.com.au", c2: "$4,730.00", c3: "—" }
+    - { code: "PENDING", name: "Hilltop Coffee Roasters", c1: "daniel@hilltoproasters.com.au", c2: "$2,310.00", c3: "—" }
+    - { code: "PENDING", name: "The Greenhouse Eatery", c1: "hannah@greenhouseeatery.com.au", c2: "$2,090.00", c3: "—" }
+  button: "Send Now"
+  footer: "A run stays a draft until someone presses Send Now. One PDF per customer; Retry Failed re-sends only what bounced."
+linkedin: |
+  January's statements can be staged in the quiet week: AIREP builds a statement run as at 31 December, one line per customer with a balance.
+  It stays a draft until someone checks the list and presses Send Now. Each customer gets a PDF with their ageing and every open invoice.
+  If a mailbox bounces, Retry Failed re-sends only that one.
+  https://intelliai.au
+facebook: |
+  Stage January's statements now, send them when you are back.
+  A statement run stays a draft until you press Send Now.
+  https://intelliai.au

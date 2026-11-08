@@ -1,0 +1,24 @@
+date: 2026-12-17
+slot: shipped
+image: images/2026-12-17-shipped-december.png
+template: shipped
+alt: "Shipped in AIREP in November 2026: Stripe receipts in the ledger, payroll calculations, public holidays and penalty rates."
+fields:
+  kicker: "Shipped · November 2026"
+  headline: "Three more that shipped *in November.*"
+  sub: "From the AIREP change log, dated. Every one of them is in every subscription."
+  # Source: airep main, commits 8d01531e (2026-11-02), 871bb24e and 309391e0
+  # (both 2026-11-03). Not already in the November Shipped post.
+  rows:
+    - { when: "2 Nov", title: "Stripe receipts in the ledger", text: "A Stripe payment posts its own journal, and a refund books a credit note against the invoice." }
+    - { when: "3 Nov", title: "Payroll calculations", text: "Deductions and salary sacrifice, annual leave loading, STSL, and final pays for leavers." }
+    - { when: "3 Nov", title: "Public holidays and penalty rates", text: "A public holidays list, weekend and public-holiday penalty rates, and an ABA file for each approved pay run." }
+  footer: "No add-on pricing. A feature that ships is in your subscription the same day."
+linkedin: |
+  Three more that shipped in AIREP in November: Stripe receipts and refunds that post to the ledger, payroll with deductions, leave loading, STSL and final pays, and public-holiday penalty rates with an ABA file for each pay run.
+  All of it is in every subscription. Nothing is an add-on.
+  https://intelliai.au
+facebook: |
+  Shipped in November: Stripe receipts in the ledger, payroll calculations, and public-holiday penalty rates.
+  All in every subscription, no add-ons.
+  https://intelliai.au

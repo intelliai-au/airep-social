@@ -19,9 +19,18 @@ import schedule
 
 class DryRunTests(unittest.TestCase):
     def test_dry_run_prints_the_fortnight_and_sends_nothing(self) -> None:
+        # Pin the tree to November so the "runs out" line does not move as months are written.
+        real = posts.load_posts
+
+        def november_only(*args, **kwargs):
+            return [p for p in real(*args, **kwargs) if p.date < date(2026, 12, 1)]
+
         with tempfile.TemporaryDirectory() as tmp:
             out = io.StringIO()
-            with contextlib.redirect_stdout(out):
+            with (
+                unittest.mock.patch.object(push.posts_mod, "load_posts", november_only),
+                contextlib.redirect_stdout(out),
+            ):
                 code = push.main(
                     ["--today", "2026-11-15", "--state", str(Path(tmp) / "pushed.json")]
                 )

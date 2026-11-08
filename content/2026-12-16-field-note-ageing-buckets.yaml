@@ -1,0 +1,25 @@
+date: 2026-12-16
+slot: field_note
+image: images/2026-12-16-field-note-ageing-buckets.png
+template: field_note
+alt: "Field note: the five ageing buckets of aged receivables, and the move each one needs before the break."
+fields:
+  kicker_left: "Field notes · debtors"
+  kicker_right: "Operations · AU"
+  headline: "Five ageing buckets, *five different moves.*"
+  sub: "Aged receivables sorts what customers owe by days past the due date, not the invoice date. Each bucket needs something different before the break."
+  rows:
+    - { label: "Current", text: "Not due yet. A statement now gets it paid on time, not after the break.", tag: "send" }
+    - { label: "1–30", text: "Just late. A polite reminder with the invoice attached, so it can be paid from the email.", tag: "remind" }
+    - { label: "31–60", text: "A month late. Phone the person who pays the bills, not the one who ordered.", tag: "call" }
+    - { label: "61–90", text: "Two months late. Hold new orders until it is sorted, and say so.", tag: "hold" }
+    - { label: "90+", text: "Agree a payment plan in writing, or decide whether it is a bad debt.", tag: "decide" }
+  test: "Test: can you name every customer in 61–90 today without opening a spreadsheet?"
+linkedin: |
+  Five ageing buckets, five different moves: send a statement, send a reminder, pick up the phone, hold new orders, or agree a plan in writing.
+  Do it before the break, while the people who pay the bills are still at their desks.
+  AIREP's aged receivables report uses these five buckets, counted from each invoice's due date, and runs as at any date you pick.
+  https://intelliai.au
+facebook: |
+  Five ageing buckets, five different moves. Work through them before the break.
+  https://intelliai.au

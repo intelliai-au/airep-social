@@ -1,0 +1,28 @@
+date: 2026-12-09
+slot: field_note
+image: images/2026-12-09-field-note-payment-terms.png
+template: field_note
+alt: "Field note: one invoice dated 15 December, six due dates, from COD to Net 30."
+fields:
+  kicker_left: "Field notes · terms"
+  kicker_right: "Operations · AU"
+  headline: "One invoice dated 15 Dec, *six due dates.*"
+  sub: "Same invoice, six sets of terms. One falls due in the week most businesses are closed, and one discount ends on Christmas Day. Know which before you send it."
+  # Dates worked from an invoice dated Tue 15 Dec 2026.
+  rows:
+    - { label: "COD", text: "Cash on delivery: due the day you invoice it.", tag: "15 Dec" }
+    - { label: "Net 7", text: "Seven days from the invoice date. Paid before Christmas, if it is paid on time.", tag: "22 Dec" }
+    - { label: "Net 14", text: "Due in the shutdown week, when nobody is in accounts to pay it.", tag: "29 Dec" }
+    - { label: "Net 21", text: "Due the first week back. Expect it to be paid late.", tag: "5 Jan" }
+    - { label: "Net 30", text: "Thirty days from the invoice date, across the whole break.", tag: "14 Jan" }
+    - { label: "2% 10 Net 30", text: "2% off if paid within 10 days, a window that ends on Christmas Day.", tag: "25 Dec" }
+  test: "Test: which of your open invoices fall due while you are closed?"
+linkedin: |
+  One invoice dated 15 December has six different due dates, depending on the terms: COD, Net 7, Net 14, Net 21, Net 30, or 2% 10 Net 30.
+  Net 14 lands on 29 December, in the week most businesses are closed.
+  In AIREP, payment terms sit on each customer, early-payment discount included, and every invoice's due date is worked out from them.
+  https://intelliai.au
+facebook: |
+  One invoice dated 15 December, six due dates. Net 14 lands on 29 December, mid-shutdown.
+  Check your terms before you invoice.
+  https://intelliai.au

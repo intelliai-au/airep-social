@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import sys
 import unittest
+import unittest.mock
 from datetime import date
 from pathlib import Path
 
@@ -110,8 +111,18 @@ class DryRunTests(unittest.TestCase):
         import contextlib
         import io
 
+        # Pin the tree to November, as it stood on 2026-11-08, so a month written
+        # later does not move the briefs this test expects.
+        real = author.posts_mod.load_posts
+
+        def november_only(*args, **kwargs):
+            return [p for p in real(*args, **kwargs) if p.date < date(2026, 12, 1)]
+
         out = io.StringIO()
-        with contextlib.redirect_stdout(out):
+        with (
+            unittest.mock.patch.object(author.posts_mod, "load_posts", november_only),
+            contextlib.redirect_stdout(out),
+        ):
             code = author.main(
                 ["write", "--dry-run", "--today", "2026-11-08", "--python", "python3"]
             )

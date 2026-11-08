@@ -1,0 +1,28 @@
+date: 2026-12-02
+slot: field_note
+image: images/2026-12-02-field-note-tax-invoice.png
+template: field_note
+alt: "Field note: what a tax invoice must show. Seven details on every one, the buyer's name or ABN from $1,000."
+fields:
+  kicker_left: "Field notes · invoicing"
+  kicker_right: "GST · AU"
+  headline: "What a tax invoice *must show.*"
+  sub: "Seven details on every tax invoice, and an eighth from $1,000. Get them right before December's invoices go out, not when a customer's bookkeeper sends one back."
+  # ATO tax invoice requirements: seven details under $1,000, plus the buyer's
+  # identity or ABN for a sale of $1,000 or more.
+  rows:
+    - { label: "Tax invoice", text: "The document says it is a tax invoice. The words at the top do it.", tag: "title" }
+    - { label: "Seller", text: "Your business name and your ABN.", tag: "who" }
+    - { label: "Date", text: "The date it was issued.", tag: "when" }
+    - { label: "Items", text: "A short description of what was sold, with quantity and price.", tag: "what" }
+    - { label: "GST", text: "The GST payable, and which lines are taxable.", tag: "tax" }
+    - { label: "$1,000+", text: "The buyer's name or ABN as well.", tag: "buyer" }
+  test: "Test: does your last invoice over $1,000 show the customer's name or ABN?"
+linkedin: |
+  A tax invoice must show seven things: that it is a tax invoice, your name, your ABN, the date, what was sold with quantity and price, the GST, and which lines are taxable. From $1,000, the buyer's name or ABN as well.
+  AIREP's tax invoice PDF puts the customer's name and ABN in the Bill To block on every invoice, not only the big ones.
+  https://intelliai.au
+facebook: |
+  Seven things every tax invoice must show, and an eighth from $1,000: the buyer's name or ABN.
+  Check yours before December's invoices go out.
+  https://intelliai.au

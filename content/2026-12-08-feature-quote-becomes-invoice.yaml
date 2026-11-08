@@ -1,0 +1,32 @@
+date: 2026-12-08
+slot: feature
+image: images/2026-12-08-feature-quote-becomes-invoice.png
+template: feature
+alt: "An AIREP quote for Bondi Bay Café with three lines and the GST, and a Stage: Invoiced button."
+fields:
+  kicker: "Feature · quote to invoice"
+  headline: "The quote *becomes the invoice.*"
+  screen_title: "Quote · Bondi Bay Café Pty Ltd"
+  screen_status: "quote"
+  columns: ["Item", "Description", "Qty", "Unit price", "Line total"]
+  # Customer, item codes, descriptions and unit prices are the seeded Northwind
+  # Commercial Kitchens demo data (core/management/commands/seed_demo_data.py:
+  # CUSTOMERS, ITEMS_SERVICE, ITEMS_RESELL). Quantities are illustrative; the
+  # totals are worked from them ($4,585.00 ex GST).
+  rows:
+    - { code: "SVC-001", name: "Site Survey & Measure", c1: "1", c2: "$385.00", c3: "$385.00" }
+    - { code: "RESELL-003", name: "Undercounter Fridge 200L", c1: "2", c2: "$1,650.00", c3: "$3,300.00" }
+    - { code: "SVC-002", name: "Installation — Single Appliance", c1: "2", c2: "$450.00", c3: "$900.00" }
+    - { code: "", name: "GST", c1: "", c2: "", c3: "$458.50" }
+    - { code: "", name: "Total inc GST", c1: "", c2: "", c3: "$5,043.50" }
+  button: "Stage: Invoiced"
+  footer: "Same document, same lines. Invoicing stamps the date, sets the due date from the customer's terms and posts the journal."
+linkedin: |
+  The quote becomes the invoice: it is the same document, so nobody retypes a line.
+  Set the stage to Invoiced and AIREP stamps the invoice date, sets the due date from the customer's payment terms, and posts the sales journal.
+  Reversing it later takes a credit note, so the books keep the history.
+  https://intelliai.au
+facebook: |
+  The quote becomes the invoice. Same document, no retyping.
+  The due date and the journal follow on their own.
+  https://intelliai.au

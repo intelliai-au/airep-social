@@ -1,0 +1,24 @@
+date: 2026-12-03
+slot: price
+image: images/2026-12-03-price-capped-in-writing.png
+template: price
+alt: "AIREP pricing: A$100 a month platform, A$100 a month per full seat, A$25 a month per timesheet seat, renewals capped at CPI + 3% in writing."
+fields:
+  kicker: "Price · in writing"
+  headline: "Next year's price, *capped in writing.*"
+  sub: "Renewal rises are capped at CPI + 3% a year, in the contract, for as long as you are a customer. Every module and Nova AI come with every seat."
+  # Source: airep templates/pages/pricing.html (the live intelliai.au pricing page).
+  rows:
+    - { label: "Platform", amount: "A$100", unit: "a month, one per company" }
+    - { label: "Full seat", amount: "A$100", unit: "a month per seat" }
+    - { label: "Timesheet seat", amount: "A$25", unit: "a month per seat" }
+  footer: "Setup from A$1,900. Nova AI is included in every seat, with no per-token bill."
+linkedin: |
+  AIREP's renewal price rises are capped at CPI + 3% a year, in writing, for as long as you are a customer.
+  A$100 a month for the platform, A$100 a month per full seat, A$25 for a timesheet-only seat. Every module and Nova AI included.
+  Budget next year in December with a number that is already in the contract.
+  https://intelliai.au
+facebook: |
+  Renewal rises capped at CPI + 3% a year, in writing.
+  A$100 a month platform, A$100 a seat, every module included.
+  https://intelliai.au

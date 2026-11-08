@@ -1,0 +1,23 @@
+date: 2026-12-10
+slot: date_post
+image: images/2026-12-10-date-post-christmas-shutdown.png
+template: date_post
+alt: "Thursday 24 December, the last business day before Christmas: get paid before you close."
+fields:
+  kicker: "Date · Christmas shutdown"
+  date_label: "Thu · last business day before Christmas"
+  date: "24 Dec"
+  headline: "Get paid *before you close.*"
+  action: "Invoice every finished job and send statements by Friday 18 December, so customers have a week to pay before the break."
+  # 2026: Christmas Day is Friday 25 Dec; Boxing Day is Saturday 26 Dec, with the
+  # additional public holiday on Monday 28 Dec in most states.
+  footer: "Christmas Day is Friday 25 December. Boxing Day falls on a Saturday, so most states take Monday 28 December as the holiday."
+linkedin: |
+  Thursday 24 December is the last business day before Christmas this year.
+  Invoice every finished job and send statements by Friday 18 December, so customers have a week to pay before the break.
+  Boxing Day falls on a Saturday, so most states take Monday 28 December as the public holiday.
+  https://intelliai.au
+facebook: |
+  24 December is the last business day before Christmas.
+  Invoice and send statements by the 18th to get paid before the break.
+  https://intelliai.au

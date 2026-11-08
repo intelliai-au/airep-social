@@ -1,0 +1,32 @@
+date: 2026-12-22
+slot: feature
+image: images/2026-12-22-feature-aged-receivables.png
+template: feature
+alt: "AIREP's aged receivables report as at 22 December, four customers across the Current, 1-30 and 31-60 buckets, with a Statement Runs button."
+fields:
+  kicker: "Feature · aged receivables"
+  headline: "Who owes what, *by days past due.*"
+  screen_title: "Aged receivables · as at 22 Dec 2026"
+  screen_status: "live"
+  # The report's first three buckets (61-90, 90+ and Total are off the right edge).
+  columns: ["", "Customer", "Current", "1-30", "31-60"]
+  # Customers are seeded Northwind demo customers (seed_demo_data.py: CUSTOMERS).
+  # The seed has no invoices, so each balance is one demo invoice priced from
+  # seeded sell prices plus GST: Bondi Bay is the 8 Dec quote (SVC-001 + 2 x
+  # RESELL-003 + 2 x SVC-002); Carlton RESELL-001 + SVC-002; Hilltop RESELL-003 +
+  # SVC-002; Greenhouse RESELL-004 + SVC-002.
+  rows:
+    - { code: "", name: "Bondi Bay Café Pty Ltd", c1: "$5,043.50", c2: "—", c3: "—" }
+    - { code: "", name: "Carlton Street Bistro", c1: "—", c2: "$4,730.00", c3: "—" }
+    - { code: "", name: "Hilltop Coffee Roasters", c1: "—", c2: "$2,310.00", c3: "—" }
+    - { code: "", name: "The Greenhouse Eatery", c1: "—", c2: "—", c3: "$2,090.00" }
+  button: "Statement Runs"
+  footer: "Buckets count days past each invoice's due date, from the invoices, payments and credit notes themselves. Run it as at any date."
+linkedin: |
+  Who owes what, by days past due: Current, 1–30, 31–60, 61–90 and 90+.
+  AIREP's aged receivables report is built from the invoices, payments and credit notes themselves, runs as at any date, and opens each customer's account in one click.
+  Look at it before you close, not after the break.
+  https://intelliai.au
+facebook: |
+  Who owes what, by days past due. AIREP's aged receivables, live from the ledger.
+  https://intelliai.au

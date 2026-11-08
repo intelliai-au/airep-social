@@ -1,0 +1,14 @@
+date: 2026-12-01
+slot: feature
+video: video/airep_quote_to_invoice_music.mp4
+# The headline caption lands just after the trimmed lead-in.
+thumbnail_offset_ms: 3000
+linkedin: |
+  Quote to invoice in AIREP is one field: the stage.
+  Quote, then Order Confirmed, then Invoiced. The invoice date stamps itself and the sales journal posts without anyone opening the accounting module.
+  Get December's finished jobs invoiced before the break, not after it.
+  https://intelliai.au
+facebook: |
+  Quote to invoice is one field in AIREP: the stage.
+  Invoice it, and the journal posts itself.
+  https://intelliai.au
