@@ -98,10 +98,11 @@ pretend date would hand Buffer posts whose `dueAt` is already behind us.
 
 There is no approval gate. Today: open Buffer > Publishing > the channel's Queue and
 delete the post before its time. Planned (plan doc, step 7, in Astrid): a Telegram card
-per queued post with a **Skip** button that deletes it in Buffer, a **Posted** card with
-the live links after each slot, and a **Delete** button for Facebook. Buffer cannot
-remove a published post from a network, and LinkedIn's Page API is open only to approved
-partners, so a published LinkedIn post is deleted in the LinkedIn app from the link. `state/pushed.json` still lists it, so the timer will not re-create
+per queued post with a **Skip** button that deletes it in Buffer, which works until the
+minute it publishes, and a **Posted** card with the live links after each slot. No API
+open to us deletes a published post (Buffer says published posts cannot be deleted from
+Buffer, Meta's Graph API restricts Page-post deletion to select developers, LinkedIn's
+Page API is partner-only), so after publishing it is two taps in the app from the link. `state/pushed.json` still lists it, so the timer will not re-create
 it; to run it again later, remove its entry from `state/pushed.json` and the next Sunday
 picks it up (if still inside the horizon).
 
