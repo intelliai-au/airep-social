@@ -160,6 +160,12 @@ with (Keiran's Max plan) and never the API or the swarm's budget (his call, 2026
 - A run that fails its checks merges nothing, keeps its worktree under
   `~/.local/state/airep-social/worktrees/` for inspection, and says so on Telegram. A
   video Tuesday whose film never arrived simply stays a feature image.
+- In the first week of a month the same run also rewrites that month's provisional
+  `shipped` post from the month that has just ended (`deploy/briefs/shipped.md`), so
+  a changelog never goes out two months stale.
+- A session may change only `content/`, `site/images/` and `site/video/`; a commit
+  that touches tests, templates, the Python or `deploy/` is refused and the worktree
+  kept (the first December writer rewrote two tests to fit its own content).
 - `python author.py write --dry-run` prints the months and the exact briefs without
   starting a session; `--month 2027-02` limits a run to one month.
 
