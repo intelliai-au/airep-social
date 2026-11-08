@@ -18,11 +18,11 @@ fields:
     - { code: "PENDING", name: "Hilltop Coffee Roasters", c1: "daniel@hilltoproasters.com.au", c2: "$2,310.00", c3: "—" }
     - { code: "PENDING", name: "The Greenhouse Eatery", c1: "hannah@greenhouseeatery.com.au", c2: "$2,090.00", c3: "—" }
   button: "Send Now"
-  footer: "A run stays a draft until someone presses Send Now. One PDF per customer; Retry Failed re-sends only what bounced."
+  footer: "A run stays a draft until someone presses Send Now. One PDF per customer; Retry Failed re-sends only the ones that failed."
 linkedin: |
   January's statements can be staged in the quiet week: AIREP builds a statement run as at 31 December, one line per customer with a balance.
   It stays a draft until someone checks the list and presses Send Now. Each customer gets a PDF with their ageing and every open invoice.
-  If a mailbox bounces, Retry Failed re-sends only that one.
+  If a send fails, Retry Failed re-sends only that one.
   https://intelliai.au
 facebook: |
   Stage January's statements now, send them when you are back.

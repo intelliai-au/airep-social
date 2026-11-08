@@ -20,7 +20,7 @@ fields:
   test: "Test: does your last invoice over $1,000 show the customer's name or ABN?"
 linkedin: |
   A tax invoice must show seven things: that it is a tax invoice, your name, your ABN, the date, what was sold with quantity and price, the GST, and which lines are taxable. From $1,000, the buyer's name or ABN as well.
-  AIREP's tax invoice PDF puts the customer's name and ABN in the Bill To block on every invoice, not only the big ones.
+  AIREP's tax invoice PDF puts the customer's name, and their ABN when it is on file, in the Bill To block on every invoice, not only the big ones.
   https://intelliai.au
 facebook: |
   Seven things every tax invoice must show, and an eighth from $1,000: the buyer's name or ABN.
