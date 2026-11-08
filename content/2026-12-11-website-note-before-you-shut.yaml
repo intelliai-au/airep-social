@@ -11,11 +11,11 @@ fields:
   # Source: docs/WEBSITES.md (enquiry form and Google setup included; Google Business
   # Profile add-on; changes on a simple site; the database plan's login to edit hours).
   rows:
-    - { label: "Holiday hours", text: "Closing and reopening dates on the home and contact pages.", tag: "the site" }
-    - { label: "Google listing", text: "The same dates set as holiday hours on your free Google profile.", tag: "Google" }
+    - { label: "Holiday hours", text: "Closing and reopening dates on the home and contact pages.", tag: "site" }
+    - { label: "Google", text: "The same dates set as holiday hours on your free Google profile.", tag: "listing" }
     - { label: "Enquiry form", text: "Send yourself a test. It should land in an inbox someone reads.", tag: "test it" }
     - { label: "Call-outs", text: "If you take emergency work, the number on every page.", tag: "if 24/7" }
-    - { label: "Reply time", text: "Say when enquiries get answered, so nobody waits in silence.", tag: "the site" }
+    - { label: "Reply time", text: "Say when enquiries get answered, so nobody waits in silence.", tag: "site" }
   test: "Test: search your business on your phone today. What it says about 25 December is what your customers will see."
   foot_link: "intelliai.au/websites →"
 linkedin: |

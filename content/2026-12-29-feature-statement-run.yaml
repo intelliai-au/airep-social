@@ -8,7 +8,7 @@ fields:
   headline: "January's statements, *staged and checked.*"
   screen_title: "Statement run · as at 31 Dec 2026"
   screen_status: "draft"
-  columns: ["Status", "Customer", "Recipient email", "Outstanding", "Sent at"]
+  columns: ["Status", "Customer", "Recipient email", "Balance", "Sent"]
   # Customers and emails are seeded Northwind demo data (seed_demo_data.py:
   # CUSTOMERS); a statement goes to the customer's contact email. Outstanding
   # carries the same demo balances as the 22 Dec aged receivables post.
