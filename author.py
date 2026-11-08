@@ -219,7 +219,9 @@ def env_overrides(environ: dict[str, str]) -> dict[str, str]:
     an explicit empty-string override. No API key means the CLI bills the box's Claude
     Code login.
     """
-    out = {k: "" for k in environ if _SECRET_LIKE.search(k)}
+    # CLAUDE* is blanked too: run by hand from inside a Claude Code session, the child
+    # would otherwise inherit that session's sockets and ids and think it is nested.
+    out = {k: "" for k in environ if _SECRET_LIKE.search(k) or k.startswith("CLAUDE")}
     out["ANTHROPIC_API_KEY"] = ""
     out["PYTHONDONTWRITEBYTECODE"] = "1"
     out["DISABLE_AUTOUPDATER"] = "1"
@@ -268,6 +270,10 @@ async def _run_session(prompt: str, cwd: Path, *, phase: str, system_append: str
         setting_sources=[],
         system_prompt={"type": "preset", "preset": "claude_code", "append": system_append},
         max_turns=MAX_TURNS[phase],
+        # The SDK's default 1 MB line buffer died on the first December run (2026-11-08,
+        # ten posts in, 0 messages delivered): a tool result carrying two rendered PNGs
+        # as base64 is bigger than that. Images and long git logs are normal here.
+        max_buffer_size=128 * 1024 * 1024,
         env=env_overrides(dict(os.environ)),
         stderr=lambda line: print(f"  cli: {line.rstrip()}", file=sys.stderr, flush=True),
     )
@@ -376,19 +382,53 @@ def completeness(
     return True
 
 
-def worktree_for(phase: str, key: str, report: RunReport) -> tuple[Path, str] | None:
-    """A fresh worktree on a branch off main; None when a previous run left one behind."""
+def worktree_for(phase: str, key: str, report: RunReport) -> tuple[Path, str, bool] | None:
+    """(worktree, branch, resumed): a fresh worktree off main, or an earlier attempt's.
+
+    None when a leftover worktree is on some other branch, which a person must look at.
+    """
     wt = STATE_DIR / "worktrees" / f"{phase}-{key}"
     branch = f"author/{phase}-{key}"
     if wt.exists():
-        report.fail(f"{wt} exists from an earlier run: inspect it, then `git worktree remove` it")
-        return None
+        # An earlier attempt was cut short (a crashed CLI, a reboot). Its files are work
+        # already paid for, so the run continues in the same worktree; the brief tells
+        # the session to keep what is there and finish the month.
+        head = sh(["git", "rev-parse", "--abbrev-ref", "HEAD"], wt).strip()
+        if head != branch:
+            report.fail(
+                f"{wt} is on {head}, not {branch}: inspect it, then `git worktree remove` it"
+            )
+            return None
+        report.say(f"resuming the earlier attempt in {wt}")
+        return wt, branch, True
     wt.parent.mkdir(parents=True, exist_ok=True)
     existing = sh(["git", "branch", "--list", branch], ROOT).strip()
     if existing:
         sh(["git", "branch", "-D", branch], ROOT)  # an empty leftover: its worktree is gone
     sh(["git", "worktree", "add", "-b", branch, str(wt), "main"], ROOT)
-    return wt, branch
+    return wt, branch, False
+
+
+def catch_up(wt: Path, report: RunReport) -> bool:
+    """Merge main into the worktree, so a fix that landed meanwhile applies before validation.
+
+    The first December run (2026-11-08) was held up by a test fixed on main while its
+    worktree still carried the old one.
+    """
+    proc = subprocess.run(
+        ["git", "merge", "--no-edit", "main"], cwd=wt, text=True, capture_output=True
+    )
+    if proc.returncode != 0:
+        subprocess.run(["git", "merge", "--abort"], cwd=wt, capture_output=True)
+        report.fail(f"merging main into the worktree failed:\n{proc.stderr.strip()[-300:]}")
+        return False
+    return True
+
+
+def has_review_commit(wt: Path, base: str) -> bool:
+    """True when a review session already committed in this worktree."""
+    subjects = sh(["git", "log", "--format=%s", f"{base}..HEAD"], wt)
+    return any(line.startswith("review:") for line in subjects.splitlines())
 
 
 def land(wt: Path, branch: str, base: str, report: RunReport) -> bool:
@@ -470,10 +510,20 @@ def phase_write(
         made = worktree_for("write", brief.key, report)
         if made is None:
             return
-        wt, branch = made
-        res = run_session(prompt, wt, phase="write", system_append=system_append(wt))
-        report.say(f"  writer: {'ok' if res.ok else 'failed ' + res.reason}, {res.turns} turns")
-        if res.ok:
+        wt, branch, resumed = made
+        # A resumed attempt may already hold every post, and the review: a session is
+        # not re-run for work that is done (the sessions are paid for in plan allowance).
+        have_all = resumed and not (set(days) - written_days(wt))
+        reviewed = have_all and has_review_commit(wt, base)
+        res = SessionResult(True)
+        if have_all:
+            report.say("  writer: skipped, the earlier attempt wrote every day")
+        else:
+            res = run_session(prompt, wt, phase="write", system_append=system_append(wt))
+            report.say(f"  writer: {'ok' if res.ok else 'failed ' + res.reason}, {res.turns} turns")
+        if reviewed:
+            report.say("  reviewer: skipped, the earlier attempt reviewed the month")
+        elif res.ok:
             render_month(wt, python, brief.key, report)  # so the reviewer can see the PNGs
             review = Template((BRIEFS / "review.md").read_text()).safe_substitute(
                 month_name=brief.name,
@@ -496,7 +546,10 @@ def phase_write(
                 sh(["git", "add", "site/images"], wt)
                 sh(["git", "commit", "-q", "-m", f"chore(build): render {brief.name} posts"], wt)
         good = (
-            res.ok and checks(wt, python, report) and completeness("write", wt, days, brief, report)
+            res.ok
+            and catch_up(wt, report)
+            and checks(wt, python, report)
+            and completeness("write", wt, days, brief, report)
         )
         if not good or not land(wt, branch, base, report):
             report.fail(f"{brief.name} not merged; worktree kept at {wt}")
@@ -526,12 +579,17 @@ def phase_film(
     made = worktree_for("film", brief.key, report)
     if made is None:
         return
-    wt, branch = made
+    wt, branch, _resumed = made
     res = run_session(prompt, wt, phase="film", system_append=system_append(wt))
     report.say(f"  filmer: {'ok' if res.ok else 'failed ' + res.reason}, {res.turns} turns")
     if res.text:
         report.say("  " + res.text.strip().splitlines()[0][:200])
-    good = res.ok and checks(wt, python, report) and completeness("film", wt, days, brief, report)
+    good = (
+        res.ok
+        and catch_up(wt, report)
+        and checks(wt, python, report)
+        and completeness("film", wt, days, brief, report)
+    )
     if not good or not land(wt, branch, base, report):
         report.fail(f"{brief.name} films not merged; worktree kept at {wt}")
 
