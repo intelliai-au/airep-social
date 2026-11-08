@@ -118,9 +118,13 @@ def telegram_text(
     if runs_out is None:
         lines.append("⚠ No content at all: the calendar is empty.")
     elif write_ahead:
-        # The month after the last written post is the one the lane must write next.
+        # The month after the last written post is the one the author run writes next
+        # (author.py on the box's Max login; the paid swarm is not used for content).
         nxt = (runs_out.replace(day=28) + timedelta(days=4)).strftime("%B")
-        lines.append(f'⚠ Content runs out {runs_out:%a %d %b}: queue "write {nxt}" for the lane.')
+        lines.append(
+            f"⚠ Content runs out {runs_out:%a %d %b}: the author timer writes {nxt} on the "
+            "first Sunday; sooner: systemctl --user start airep-social-author@write"
+        )
     else:
         lines.append(f"Content written to {runs_out:%a %d %b}.")
     lines.append(VETO_LINE)

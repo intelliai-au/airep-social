@@ -1,0 +1,22 @@
+[Unit]
+Description=AIREP social authoring (%i): a headless Claude Code run on the box's Max login
+After=network-online.target
+Wants=network-online.target
+# Never alongside the Sunday push: both commit to main.
+Conflicts=airep-social.service
+
+[Service]
+Type=oneshot
+# %i is the phase: "write" (the next month's posts) or "film" (its two videos).
+# The run bills the box's Claude Code login (Max subscription), never an API key:
+# author.py blanks ANTHROPIC_API_KEY in the child environment on purpose.
+WorkingDirectory=/home/keiran/Documents/Github Projects/airep-social
+ExecStart="/home/keiran/Documents/Github Projects/nova/Nova/venv/bin/python" "/home/keiran/Documents/Github Projects/airep-social/author.py" %i
+# Playwright, Chromium and the Agent SDK live in Astrid's venv. Quoted: systemd splits an
+# unquoted Environment= line on spaces, and this path has one ("Github Projects").
+Environment="AIREP_SOCIAL_PYTHON=/home/keiran/Documents/Github Projects/nova/Nova/venv/bin/python"
+Environment=PYTHONUNBUFFERED=1
+# A writing run is one or two months of posts plus a review pass; a film run drives the
+# demo tenant and the rig. Both are bounded by author.py's own turn caps as well.
+TimeoutStartSec=3h
+Nice=10

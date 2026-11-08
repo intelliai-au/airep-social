@@ -1,0 +1,547 @@
+"""Headless authoring runs on the box's Claude Code (Max) login: write a month, or film its videos.
+
+Two phases, each a fresh Claude Code session started through the Agent SDK with the API
+key blanked, so the run bills the subscription the box is logged in with and never the
+API (Keiran, 2026-11-08: "use these Claude sessions with my Max subscription", not the
+paid swarm). The sessions work in a git worktree; this script validates what they left
+(ruff, the unit tests, build.py, completeness), merges into main on success, and leaves
+the worktree in place for inspection on failure. It never pushes to Buffer: push.py does
+that on Sundays, from main.
+
+    author.py write            # every missing posting day up to the end of the month
+                               # after next, one session per month, each reviewed
+    author.py film             # the month after next's two films (YEAR.md), then the
+                               # two Tuesday posts that use them
+    author.py write --dry-run  # print the plan and the briefs, start no session
+"""
+
+from __future__ import annotations
+
+import argparse
+import asyncio
+import calendar
+import os
+import re
+import subprocess
+import sys
+from collections.abc import Iterable
+from dataclasses import dataclass, field
+from datetime import date, datetime
+from pathlib import Path
+from string import Template
+
+import posts as posts_mod
+import push
+import schedule
+
+ROOT = Path(__file__).resolve().parent
+BRIEFS = ROOT / "deploy" / "briefs"
+YEAR_MD = ROOT / "docs" / "YEAR.md"
+STATE_DIR = Path.home() / ".local" / "state" / "airep-social"
+
+# Content is kept written to the end of the month after next: the Sunday push looks 14
+# days ahead, so two months is slack enough for a failed run to be retried by hand.
+MONTHS_AHEAD = 2
+
+# Turn and wall-clock caps per session. A writing run is 13 files plus a render; a film
+# run drives the demo tenant and the rig, which is slower by nature.
+MAX_TURNS = {"write": 160, "review": 60, "film": 320}
+TIMEOUT_S = {"write": 60 * 60, "review": 25 * 60, "film": 120 * 60}
+
+# Only these may reach the child session's environment with a value. Anything that looks
+# like a credential is blanked, and ANTHROPIC_API_KEY always is: with no key the CLI
+# falls back to the box's Claude Code login, which is the whole point of this script.
+_SECRET_LIKE = re.compile(r"(API_KEY|TOKEN|SECRET|PASSWORD|PASSWD|DSN|DATABASE_URL)", re.I)
+
+_YEAR_ROW = re.compile(r"^\|\s*(\d{4})-(\d{2})\s*\|(.*)\|\s*$")
+
+
+@dataclass(frozen=True)
+class MonthBrief:
+    """What one month's run needs from docs/YEAR.md."""
+
+    year: int
+    month: int
+    theme: str
+    films: str
+    hooks: str
+
+    @property
+    def key(self) -> str:
+        """``YYYY-MM``, as the content filenames start."""
+        return f"{self.year:04d}-{self.month:02d}"
+
+    @property
+    def name(self) -> str:
+        """``February 2027``."""
+        return f"{calendar.month_name[self.month]} {self.year}"
+
+
+@dataclass
+class SessionResult:
+    """What one headless session came back with."""
+
+    ok: bool
+    text: str = ""
+    turns: int = 0
+    cost_usd: float | None = None
+    reason: str = ""
+
+
+@dataclass
+class RunReport:
+    """Everything the Telegram summary and the exit code are built from."""
+
+    phase: str
+    ok: bool = True
+    lines: list[str] = field(default_factory=list)
+
+    def say(self, line: str) -> None:
+        """Print and remember one line of progress."""
+        print(line, flush=True)
+        self.lines.append(line)
+
+    def fail(self, line: str) -> None:
+        """Record a failure; the run keeps the worktree and exits 1."""
+        self.ok = False
+        self.say(f"⚠ {line}")
+
+
+# ----------------------------------------------------------------------------- planning
+
+
+def month_end(year: int, month: int) -> date:
+    """The last day of *month*."""
+    return date(year, month, calendar.monthrange(year, month)[1])
+
+
+def add_months(day: date, months: int) -> tuple[int, int]:
+    """(year, month) *months* after *day*'s month."""
+    index = day.year * 12 + (day.month - 1) + months
+    return index // 12, index % 12 + 1
+
+
+def missing_days(
+    existing: Iterable[date], today: date, months_ahead: int = MONTHS_AHEAD
+) -> list[date]:
+    """Posting days after *today* with no content yet, up to the end of the month
+    *months_ahead* after this one. Past days are never written: a missed post is gone."""
+    have = set(existing)
+    horizon = month_end(*add_months(today, months_ahead))
+    return [d for d in schedule.cadence() if today < d <= horizon and d not in have]
+
+
+def by_month(days: Iterable[date]) -> dict[tuple[int, int], list[date]]:
+    """Group days by (year, month), in order."""
+    out: dict[tuple[int, int], list[date]] = {}
+    for day in sorted(days):
+        out.setdefault((day.year, day.month), []).append(day)
+    return out
+
+
+def year_rows(text: str) -> dict[tuple[int, int], MonthBrief]:
+    """Parse docs/YEAR.md's month table."""
+    rows: dict[tuple[int, int], MonthBrief] = {}
+    for line in text.splitlines():
+        m = _YEAR_ROW.match(line)
+        if not m:
+            continue
+        cells = [c.strip() for c in m.group(3).split("|")]
+        if len(cells) < 3:
+            continue
+        year, month = int(m.group(1)), int(m.group(2))
+        rows[(year, month)] = MonthBrief(year, month, cells[0], cells[1], cells[2])
+    return rows
+
+
+def month_brief(year: int, month: int, year_text: str | None = None) -> MonthBrief:
+    """The YEAR.md row for a month; a month outside the table still gets a usable brief."""
+    text = year_text if year_text is not None else YEAR_MD.read_text()
+    row = year_rows(text).get((year, month))
+    if row is None:
+        row = MonthBrief(
+            year, month, "(no theme in docs/YEAR.md: pick from the ICP's pains)", "none", ""
+        )
+    return row
+
+
+def existing_films(site_dir: Path) -> list[str]:
+    """The mp4 files already in site/video/, by name."""
+    video_dir = site_dir / "video"
+    if not video_dir.is_dir():
+        return []
+    return sorted(p.name for p in video_dir.glob("*.mp4"))
+
+
+def date_lines(days: Iterable[date]) -> str:
+    """One line per posting day with its allowed slot(s), for the brief."""
+    lines = []
+    for day in days:
+        slots = sorted(schedule.allowed_slots(day))
+        lines.append(f"- {day:%a %d %b %Y} ({day.isoformat()}): slot {' or '.join(slots)}")
+    return "\n".join(lines)
+
+
+def render_brief(
+    phase: str, brief: MonthBrief, days: list[date], *, python: str, films_present: list[str]
+) -> str:
+    """Fill deploy/briefs/<phase>.md for one month."""
+    template = Template((BRIEFS / f"{phase}.md").read_text())
+    named = [f for f in films_present if f in brief.films]
+    if phase == "write":
+        film_rule = (
+            f"Both films exist in site/video/ ({', '.join(named)}): the first and third Tuesday "
+            "are video posts (copy content/2026-11-17-feature-reorder-film.yaml's shape)."
+            if len(named) >= 2
+            else "Those films are not in site/video/ yet: write EVERY Tuesday as a feature image. "
+            "The film run converts two of them later."
+        )
+    else:
+        film_rule = ""
+    quoted = f'"{python}"'
+    return template.safe_substitute(
+        month_name=brief.name,
+        month=brief.key,
+        theme=brief.theme,
+        films=brief.films,
+        hooks=brief.hooks or "none",
+        dates=date_lines(days),
+        film_rule=film_rule,
+        python=quoted,
+        files="",
+    )
+
+
+def env_overrides(environ: dict[str, str]) -> dict[str, str]:
+    """``options.env`` for the child: credentials blanked, the API key always blanked.
+
+    The SDK builds the child env as ``{**os.environ, **options.env}``, so a blank is
+    an explicit empty-string override. No API key means the CLI bills the box's Claude
+    Code login.
+    """
+    out = {k: "" for k in environ if _SECRET_LIKE.search(k)}
+    out["ANTHROPIC_API_KEY"] = ""
+    out["PYTHONDONTWRITEBYTECODE"] = "1"
+    out["DISABLE_AUTOUPDATER"] = "1"
+    out["CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC"] = "1"
+    return out
+
+
+# ----------------------------------------------------------------------------- sessions
+
+
+async def _run_session(prompt: str, cwd: Path, *, phase: str, system_append: str) -> SessionResult:
+    """One headless Claude Code session in *cwd*; the result text and whether it erred."""
+    try:
+        from claude_agent_sdk import ClaudeAgentOptions, query
+    except ImportError:  # pragma: no cover - the unit sets Astrid's venv python
+        return SessionResult(
+            False, reason="claude_agent_sdk missing: run with Astrid's venv python"
+        )
+
+    tools = ["Read", "Edit", "Write", "Bash", "Grep", "Glob", "TodoWrite"]
+    # The writing and review runs need no network at all (Playwright renders a local
+    # file). The film run talks to the demo tenant on localhost, which a network
+    # namespace would cut off, so it runs unsandboxed and relies on the brief.
+    sandbox: dict[str, object] = (
+        {"enabled": False}
+        if phase == "film"
+        else {
+            "enabled": True,
+            "autoAllowBashIfSandboxed": True,
+            "allowUnsandboxedCommands": False,
+            "network": {"deniedDomains": ["*"]},
+        }
+    )
+    options = ClaudeAgentOptions(
+        cwd=str(cwd),
+        effort="medium" if phase == "review" else "high",
+        tools=tools,
+        allowed_tools=tools,
+        disallowed_tools=["WebFetch", "WebSearch"],
+        # dontAsk: the listed tools are pre-approved and anything else is denied, never
+        # prompted — there is nobody at the keyboard at 02:00 on a Sunday.
+        permission_mode="dontAsk",
+        sandbox=sandbox,
+        # No settings files: the repo's interactive hooks are for people; the rules the
+        # run must keep ride in on the system prompt instead.
+        setting_sources=[],
+        system_prompt={"type": "preset", "preset": "claude_code", "append": system_append},
+        max_turns=MAX_TURNS[phase],
+        env=env_overrides(dict(os.environ)),
+        stderr=lambda line: print(f"  cli: {line.rstrip()}", file=sys.stderr, flush=True),
+    )
+    result = SessionResult(False)
+    got_result = False
+
+    async def _consume() -> None:
+        nonlocal got_result
+        async for msg in query(prompt=prompt, options=options):
+            if type(msg).__name__ != "ResultMessage":
+                continue
+            got_result = True
+            result.turns = int(getattr(msg, "num_turns", 0) or 0)
+            result.cost_usd = getattr(msg, "total_cost_usd", None)
+            result.text = str(getattr(msg, "result", "") or "")
+            result.ok = not bool(getattr(msg, "is_error", False))
+            if not result.ok:
+                result.reason = str(getattr(msg, "subtype", "error"))
+
+    try:
+        await asyncio.wait_for(_consume(), timeout=TIMEOUT_S[phase])
+    except TimeoutError:
+        result.ok, result.reason = False, f"exceeded {TIMEOUT_S[phase] // 60} min"
+    except Exception as exc:  # noqa: BLE001 - a crashed CLI is an outcome to report
+        if not got_result:
+            result.ok, result.reason = False, f"{type(exc).__name__}: {exc}"[:300]
+    return result
+
+
+def run_session(prompt: str, cwd: Path, *, phase: str, system_append: str) -> SessionResult:
+    """Synchronous wrapper around the session."""
+    return asyncio.run(_run_session(prompt, cwd, phase=phase, system_append=system_append))
+
+
+# ----------------------------------------------------------------------------- git + checks
+
+
+def sh(args: list[str], cwd: Path) -> str:
+    """Run a command, raise on failure, return stdout."""
+    proc = subprocess.run(args, cwd=cwd, text=True, capture_output=True)
+    if proc.returncode != 0:
+        raise RuntimeError(f"{' '.join(args)} failed in {cwd}:\n{proc.stderr.strip()}")
+    return proc.stdout
+
+
+def checks(wt: Path, python: str, report: RunReport) -> bool:
+    """ruff, the unit tests and build.py, all inside the worktree."""
+    ok = True
+    for label, args in (
+        ("ruff", [python, "-m", "ruff", "check", "."]),
+        ("tests", [python, "-m", "unittest"]),
+        ("build", [python, "build.py"]),
+    ):
+        proc = subprocess.run(args, cwd=wt, text=True, capture_output=True)
+        if proc.returncode != 0:
+            ok = False
+            tail = (proc.stdout + proc.stderr).strip().splitlines()[-8:]
+            report.fail(f"{label} failed:\n" + "\n".join(tail))
+    return ok
+
+
+def written_days(wt: Path) -> set[date]:
+    """Dates that have a valid content file in the worktree."""
+    return {p.date for p in posts_mod.load_posts(wt / "content")}
+
+
+def completeness(
+    phase: str, wt: Path, days: list[date], brief: MonthBrief, report: RunReport
+) -> bool:
+    """Did the session leave what the month needs?"""
+    if phase == "write":
+        missing = sorted(set(days) - written_days(wt))
+        if missing:
+            report.fail(f"{brief.name}: no post for " + ", ".join(d.isoformat() for d in missing))
+            return False
+        return True
+    # film: at least one Tuesday of the month now carries a video that exists on disk
+    videos = [
+        p
+        for p in posts_mod.load_posts(wt / "content")
+        if p.date.strftime("%Y-%m") == brief.key and p.video and (wt / "site" / p.video).is_file()
+    ]
+    if not videos:
+        report.fail(f"{brief.name}: no Tuesday post uses a film that exists in site/video/")
+        return False
+    report.say(
+        f"{brief.name}: {len(videos)} video post(s): " + ", ".join(p.video or "" for p in videos)
+    )
+    return True
+
+
+def worktree_for(phase: str, key: str, report: RunReport) -> tuple[Path, str] | None:
+    """A fresh worktree on a branch off main; None when a previous run left one behind."""
+    wt = STATE_DIR / "worktrees" / f"{phase}-{key}"
+    branch = f"author/{phase}-{key}"
+    if wt.exists():
+        report.fail(f"{wt} exists from an earlier run: inspect it, then `git worktree remove` it")
+        return None
+    wt.parent.mkdir(parents=True, exist_ok=True)
+    existing = sh(["git", "branch", "--list", branch], ROOT).strip()
+    if existing:
+        sh(["git", "branch", "-D", branch], ROOT)  # an empty leftover: its worktree is gone
+    sh(["git", "worktree", "add", "-b", branch, str(wt), "main"], ROOT)
+    return wt, branch
+
+
+def land(wt: Path, branch: str, base: str, report: RunReport) -> bool:
+    """Merge the worktree's commits into main and push; tidy the worktree."""
+    count = int(sh(["git", "rev-list", "--count", f"{base}..HEAD"], wt).strip() or 0)
+    if count == 0:
+        report.say("nothing committed; worktree removed")
+        sh(["git", "worktree", "remove", "--force", str(wt)], ROOT)
+        sh(["git", "branch", "-D", branch], ROOT)
+        return True
+    dirty = sh(["git", "status", "--porcelain"], wt).strip()
+    if dirty:
+        report.fail(f"uncommitted changes left in {wt}; not merged")
+        return False
+    sh(["git", "merge", "--no-edit", branch], ROOT)
+    sh(["git", "push", "origin", "main"], ROOT)
+    sh(["git", "worktree", "remove", str(wt)], ROOT)
+    sh(["git", "branch", "-d", branch], ROOT)
+    report.say(f"merged {count} commit(s) into main and pushed")
+    return True
+
+
+def notify(report: RunReport) -> None:
+    """Best-effort Telegram summary through the same Astrid webhook push.py uses."""
+    try:
+        env = push.load_env(require_secrets=False)
+    except Exception as exc:  # noqa: BLE001 - the env file is optional here
+        print(f"(no Telegram: {exc})")
+        return
+    url = env.get("ASTRID_WEBHOOK_URL", "")
+    if not url:
+        return
+    head = "AIREP social author" + ("" if report.ok else " FAILED")
+    text = "\n".join([f"{head} · {report.phase} · {datetime.now():%a %d %b %H:%M}", *report.lines])[
+        :3500
+    ]
+    try:
+        push.notify(url, env.get("ASTRID_WEBHOOK_SECRET", ""), text)
+    except Exception as exc:  # noqa: BLE001
+        print(f"(Telegram failed: {exc})")
+
+
+# ----------------------------------------------------------------------------- phases
+
+
+def system_append(wt: Path) -> str:
+    """The repo's CLAUDE.md plus the unattended-run rules."""
+    rules = (wt / "CLAUDE.md").read_text()
+    return (
+        rules + "\n\n## This is an unattended run\n"
+        "Nobody will answer a question: decide and proceed. Never run `git push`, never run "
+        "`push.py --live`, never touch `state/`. Commit your work in this worktree when it passes "
+        "`ruff check .` and the unit tests; the caller merges it."
+    )
+
+
+def phase_write(
+    today: date, python: str, report: RunReport, *, dry_run: bool, only: str | None
+) -> None:
+    """Write every missing month up to MONTHS_AHEAD, each in its own session, then review it."""
+    have = {p.date for p in posts_mod.load_posts()}
+    months = by_month(missing_days(have, today))
+    if only:
+        y, m = (int(x) for x in only.split("-"))
+        months = {k: v for k, v in months.items() if k == (y, m)}
+    if not months:
+        until = calendar.month_name[add_months(today, MONTHS_AHEAD)[1]]
+        report.say(f"content already written to the end of {until}")
+        return
+    films = existing_films(ROOT / "site")
+    for (year, month), days in months.items():
+        brief = month_brief(year, month)
+        prompt = render_brief("write", brief, days, python=python, films_present=films)
+        report.say(f"{brief.name}: {len(days)} posting day(s) to write")
+        if dry_run:
+            print(prompt)
+            continue
+        base = sh(["git", "rev-parse", "HEAD"], ROOT).strip()
+        made = worktree_for("write", brief.key, report)
+        if made is None:
+            return
+        wt, branch = made
+        res = run_session(prompt, wt, phase="write", system_append=system_append(wt))
+        report.say(f"  writer: {'ok' if res.ok else 'failed ' + res.reason}, {res.turns} turns")
+        if res.ok:
+            review = Template((BRIEFS / "review.md").read_text()).safe_substitute(
+                month_name=brief.name,
+                month=brief.key,
+                python=f'"{python}"',
+                files="\n".join(
+                    f"- content/{p.name}"
+                    for p in sorted((wt / "content").glob(f"{brief.key}-*.yaml"))
+                ),
+            )
+            rev = run_session(review, wt, phase="review", system_append=system_append(wt))
+            report.say(
+                f"  reviewer: {'ok' if rev.ok else 'failed ' + rev.reason}, {rev.turns} turns"
+            )
+            if rev.text:
+                report.say("  " + rev.text.strip().splitlines()[0][:200])
+        good = (
+            res.ok and checks(wt, python, report) and completeness("write", wt, days, brief, report)
+        )
+        if not good or not land(wt, branch, base, report):
+            report.fail(f"{brief.name} not merged; worktree kept at {wt}")
+            return
+
+
+def phase_film(
+    today: date, python: str, report: RunReport, *, dry_run: bool, only: str | None
+) -> None:
+    """Film the month-after-next's two videos and convert its Tuesday posts to use them."""
+    year, month = (int(x) for x in only.split("-")) if only else add_months(today, MONTHS_AHEAD)
+    brief = month_brief(year, month)
+    if "(existing)" in brief.films or brief.films.strip().lower() == "none":
+        report.say(f"{brief.name}: films already exist ({brief.films}); nothing to film")
+        return
+    days = [
+        d for d in schedule.cadence() if (d.year, d.month) == (year, month) and d.weekday() == 1
+    ]
+    prompt = render_brief(
+        "film", brief, days, python=python, films_present=existing_films(ROOT / "site")
+    )
+    report.say(f"{brief.name}: films to make: {brief.films}")
+    if dry_run:
+        print(prompt)
+        return
+    base = sh(["git", "rev-parse", "HEAD"], ROOT).strip()
+    made = worktree_for("film", brief.key, report)
+    if made is None:
+        return
+    wt, branch = made
+    res = run_session(prompt, wt, phase="film", system_append=system_append(wt))
+    report.say(f"  filmer: {'ok' if res.ok else 'failed ' + res.reason}, {res.turns} turns")
+    if res.text:
+        report.say("  " + res.text.strip().splitlines()[0][:200])
+    good = res.ok and checks(wt, python, report) and completeness("film", wt, days, brief, report)
+    if not good or not land(wt, branch, base, report):
+        report.fail(f"{brief.name} films not merged; worktree kept at {wt}")
+
+
+def main(argv: list[str] | None = None) -> int:
+    """CLI entry point."""
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("phase", choices=("write", "film"))
+    parser.add_argument(
+        "--dry-run", action="store_true", help="print the plan and briefs; no session"
+    )
+    parser.add_argument("--month", help="YYYY-MM: only this month (write) or this month's films")
+    parser.add_argument("--today", help="YYYY-MM-DD, with --dry-run only")
+    parser.add_argument("--python", default=os.environ.get("AIREP_SOCIAL_PYTHON") or sys.executable)
+    args = parser.parse_args(argv)
+    if args.today and not args.dry_run:
+        parser.error("--today is a dry-run aid")
+    today = date.fromisoformat(args.today) if args.today else datetime.now(schedule.AEST).date()
+
+    report = RunReport(args.phase)
+    if not args.dry_run:
+        sh(["git", "pull", "--ff-only"], ROOT)
+    try:
+        if args.phase == "write":
+            phase_write(today, args.python, report, dry_run=args.dry_run, only=args.month)
+        else:
+            phase_film(today, args.python, report, dry_run=args.dry_run, only=args.month)
+    except RuntimeError as exc:
+        report.fail(str(exc))
+    if not args.dry_run:
+        notify(report)
+    return 0 if report.ok else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

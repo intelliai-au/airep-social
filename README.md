@@ -64,11 +64,17 @@ Everything is idempotent, so a failed run can simply run again.
 
 ```
 # Same style as linux-setup/install.sh: copy the units, reload, enable the timer.
-install -m 644 deploy/airep-social.service deploy/airep-social.timer ~/.config/systemd/user/
+install -m 644 deploy/airep-social.service deploy/airep-social.timer \
+    deploy/airep-social-author@.service deploy/airep-social-author@write.timer \
+    deploy/airep-social-author@film.timer ~/.config/systemd/user/
 systemctl --user daemon-reload
-systemctl --user enable --now airep-social.timer
-systemctl --user list-timers airep-social.timer     # next Sunday 18:00
+systemctl --user enable --now airep-social.timer airep-social-author@write.timer \
+    airep-social-author@film.timer
+systemctl --user list-timers 'airep-social*'        # Sunday 18:00, 1st and 3rd Sunday 02:00
 ```
+
+Run an authoring phase now, watched: `systemctl --user start airep-social-author@write`
+then `journalctl --user -u airep-social-author@write -f`.
 
 Keep `linux-setup/systemd/` in step if you want the box rebuilt from there: copy the two
 units into it as well.
@@ -90,8 +96,12 @@ pretend date would hand Buffer posts whose `dueAt` is already behind us.
 
 ## Vetoing a post
 
-There is no approval gate. Open Buffer > Publishing > the channel's Queue and delete the
-post before its time. `state/pushed.json` still lists it, so the timer will not re-create
+There is no approval gate. Today: open Buffer > Publishing > the channel's Queue and
+delete the post before its time. Planned (plan doc, step 7, in Astrid): a Telegram card
+per queued post with a **Skip** button that deletes it in Buffer, a **Posted** card with
+the live links after each slot, and a **Delete** button for Facebook. Buffer cannot
+remove a published post from a network, and LinkedIn's Page API is open only to approved
+partners, so a published LinkedIn post is deleted in the LinkedIn app from the link. `state/pushed.json` still lists it, so the timer will not re-create
 it; to run it again later, remove its entry from `state/pushed.json` and the next Sunday
 picks it up (if still inside the horizon).
 
@@ -131,11 +141,29 @@ scheduling one again. To reuse one, reference it as `image: images/legacy/<file>
 and `build.py` copies it into `site/` flattened to RGB (LinkedIn and Facebook reject
 transparent PNGs). The `AIREP-Founder-*` image is deliberately not here.
 
-## Writing more
+## Writing more: the authoring runs (Max login, not the swarm)
 
-The swarm lane writes a month at a time ("write <month>" items; see CLAUDE.md). Each new
-post is a YAML file; `python build.py` renders it; `python -m unittest` and
-`ruff check .` keep it honest.
+`author.py` writes and films ahead with headless Claude Code sessions started through the
+Agent SDK with the API key blanked, so they bill the subscription the box is logged in
+with (Keiran's Max plan) and never the API or the swarm's budget (his call, 2026-11-08).
+
+- `airep-social-author@write.timer`, first Sunday of the month at 02:00: for every month
+  with missing posting days up to the end of the month after next, one session writes
+  the month from `deploy/briefs/write.md` and `docs/YEAR.md`, a second session reviews it
+  (`deploy/briefs/review.md`), then the script runs `ruff`, the tests and `build.py`,
+  checks every day has a post, and merges the worktree into main.
+- `airep-social-author@film.timer`, third Sunday at 02:00: one session films the
+  month-after-next's two videos with the rig in the airep repo
+  (`deploy/briefs/film.md`) and turns that month's first and third Tuesday posts into
+  video posts. It runs unsandboxed because the rig talks to a local server.
+- A run that fails its checks merges nothing, keeps its worktree under
+  `~/.local/state/airep-social/worktrees/` for inspection, and says so on Telegram. A
+  video Tuesday whose film never arrived simply stays a feature image.
+- `python author.py write --dry-run` prints the months and the exact briefs without
+  starting a session; `--month 2027-02` limits a run to one month.
+
+By hand, the same thing is a YAML file per post, `python build.py` to render it, and
+`python -m unittest` and `ruff check .` to keep it honest.
 
 ## Tests
 

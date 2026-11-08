@@ -34,7 +34,7 @@ class DryRunTests(unittest.TestCase):
         self.assertIn("video/airep_reorder_music.mp4", text)
         self.assertIn(push.VETO_LINE, text)
         self.assertIn("LinkedIn 6, Facebook 6", text)
-        self.assertIn('queue "write December"', text)
+        self.assertIn("the author timer writes December", text)
 
     def test_second_run_after_a_push_plans_nothing_new(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

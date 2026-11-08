@@ -1,0 +1,13 @@
+[Unit]
+Description=Third Sunday of the month, 02:00: film the two videos for the month after next
+
+[Timer]
+# Two weeks after the writing run, so the posts that use these films already exist
+# and a failed film still leaves a month for a retry by hand.
+OnCalendar=Sun *-*-15..21 02:00:00
+Persistent=true
+AccuracySec=5m
+Unit=airep-social-author@film.service
+
+[Install]
+WantedBy=timers.target

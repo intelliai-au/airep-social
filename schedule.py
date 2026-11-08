@@ -34,8 +34,8 @@ PLAN_END = date(2027, 11, 11)
 HORIZON_DAYS = 14
 CHANNEL_CAP = 6
 
-# Fewer than six weeks of unpushed calendar left means the swarm must write the
-# next month (plan doc, "Writing ahead").
+# Fewer than six weeks of unpushed calendar left means the author run (author.py, on
+# the box's Max login) is overdue for the next month (plan doc, "Writing ahead").
 WRITE_AHEAD_WEEKS = 6
 
 # The plan's recommended LinkedIn hashtags; Facebook gets none.
@@ -130,7 +130,7 @@ def plan(
 
 
 def content_runs_out(posts: list[Schedulable], now: datetime) -> tuple[date | None, bool]:
-    """(last dated post, whether the swarm must write ahead now)."""
+    """(last dated post, whether the author run must write ahead now)."""
     if not posts:
         return None, True
     last = max(p.date for p in posts)

@@ -35,9 +35,18 @@ by GitHub Pages so Buffer can fetch each asset from a public URL. See README.md.
 - **`push.py` is a dry run unless `--live`.** Never run `--live` from a session; the
   timer does, on Sundays.
 
-## Writing a month ("write <month>" lane item)
+## Writing a month (the `write` author run, or a session by hand)
 
-1. Read the month's theme, films and dated hooks in the plan doc's month table.
+`author.py write` does the steps below unattended on the box's Claude Code login (the
+Max subscription, never an API key), on the first Sunday of each month, keeping content
+written to the end of the month after next; `author.py film` makes a month's two videos
+on the third Sunday. **The swarm lane is not used for content** (Keiran, 2026-11-08).
+Buffer stays on the **Free plan**: `push.py` never queues more than six a channel.
+A session asked to "write <month>" by hand follows the same steps; `deploy/briefs/`
+holds the exact briefs the runs use.
+
+1. Read the month's theme, films and dated hooks in `docs/YEAR.md` (a copy of the plan
+   doc's month table, kept in step with it).
 2. Add one `content/YYYY-MM-DD-<slug>.yaml` per cadence day (`python -c "import
    schedule; print(schedule.cadence())"` lists them). Copy an existing file of the same
    slot for the field layout; `templates/<slot>.html` shows what each field is.
