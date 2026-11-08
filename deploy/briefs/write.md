@@ -24,6 +24,9 @@ dated, no internal refactors); a `date_post` for each dated hook above; `price` 
 
 ## How
 
+0. If `content/` already holds files for this month, an earlier attempt wrote them and
+   was cut short: keep them (fix anything that breaks a rule), write only the missing
+   days, and still render, test and commit everything below.
 1. Read `docs/YEAR.md`, two existing files of each slot in `content/`, and
    `templates/<slot>.html` to see which fields each template takes.
 2. Check every feature claim against the airep code in `../../airep/airep` (grep the

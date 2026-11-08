@@ -93,11 +93,20 @@ class BriefTests(unittest.TestCase):
 class EnvTests(unittest.TestCase):
     def test_credentials_are_blanked_and_the_api_key_always_is(self) -> None:
         env = author.env_overrides(
-            {"HOME": "/h", "GITHUB_TOKEN": "x", "ANTHROPIC_API_KEY": "k", "PGPASSWORD": "p"}
+            {
+                "HOME": "/h",
+                "GITHUB_TOKEN": "x",
+                "ANTHROPIC_API_KEY": "k",
+                "PGPASSWORD": "p",
+                "CLAUDECODE": "1",
+                "CLAUDE_CODE_MESSAGING_SOCKET": "/run/x",
+            }
         )
         self.assertEqual(env["ANTHROPIC_API_KEY"], "")
         self.assertEqual(env["GITHUB_TOKEN"], "")
         self.assertEqual(env["PGPASSWORD"], "")
+        self.assertEqual(env["CLAUDECODE"], "")
+        self.assertEqual(env["CLAUDE_CODE_MESSAGING_SOCKET"], "")
         self.assertNotIn("HOME", env)
         self.assertEqual(env["DISABLE_AUTOUPDATER"], "1")
 

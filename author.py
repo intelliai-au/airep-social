@@ -219,7 +219,9 @@ def env_overrides(environ: dict[str, str]) -> dict[str, str]:
     an explicit empty-string override. No API key means the CLI bills the box's Claude
     Code login.
     """
-    out = {k: "" for k in environ if _SECRET_LIKE.search(k)}
+    # CLAUDE* is blanked too: run by hand from inside a Claude Code session, the child
+    # would otherwise inherit that session's sockets and ids and think it is nested.
+    out = {k: "" for k in environ if _SECRET_LIKE.search(k) or k.startswith("CLAUDE")}
     out["ANTHROPIC_API_KEY"] = ""
     out["PYTHONDONTWRITEBYTECODE"] = "1"
     out["DISABLE_AUTOUPDATER"] = "1"
@@ -268,6 +270,10 @@ async def _run_session(prompt: str, cwd: Path, *, phase: str, system_append: str
         setting_sources=[],
         system_prompt={"type": "preset", "preset": "claude_code", "append": system_append},
         max_turns=MAX_TURNS[phase],
+        # The SDK's default 1 MB line buffer died on the first December run (2026-11-08,
+        # ten posts in, 0 messages delivered): a tool result carrying two rendered PNGs
+        # as base64 is bigger than that. Images and long git logs are normal here.
+        max_buffer_size=128 * 1024 * 1024,
         env=env_overrides(dict(os.environ)),
         stderr=lambda line: print(f"  cli: {line.rstrip()}", file=sys.stderr, flush=True),
     )
@@ -381,8 +387,17 @@ def worktree_for(phase: str, key: str, report: RunReport) -> tuple[Path, str] | 
     wt = STATE_DIR / "worktrees" / f"{phase}-{key}"
     branch = f"author/{phase}-{key}"
     if wt.exists():
-        report.fail(f"{wt} exists from an earlier run: inspect it, then `git worktree remove` it")
-        return None
+        # An earlier attempt was cut short (a crashed CLI, a reboot). Its files are work
+        # already paid for, so the run continues in the same worktree; the brief tells
+        # the session to keep what is there and finish the month.
+        head = sh(["git", "rev-parse", "--abbrev-ref", "HEAD"], wt).strip()
+        if head != branch:
+            report.fail(
+                f"{wt} is on {head}, not {branch}: inspect it, then `git worktree remove` it"
+            )
+            return None
+        report.say(f"resuming the earlier attempt in {wt}")
+        return wt, branch
     wt.parent.mkdir(parents=True, exist_ok=True)
     existing = sh(["git", "branch", "--list", branch], ROOT).strip()
     if existing:
