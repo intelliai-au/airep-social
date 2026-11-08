@@ -5,7 +5,7 @@ video: video/airep_no_ui_stage_music.mp4
 thumbnail_offset_ms: 3000
 linkedin: |
   Type "mark SO-00100059 as confirmed" and Nova moves the order from Quote to Order Confirmed. No form, no clicking through stages.
-  It reads the change back first: the order, the customer, the new stage, the lines and the total. Nothing is written until you press Confirm.
+  It reads the change back first: the current stage, the new stage, the lines and the total. Nothing is written until you press Confirm.
   Same rules and same permissions as the form, without the form.
   https://intelliai.au
 facebook: |

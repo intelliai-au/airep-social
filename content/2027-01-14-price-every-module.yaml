@@ -5,7 +5,7 @@ template: price
 alt: "AIREP pricing: every module included. A$100 a month platform, A$100 a month per full seat, A$25 a month per timesheet seat."
 fields:
   kicker: "Price · every module"
-  headline: "Every module, *one seat price.*"
+  headline: "Every module, *no higher tier.*"
   sub: "Procurement, sales, inventory, manufacturing, accounting, CRM, shipping and workforce, all unlocked from day one, with Nova AI in every seat."
   # Source: airep templates/pages/pricing.html ("All modules unlocked"; the
   # SoftwareApplication description lists the eight modules).
@@ -20,5 +20,5 @@ linkedin: |
   No higher tier to buy when the business grows into a module it did not need last year.
   https://intelliai.au
 facebook: |
-  Every module, one seat price. A$100 a month platform, A$100 a seat, A$25 a timesheet seat.
+  Every module, no higher tier. A$100 a month platform, A$100 a seat, A$25 a timesheet seat.
   https://intelliai.au
