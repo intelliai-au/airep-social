@@ -13,6 +13,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DEPLOY = ROOT / "deploy"
+# The units hard-code the canonical checkout (systemd wants absolute paths), while the
+# tests may run from an author.py worktree under ~/.local/state, so the expected path is
+# never derived from the test file's own location (that failed the first December run).
+CANONICAL = Path.home() / "Documents" / "Github Projects" / "airep-social"
+UNITS = (
+    "airep-social.service",
+    "airep-social.timer",
+    "airep-social-author@.service",
+    "airep-social-author@write.timer",
+    "airep-social-author@film.timer",
+)
 
 
 class UnitFileTests(unittest.TestCase):
@@ -21,7 +32,7 @@ class UnitFileTests(unittest.TestCase):
         # KEY=VALUE words, so an unquoted path with a space becomes two assignments and
         # the second half is dropped ("Invalid environment assignment, ignoring").
         # The repo path has a space ("Github Projects"), so every value must be quoted.
-        for unit in ("airep-social.service", "airep-social.timer"):
+        for unit in UNITS:
             for line in (DEPLOY / unit).read_text(encoding="utf-8").splitlines():
                 if not line.startswith("Environment="):
                     continue
@@ -37,8 +48,18 @@ class UnitFileTests(unittest.TestCase):
 
     def test_service_runs_the_repo_script_from_the_repo(self) -> None:
         text = (DEPLOY / "airep-social.service").read_text(encoding="utf-8")
-        self.assertIn(f"WorkingDirectory={ROOT}\n", text)
-        self.assertIn(f'ExecStart=/usr/bin/env bash "{DEPLOY / "run.sh"}"\n', text)
+        self.assertIn(f"WorkingDirectory={CANONICAL}\n", text)
+        self.assertIn(f'ExecStart=/usr/bin/env bash "{CANONICAL / "deploy" / "run.sh"}"\n', text)
+
+    def test_author_units_run_author_py_from_the_repo_with_a_phase(self) -> None:
+        text = (DEPLOY / "airep-social-author@.service").read_text(encoding="utf-8")
+        self.assertIn(f"WorkingDirectory={CANONICAL}\n", text)
+        self.assertIn(f'"{CANONICAL / "author.py"}" %i\n', text)
+        self.assertIn("Conflicts=airep-social.service\n", text)  # never beside the push
+        for phase in ("write", "film"):
+            timer = (DEPLOY / f"airep-social-author@{phase}.timer").read_text(encoding="utf-8")
+            self.assertIn(f"Unit=airep-social-author@{phase}.service\n", timer)
+            self.assertIn("02:00:00\n", timer)
 
 
 class RunShTests(unittest.TestCase):
