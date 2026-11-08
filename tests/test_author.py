@@ -148,3 +148,43 @@ class DryRunTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class GuardTests(unittest.TestCase):
+    def test_only_content_and_media_may_change(self) -> None:
+        bad = author.disallowed_changes(
+            [
+                "content/2026-12-02-x.yaml",
+                "site/images/2026-12-02-x.png",
+                "site/video/airep_x_music.mp4",
+                "tests/test_push.py",
+                "templates/feature.html",
+                "",
+            ]
+        )
+        self.assertEqual(bad, ["templates/feature.html", "tests/test_push.py"])
+
+
+class ShippedRefreshTests(unittest.TestCase):
+    def _post(self, day: date, slot: str) -> object:
+        import types
+
+        return types.SimpleNamespace(slug=f"{day.isoformat()}-{slot}", date=day, slot=slot)
+
+    def test_due_in_the_first_week_when_buffer_lacks_it(self) -> None:
+        post_list = [
+            self._post(date(2026, 12, 17), "shipped"),
+            self._post(date(2026, 12, 2), "field_note"),
+        ]
+        due = author.shipped_refresh_due(date(2026, 12, 6), post_list, {})
+        self.assertIsNotNone(due)
+        self.assertEqual(due.slug, "2026-12-17-shipped")
+
+    def test_not_due_later_in_the_month_or_once_pushed(self) -> None:
+        post_list = [self._post(date(2026, 12, 17), "shipped")]
+        self.assertIsNone(author.shipped_refresh_due(date(2026, 12, 13), post_list, {}))
+        pushed = {"2026-12-17-shipped": {"linkedin": {}}}
+        self.assertIsNone(author.shipped_refresh_due(date(2026, 12, 6), post_list, pushed))
+
+    def test_not_due_when_the_month_has_no_shipped_post(self) -> None:
+        self.assertIsNone(author.shipped_refresh_due(date(2027, 1, 3), [], {}))

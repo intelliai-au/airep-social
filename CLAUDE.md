@@ -43,7 +43,8 @@ written to the end of the month after next; `author.py film` makes a month's two
 on the third Sunday. **The swarm lane is not used for content** (Keiran, 2026-11-08).
 Buffer stays on the **Free plan**: `push.py` never queues more than six a channel.
 A session asked to "write <month>" by hand follows the same steps; `deploy/briefs/`
-holds the exact briefs the runs use.
+holds the exact briefs the runs use. A content session changes only `content/`,
+`site/images/` and `site/video/`: never tests, templates, the Python or `deploy/`.
 
 1. Read the month's theme, films and dated hooks in `docs/YEAR.md` (a copy of the plan
    doc's month table, kept in step with it).

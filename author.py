@@ -33,6 +33,7 @@ from string import Template
 import posts as posts_mod
 import push
 import schedule
+import state as state_mod
 
 ROOT = Path(__file__).resolve().parent
 BRIEFS = ROOT / "deploy" / "briefs"
@@ -45,8 +46,13 @@ MONTHS_AHEAD = 2
 
 # Turn and wall-clock caps per session. A writing run is 13 files plus a render; a film
 # run drives the demo tenant and the rig, which is slower by nature.
-MAX_TURNS = {"write": 160, "review": 60, "film": 320}
-TIMEOUT_S = {"write": 60 * 60, "review": 25 * 60, "film": 120 * 60}
+MAX_TURNS = {"write": 160, "review": 60, "film": 320, "shipped": 40}
+TIMEOUT_S = {"write": 60 * 60, "review": 25 * 60, "film": 120 * 60, "shipped": 20 * 60}
+
+# What a session may change in this repo. Everything else (tests, templates, the Python,
+# the units) is the caller's; a session that touches it has drifted off its brief, as the
+# first December writer did when it rewrote two tests to fit the content it had added.
+ALLOWED_PREFIXES = ("content/", "site/images/", "site/video/")
 
 # Only these may reach the child session's environment with a value. Anything that looks
 # like a credential is blanked, and ANTHROPIC_API_KEY always is: with no key the CLI
@@ -431,6 +437,47 @@ def has_review_commit(wt: Path, base: str) -> bool:
     return any(line.startswith("review:") for line in subjects.splitlines())
 
 
+def disallowed_changes(paths: Iterable[str]) -> list[str]:
+    """Paths a session changed that are not its to change."""
+    return sorted(p for p in paths if p and not p.startswith(ALLOWED_PREFIXES))
+
+
+def session_paths(wt: Path, base: str) -> list[str]:
+    """Every path the session's own commits touched (first-parent, so a main merged in by
+    catch_up does not count against it)."""
+    shas = sh(["git", "log", "--first-parent", "--no-merges", "--format=%H", f"{base}..HEAD"], wt)
+    paths: set[str] = set()
+    for sha in shas.split():
+        paths.update(sh(["git", "show", "--name-only", "--format=", sha], wt).split("\n"))
+    return sorted(p for p in paths if p)
+
+
+def guard(wt: Path, base: str, report: RunReport) -> bool:
+    """Refuse to merge a session that edited anything outside content and media."""
+    bad = disallowed_changes(session_paths(wt, base))
+    if bad:
+        report.fail("session changed files outside content/ and site/: " + ", ".join(bad))
+        return False
+    return True
+
+
+def shipped_refresh_due(
+    today: date, post_list: list[posts_mod.Post], pushed: dict[str, object]
+) -> posts_mod.Post | None:
+    """This month's `shipped` post when the run falls in the month's first week and Buffer
+    does not hold it yet. It was written two months early, so its changelog is rewritten
+    from the month that has just ended."""
+    if today.day > 7:
+        return None
+    for post in post_list:
+        if post.slot == "shipped" and (post.date.year, post.date.month) == (
+            today.year,
+            today.month,
+        ):
+            return None if post.slug in pushed else post
+    return None
+
+
 def land(wt: Path, branch: str, base: str, report: RunReport) -> bool:
     """Merge the worktree's commits into main and push; tidy the worktree."""
     count = int(sh(["git", "rev-list", "--count", f"{base}..HEAD"], wt).strip() or 0)
@@ -480,7 +527,9 @@ def system_append(wt: Path) -> str:
     return (
         rules + "\n\n## This is an unattended run\n"
         "Nobody will answer a question: decide and proceed. Never run `git push`, never run "
-        "`push.py --live`, never touch `state/`. Commit your work in this worktree when it passes "
+        "`push.py --live`, never touch `state/`. Change only `content/`, `site/images/` and "
+        "`site/video/`: tests, templates, the Python and `deploy/` are not yours, and a commit "
+        "that touches them is refused. Commit your work in this worktree when it passes "
         "`ruff check .` and the unit tests; the caller merges it."
     )
 
@@ -547,6 +596,7 @@ def phase_write(
                 sh(["git", "commit", "-q", "-m", f"chore(build): render {brief.name} posts"], wt)
         good = (
             res.ok
+            and guard(wt, base, report)
             and catch_up(wt, report)
             and checks(wt, python, report)
             and completeness("write", wt, days, brief, report)
@@ -586,12 +636,56 @@ def phase_film(
         report.say("  " + res.text.strip().splitlines()[0][:200])
     good = (
         res.ok
+        and guard(wt, base, report)
         and catch_up(wt, report)
         and checks(wt, python, report)
         and completeness("film", wt, days, brief, report)
     )
     if not good or not land(wt, branch, base, report):
         report.fail(f"{brief.name} films not merged; worktree kept at {wt}")
+
+
+def phase_shipped(today: date, python: str, report: RunReport, *, dry_run: bool) -> None:
+    """First week of a month: rewrite this month's provisional `shipped` post from the
+    month that has just ended, so a changelog never goes out two months stale."""
+    post = shipped_refresh_due(today, posts_mod.load_posts(), state_mod.load_state())
+    if post is None:
+        return
+    py, pm = add_months(today, -1)
+    prev_month = f"{calendar.month_name[pm]} {py}"
+    prompt = Template((BRIEFS / "shipped.md").read_text()).safe_substitute(
+        file=f"content/{post.slug}.yaml",
+        slug=post.slug,
+        prev_month=prev_month,
+        since=date(py, pm, 1).isoformat(),
+        until=date(today.year, today.month, 1).isoformat(),
+        python=f'"{python}"',
+    )
+    report.say(f"{post.slug}: refreshing the changelog for {prev_month}")
+    if dry_run:
+        print(prompt)
+        return
+    base = sh(["git", "rev-parse", "HEAD"], ROOT).strip()
+    made = worktree_for("shipped", f"{today.year:04d}-{today.month:02d}", report)
+    if made is None:
+        return
+    wt, branch, _resumed = made
+    res = run_session(prompt, wt, phase="shipped", system_append=system_append(wt))
+    report.say(f"  refresher: {'ok' if res.ok else 'failed ' + res.reason}, {res.turns} turns")
+    if res.text:
+        report.say("  " + res.text.strip().splitlines()[0][:200])
+    if res.ok:
+        subprocess.run(
+            [python, "build.py", "--force", "--only", post.slug], cwd=wt, capture_output=True
+        )
+        if sh(["git", "status", "--porcelain", "--", "site/images"], wt).strip():
+            sh(["git", "add", "site/images"], wt)
+            sh(["git", "commit", "-q", "-m", f"chore(build): render {post.slug}"], wt)
+    good = (
+        res.ok and guard(wt, base, report) and catch_up(wt, report) and checks(wt, python, report)
+    )
+    if not good or not land(wt, branch, base, report):
+        report.fail(f"{post.slug} not refreshed; worktree kept at {wt}")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -615,6 +709,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.phase == "write":
             phase_write(today, args.python, report, dry_run=args.dry_run, only=args.month)
+            if not args.month:  # a one-month rerun by hand is not the monthly run
+                phase_shipped(today, args.python, report, dry_run=args.dry_run)
         else:
             phase_film(today, args.python, report, dry_run=args.dry_run, only=args.month)
     except RuntimeError as exc:
