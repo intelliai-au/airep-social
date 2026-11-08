@@ -1,0 +1,15 @@
+date: 2027-01-22
+slot: website
+video: video/website_mike-trace-engineering_scroll.mp4
+thumbnail_offset_ms: 0
+hashtags: [WebDesign, SmallBusiness, Brisbane]
+# Facts from sites.yaml (intelliai.au/work/); prices and ownership from docs/WEBSITES.md.
+linkedin: |
+  Mike Trace Engineering has serviced road sweepers in Brisbane and the Gold Coast since 2002, with no meaningful web presence until the site we built.
+  The service range is explained and the workshop is one tap away. Like every site we build, it belongs to the business: the web address, the words, the photos.
+  A simple site like this is $2,500 + GST to build, then $30 + GST a month, with no lock-in.
+  https://intelliai.au/websites/
+facebook: |
+  Mike Trace Engineering's site explains the service range and puts the workshop one tap away.
+  A simple site like this is $2,500 + GST, then $30 + GST a month. It stays the business's.
+  https://intelliai.au/websites/

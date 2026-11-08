@@ -1,0 +1,30 @@
+date: 2027-01-15
+slot: website
+image: images/2027-01-15-website-note-who-owns-it.png
+template: field_note
+alt: "Field note: who owns your website? Six things to check: the web address in your business's name, the words and photos, the design files, payment and email accounts in your name, a monthly you can stop on 30 days' notice, and a replacement site that keeps your address."
+fields:
+  kicker_left: "Field notes · websites"
+  kicker_right: "Small business · AU"
+  headline: "Who owns your website? *Six things to check.*"
+  sub: "If you stopped paying your web company tomorrow, what would you keep? Worth knowing before a new-year renewal, and before you replace an old site."
+  # Source: docs/WEBSITES.md ("What you own, always"; "Replacing a site"; the web
+  # address registered in the business's name).
+  rows:
+    - { label: "Web address", text: "Registered in your business's name, not your web company's.", tag: "yours" }
+    - { label: "Words, photos", text: "The text and pictures on the site belong to the business.", tag: "yours" }
+    - { label: "Design files", text: "Handed over with everything else if you leave.", tag: "yours" }
+    - { label: "Accounts", text: "Payments and email opened in your business's name.", tag: "yours" }
+    - { label: "Leaving", text: "A monthly, not a contract: 30 days' notice, then a handover.", tag: "30 days" }
+    - { label: "Moving", text: "A new site keeps your address; old page links still land.", tag: "kept" }
+  test: "Test: look up who your web address is registered to. If it is not your business, ask why before you renew."
+  foot_link: "intelliai.au/websites →"
+linkedin: |
+  Who owns your website? Check the web address is registered in your business's name, and that the words, photos and design files come with you if you leave.
+  With us they do: payment and email accounts open in your name, and the monthly stops on 30 days' notice with everything handed over.
+  Replacing an old site keeps your web address, and links to your old pages are sent to the new ones. $2,500 + GST to build.
+  https://intelliai.au/websites/
+facebook: |
+  Who owns your website? The web address, words, photos and design files should all be your business's.
+  With us they are, and replacing an old site keeps your address. $2,500 + GST to build.
+  https://intelliai.au/websites/

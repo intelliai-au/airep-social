@@ -1,0 +1,25 @@
+date: 2027-01-29
+slot: website
+image: images/2027-01-29-website-offer-yours-to-keep.png
+template: price
+alt: "Intelli AI websites: $2,500 + GST to build, live in about two weeks. Then $30 + GST a month for a simple site, $60 + GST with a database, from $110 + GST for a full online system. You own it, no lock-in."
+fields:
+  kicker: "Websites · the offer"
+  headline: "$2,500 to build, *yours to keep.*"
+  sub: "One fixed price, plus GST, live in about two weeks once we have your content. Then a small monthly, priced on what the site runs on, never on visitors."
+  # Source: docs/WEBSITES.md (the build price, the three plans, "What you own, always").
+  rows:
+    - { label: "Simple site", amount: "$30", unit: "+ GST a month" }
+    - { label: "With a database", amount: "$60", unit: "+ GST a month" }
+    - { label: "Full system", amount: "$110", unit: "+ GST a month, and up" }
+  footer: "You own the words, photos and web address. No contract: 30 days' notice and we hand everything over."
+  foot_link: "intelliai.au/websites →"
+linkedin: |
+  A website for your business: $2,500 + GST to build, live in about two weeks once we have your content.
+  Then $30 + GST a month for a simple site, $60 with a database, from $110 for a full online system, with hosting, backups and fixes included.
+  You own it, and there is no lock-in: 30 days' notice and everything is handed over.
+  https://intelliai.au/websites/
+facebook: |
+  A website for your business: $2,500 + GST to build, live in about two weeks.
+  Then from $30 + GST a month. You own it, no lock-in.
+  https://intelliai.au/websites/

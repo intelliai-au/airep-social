@@ -1,0 +1,31 @@
+date: 2027-01-08
+slot: website
+image: images/2027-01-08-website-gripswich-own-system.png
+template: website
+hashtags: [WebDesign, SmallBusiness, Ipswich]
+alt: "The GRIPswich Bouldering website on a laptop, built by Intelli AI: the gym moved off the off-the-shelf system it opened on in August 2026, with direct debit and card billing now run in-house."
+fields:
+  kicker: "Websites · built by Intelli AI"
+  headline: "Off the shelf, *onto a system built for the gym.*"
+  # Facts from sites.yaml (intelliai.au/work/); ownership and notice terms from docs/WEBSITES.md.
+  sub: "GRIPswich Bouldering in Ipswich opened on an off-the-shelf system. In August 2026 it cut over to one we built, with direct debit and card billing run in-house and members booking and paying for themselves."
+  rows:
+    - { text: "Cut over Aug 2026" }
+    - { text: "Billing in-house" }
+    - { text: "Direct debit" }
+    - { text: "Member self-serve" }
+    - { text: "Check-in" }
+    - { text: "Point of sale" }
+  shot: shots/gripswich-laptop.png
+  frame: laptop
+  site_url: gripswich.au
+  footer: "Every site we build belongs to the business: the words, photos, design files and web address. The monthly is not a contract; 30 days' notice and we hand everything over."
+linkedin: |
+  GRIPswich Bouldering in Ipswich opened on an off-the-shelf system. In August 2026 it cut over to one we built, with direct debit and card billing run in-house.
+  Every site we build belongs to the business: the words, photos, design files and web address. The monthly is not a contract, and either side can stop it on 30 days' notice.
+  A business website is $2,500 + GST. A full system like this one is quoted in writing before we start.
+  https://intelliai.au/websites/
+facebook: |
+  GRIPswich Bouldering moved off an off-the-shelf system onto one we built, with billing run in-house.
+  Every site we build belongs to the business, and the monthly stops on 30 days' notice.
+  https://intelliai.au/websites/
