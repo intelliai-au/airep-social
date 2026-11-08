@@ -3,7 +3,7 @@ slot: website
 image: images/2027-01-08-website-gripswich-own-system.png
 template: website
 hashtags: [WebDesign, SmallBusiness, Ipswich]
-alt: "The GRIPswich Bouldering website on a laptop, built by Intelli AI: the gym moved off the off-the-shelf system it opened on in August 2026, with direct debit and card billing now run in-house."
+alt: "The GRIPswich Bouldering website on a phone, built by Intelli AI: in August 2026 the gym cut over from the off-the-shelf system it opened on, with direct debit and card billing now run in-house."
 fields:
   kicker: "Websites · built by Intelli AI"
   headline: "Off the shelf, *onto a system built for the gym.*"
@@ -16,8 +16,8 @@ fields:
     - { text: "Member self-serve" }
     - { text: "Check-in" }
     - { text: "Point of sale" }
-  shot: shots/gripswich-laptop.png
-  frame: laptop
+  shot: shots/gripswich-phone.png
+  frame: phone
   site_url: gripswich.au
   footer: "Every site we build belongs to the business: the words, photos, design files and web address. The monthly is not a contract; 30 days' notice and we hand everything over."
 linkedin: |
