@@ -15,8 +15,9 @@ Nobody will answer a question. Check each file against CLAUDE.md and `docs/YEAR.
   emphasis phrase in the headline, the kicker labels short.
 
 Fix what you can in place, then re-render that post with
-$python build.py --force --only <slug>. Delete a post that cannot be made
-honest (and its PNG) and say so. Then `ruff check .`, $python -m unittest,
+$python build.py --force --only <slug> (if Chromium cannot start inside this
+sandbox, carry on: the caller re-renders every post of the month after you). Delete a
+post that cannot be made honest (and its PNG) and say so. Then `ruff check .`, $python -m unittest,
 and `git commit -am "review: $month_name posts"` if you changed anything. Do not push.
 
 Files:

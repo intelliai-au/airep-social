@@ -329,6 +329,23 @@ def checks(wt: Path, python: str, report: RunReport) -> bool:
     return ok
 
 
+def render_month(wt: Path, python: str, key: str, report: RunReport) -> bool:
+    """Re-render every post of month *key* outside the session's sandbox.
+
+    Chromium may not start inside the writer's network-less sandbox, and a reviewer that
+    changed a field may not have re-rendered; the caller always does, one post at a time
+    so a legacy or video post is left alone.
+    """
+    ok = True
+    for path in sorted((wt / "content").glob(f"{key}-*.yaml")):
+        args = [python, "build.py", "--force", "--only", path.stem]
+        proc = subprocess.run(args, cwd=wt, text=True, capture_output=True)
+        if proc.returncode != 0:
+            ok = False
+            report.fail(f"render {path.stem}: {(proc.stdout + proc.stderr).strip()[-300:]}")
+    return ok
+
+
 def written_days(wt: Path) -> set[date]:
     """Dates that have a valid content file in the worktree."""
     return {p.date for p in posts_mod.load_posts(wt / "content")}
@@ -457,6 +474,7 @@ def phase_write(
         res = run_session(prompt, wt, phase="write", system_append=system_append(wt))
         report.say(f"  writer: {'ok' if res.ok else 'failed ' + res.reason}, {res.turns} turns")
         if res.ok:
+            render_month(wt, python, brief.key, report)  # so the reviewer can see the PNGs
             review = Template((BRIEFS / "review.md").read_text()).safe_substitute(
                 month_name=brief.name,
                 month=brief.key,
@@ -472,6 +490,11 @@ def phase_write(
             )
             if rev.text:
                 report.say("  " + rev.text.strip().splitlines()[0][:200])
+            render_month(wt, python, brief.key, report)  # the reviewer's edits, rendered
+            # The sessions commit their own work; a re-render that changed bytes is ours.
+            if sh(["git", "status", "--porcelain", "--", "site/images"], wt).strip():
+                sh(["git", "add", "site/images"], wt)
+                sh(["git", "commit", "-q", "-m", f"chore(build): render {brief.name} posts"], wt)
         good = (
             res.ok and checks(wt, python, report) and completeness("write", wt, days, brief, report)
         )
