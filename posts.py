@@ -91,10 +91,15 @@ def parse_post(path: Path) -> Post:
     if not match:
         raise ContentError(f"{path.name}: name must be YYYY-MM-DD-slug.yaml")
     try:
+        file_day = date.fromisoformat(match.group(1))
+    except ValueError as exc:
+        raise ContentError(f"{path.name}: {match.group(1)} is not a real date") from exc
+    try:
         raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-    except yaml.YAMLError as exc:
+    except (yaml.YAMLError, ValueError) as exc:
         # An unquoted colon in a caption is the usual one. Callers handle ContentError
         # (push.py's error line, author.py's resume); a bare YAMLError went past them.
+        # PyYAML raises a plain ValueError for an impossible date (date: 2027-02-30).
         raise ContentError(f"{path.name}: not valid YAML: {exc}") from exc
     if not isinstance(raw, dict):
         raise ContentError(f"{path.name}: must be a YAML mapping of the post's fields")
@@ -103,7 +108,7 @@ def parse_post(path: Path) -> Post:
     day = raw.get("date")
     if not isinstance(day, date) or day.isoformat() != match.group(1):
         errors.append("date must match the filename's date")
-        day = date.fromisoformat(match.group(1))
+        day = file_day
 
     slot = str(raw.get("slot", ""))
     allowed = schedule.allowed_slots(day)

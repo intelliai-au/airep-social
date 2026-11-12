@@ -158,6 +158,19 @@ class ValidationTests(unittest.TestCase):
             with self.assertRaisesRegex(posts.ContentError, reason, msg=body):
                 posts.parse_post(_write(self.tmp, "2026-11-18-x.yaml", body))
 
+    def test_an_impossible_date_is_a_content_error(self) -> None:
+        # PyYAML raises a plain ValueError for 2027-02-30, and the filename's date went
+        # through date.fromisoformat unguarded: both escaped every ContentError handler,
+        # so Sunday's push.py died with a traceback and no Telegram.
+        cases = {
+            "2026-11-18-x.yaml": GOOD.replace("date: 2026-11-18", "date: 2027-02-30"),
+            "2027-02-30-x.yaml": GOOD,
+        }
+        for name, body in cases.items():
+            self.assertIn("2027-02-30", body + name)
+            with self.assertRaises(posts.ContentError, msg=name):
+                posts.parse_post(_write(self.tmp, name, body))
+
     def test_one_post_per_day(self) -> None:
         _write(self.tmp, "2026-11-18-a.yaml", GOOD)
         _write(self.tmp, "2026-11-18-b.yaml", GOOD)
