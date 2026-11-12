@@ -789,9 +789,11 @@ def main(argv: list[str] | None = None) -> int:
     report = RunReport(args.phase)
     # A dry run commits nothing, so it never waits on (or holds up) the Sunday push.
     with contextlib.nullcontext() if args.dry_run else hold_run_lock():
-        if not args.dry_run:
-            sh(["git", "pull", "--ff-only"], ROOT)
         try:
+            # Inside the try: a pull that fails (main diverged, no network at 02:00) is a
+            # failed run like any other and must reach Telegram, not only the journal.
+            if not args.dry_run:
+                sh(["git", "pull", "--ff-only"], ROOT)
             if args.phase == "write":
                 phase_write(today, args.python, report, dry_run=args.dry_run, only=args.month)
                 if not args.month:  # a one-month rerun by hand is not the monthly run

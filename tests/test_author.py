@@ -321,3 +321,28 @@ class LandTests(unittest.TestCase):
             self.assertTrue(landed)
             self.assertTrue(report.ok)
             self.assertFalse(wt.exists())
+
+
+class MainNotifyTests(unittest.TestCase):
+    def test_a_failed_pull_is_reported_on_telegram(self) -> None:
+        # Nobody reads the journal at 02:00: a pull that fails (main diverged, no network)
+        # must still reach Telegram like every other failure of the run.
+        import contextlib
+
+        def sh(args: list[str], _cwd: Path) -> str:
+            if args[:2] == ["git", "pull"]:
+                raise RuntimeError("git pull --ff-only failed: Not possible to fast-forward")
+            raise AssertionError(f"unexpected command {args}")
+
+        sent: list[author.RunReport] = []
+        with (
+            unittest.mock.patch.object(author, "hold_run_lock", contextlib.nullcontext),
+            unittest.mock.patch.object(author, "sh", sh),
+            unittest.mock.patch.object(author, "notify", sent.append),
+            unittest.mock.patch("builtins.print"),
+        ):
+            code = author.main(["write", "--python", "python3"])
+        self.assertEqual(code, 1)
+        self.assertEqual(len(sent), 1)
+        self.assertFalse(sent[0].ok)
+        self.assertIn("fast-forward", "\n".join(sent[0].lines))
