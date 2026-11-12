@@ -237,6 +237,11 @@ def main(argv: list[str] | None = None) -> int:
         post_list = posts_mod.load_posts(args.content)
     except posts_mod.ContentError as exc:
         print(f"error: {exc}", file=sys.stderr)
+        if args.live and not args.no_notify:
+            # One bad file holds back the whole fortnight, and on a Sunday nobody reads
+            # stderr: say so where the weekly summary would have gone.
+            text = f"⚠ AIREP social: nothing scheduled, a content file does not load.\n{exc}"
+            notify(env["ASTRID_WEBHOOK_URL"], env.get("ASTRID_WEBHOOK_SECRET", ""), text)
         return 2
     by_slug = {p.slug: p for p in post_list}
     pushed = state_mod.load_state(args.state)

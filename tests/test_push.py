@@ -151,6 +151,40 @@ class LiveGuardTests(unittest.TestCase):
         self.assertEqual(len(sent), 1)
         self.assertIn("Buffer HTTP 503", sent[0])
 
+    def test_a_content_file_that_does_not_load_on_sunday_reaches_telegram(self) -> None:
+        # One bad file holds back the whole fortnight; on --live it went to stderr only,
+        # which nobody reads on a Sunday, and the posts quietly stopped.
+        with tempfile.TemporaryDirectory() as tmp:
+            env_path = Path(tmp) / "env"
+            env_path.write_text(
+                "BUFFER_API_KEY=k\nBUFFER_LINKEDIN_CHANNEL_ID=l\n"
+                "BUFFER_FACEBOOK_CHANNEL_ID=f\nASTRID_WEBHOOK_URL=u\n"
+            )
+            os.chmod(env_path, 0o600)
+            content = Path(tmp) / "content"
+            content.mkdir()
+            (content / "2027-01-05-x.yaml").write_text("date: 2027-01-05\n")
+
+            def boom(*_a, **_k):
+                raise AssertionError("Buffer was called")
+
+            sent: list[str] = []
+            with (
+                unittest.mock.patch.object(buffer_api, "list_channels", boom),
+                unittest.mock.patch.object(buffer_api, "create_post", boom),
+                unittest.mock.patch.object(push, "notify", lambda _u, _s, text: sent.append(text)),
+                contextlib.redirect_stdout(io.StringIO()),
+                contextlib.redirect_stderr(io.StringIO()),
+            ):
+                live = ["--env", str(env_path), "--content", str(content), "--skip-head"]
+                code = push.main(["--live", *live, "--state", str(Path(tmp) / "s.json")])
+                self.assertEqual(code, 2)
+                self.assertEqual(len(sent), 1)
+                self.assertIn("2027-01-05-x.yaml", sent[0])
+                push.main(["--live", "--no-notify", *live])
+                push.main(live)  # a dry run never notifies
+        self.assertEqual(len(sent), 1)
+
 
 class EnvTests(unittest.TestCase):
     def test_env_file_must_be_private(self) -> None:
