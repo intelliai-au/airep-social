@@ -197,6 +197,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--skip-head", action="store_true", help="do not HEAD-check assets")
     parser.add_argument("--no-notify", action="store_true", help="live, but no Telegram")
+    parser.add_argument("--alert", metavar="TEXT", help="send TEXT to Telegram and exit")
     args = parser.parse_args(argv)
     if args.live and args.today:
         # A pretend date makes plan() keep posts whose real due time has passed, and
@@ -210,6 +211,15 @@ def main(argv: list[str] | None = None) -> int:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     base = env.get("PAGES_BASE_URL") or DEFAULT_PAGES_BASE_URL
+
+    if args.alert is not None:
+        # run.sh's own failures (a pull that stops the run before anything is scheduled)
+        # go to Telegram through the same webhook as the weekly summary.
+        if not env.get("ASTRID_WEBHOOK_URL"):
+            print(f"error: {args.env} has no ASTRID_WEBHOOK_URL", file=sys.stderr)
+            return 2
+        notify(env["ASTRID_WEBHOOK_URL"], env.get("ASTRID_WEBHOOK_SECRET", ""), args.alert)
+        return 0
 
     if args.channels:
         for ch in buffer_api.list_channels(env["BUFFER_API_KEY"]):

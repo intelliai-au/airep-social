@@ -185,6 +185,30 @@ class LiveGuardTests(unittest.TestCase):
                 push.main(live)  # a dry run never notifies
         self.assertEqual(len(sent), 1)
 
+    def test_alert_sends_its_text_and_touches_nothing_else(self) -> None:
+        # run.sh's own failures (a pull that stops the run) reach Telegram through this.
+        with tempfile.TemporaryDirectory() as tmp:
+            env_path = Path(tmp) / "env"
+            env_path.write_text("ASTRID_WEBHOOK_URL=u\n")
+            os.chmod(env_path, 0o600)
+
+            def boom(*_a, **_k):
+                raise AssertionError("Buffer was called")
+
+            sent: list[str] = []
+            with (
+                unittest.mock.patch.object(buffer_api, "list_channels", boom),
+                unittest.mock.patch.object(buffer_api, "create_post", boom),
+                unittest.mock.patch.object(push, "notify", lambda _u, _s, text: sent.append(text)),
+                contextlib.redirect_stdout(io.StringIO()),
+                contextlib.redirect_stderr(io.StringIO()),
+            ):
+                code = push.main(["--alert", "git pull failed", "--env", str(env_path)])
+                self.assertEqual((code, sent), (0, ["git pull failed"]))
+                env_path.write_text("")
+                self.assertEqual(push.main(["--alert", "x", "--env", str(env_path)]), 2)
+        self.assertEqual(sent, ["git pull failed"])
+
 
 class EnvTests(unittest.TestCase):
     def test_env_file_must_be_private(self) -> None:

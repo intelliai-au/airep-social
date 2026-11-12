@@ -38,7 +38,15 @@ push_main() {
   return 1
 }
 
-git pull --ff-only
+# A pull that fails (local changes in the way, main diverged) stops the run before
+# anything is scheduled. set -e ended it with only a journal line, which nobody reads on a
+# Sunday, so the pages went quiet; say so on Telegram instead.
+if ! pull_out=$(git pull --ff-only 2>&1); then
+  printf '%s\n' "$pull_out" >&2
+  "$PY" push.py --alert "⚠ AIREP social: nothing scheduled, git pull --ff-only failed:
+$(printf '%s\n' "$pull_out" | tail -n 8)" || true
+  exit 1
+fi
 
 # build.py renders every post, not only this fortnight's, so a film missing weeks ahead
 # fails it. Push anyway: push.py HEAD-checks each post's asset and skips (and alerts on)

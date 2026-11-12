@@ -121,7 +121,8 @@ class RunShTests(unittest.TestCase):
             'echo "$*" >> "$FAKE_LOG"\n'
             'case "$1" in\n'
             '  build.py) exit "${FAKE_BUILD_STATUS:-0}" ;;\n'
-            '  push.py) echo \'{"posts": {"x": {"linkedin": {"post_id": "p1"}}}}\' '
+            '  push.py) if [ "$2" = "--alert" ]; then exit 0; fi\n'
+            '    echo \'{"posts": {"x": {"linkedin": {"post_id": "p1"}}}}\' '
             "> state/pushed.json\n"
             # $FAKE_RACE: another clone pushes to origin while the push is running.
             '    if [ -n "${FAKE_RACE:-}" ]; then\n'
@@ -186,6 +187,31 @@ class RunShTests(unittest.TestCase):
         self.assertIn("race", on_origin)
         self.assertEqual(self._git("rev-parse", "HEAD"), self._git("rev-parse", "origin/main"))
         self.assertEqual(self._git("status", "--porcelain"), "")
+
+    def test_a_pull_that_fails_is_reported_on_telegram(self) -> None:
+        # Local changes in the way or a diverged main stop the run at the pull, before
+        # anything is scheduled. set -e ended it there with only a journal line, so the
+        # pages went quiet and nobody was told.
+        other = Path(self._tmp.name) / "other"
+        subprocess.run(
+            ["git", "clone", "-q", self._git("remote", "get-url", "origin").strip(), str(other)],
+            check=True,
+            env=self.env,
+        )
+        subprocess.run(
+            ["git", "-C", str(other), "commit", "-q", "--allow-empty", "-m", "theirs"],
+            check=True,
+            env=self.env,
+        )
+        subprocess.run(["git", "-C", str(other), "push", "-q"], check=True, env=self.env)
+        self._git("commit", "-q", "--allow-empty", "-m", "ours")
+        result = self._run_sh()
+        self.assertNotEqual(result.returncode, 0)
+        calls = self._calls()
+        self.assertTrue(calls and calls[0].startswith("push.py --alert"), calls)
+        self.assertIn("git pull", calls[0])
+        self.assertNotIn("build.py", calls)
+        self.assertNotIn("push.py --live", calls)
 
     def test_waits_while_an_author_run_holds_the_lock(self) -> None:
         # The author units used Conflicts=airep-social.service, which in systemd's
