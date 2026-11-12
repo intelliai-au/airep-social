@@ -73,7 +73,7 @@ runs `deploy/run.sh`:
 
 Everything is idempotent, so a failed run can simply run again.
 
-### Install (not yet installed; Keiran's call)
+### Install (installed on the home box since 2026-11-08)
 
 ```
 # Same style as linux-setup/install.sh: copy the units, reload, enable the timer.
