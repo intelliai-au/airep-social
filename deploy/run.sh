@@ -20,6 +20,24 @@ cd "$(dirname "$0")/.."
 
 PY="${AIREP_SOCIAL_PYTHON:-python3}"
 
+# Push main; when another push landed meanwhile (the swarm lane, a session), merge it and
+# try again. A rejected push left the local commit diverged from origin, and every later
+# Sunday then stopped at `git pull --ff-only` with nothing scheduled. A merge, not a
+# rebase: this is the shared checkout, and a rebase refuses to run on a dirty tree.
+push_main() {
+  for _ in 1 2 3; do
+    if git push -q origin main; then
+      return 0
+    fi
+    git fetch -q origin main
+    if ! git merge -q --no-edit origin/main; then
+      git merge --abort || true
+      return 1
+    fi
+  done
+  return 1
+}
+
 git pull --ff-only
 
 # build.py renders every post, not only this fortnight's, so a film missing weeks ahead
@@ -31,7 +49,7 @@ if ! git diff --quiet -- site/images || [ -n "$(git ls-files --others --exclude-
   git add site/images
   git commit -q -m "chore(build): render images for the next fortnight"
   # Buffer HEAD-checks each asset at push time, so the images must be on Pages first.
-  git push origin main
+  push_main
   sleep 90  # GitHub Pages usually rebuilds within a minute of a push
 fi
 
@@ -45,7 +63,7 @@ status=0
 if ! git diff --quiet -- state/pushed.json; then
   git add state/pushed.json
   git commit -q -m "chore(state): Buffer posts scheduled $(date +%F)"
-  git push origin main
+  push_main
 fi
 
 if [ "$status" -eq 0 ]; then

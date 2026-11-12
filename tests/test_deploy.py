@@ -122,7 +122,13 @@ class RunShTests(unittest.TestCase):
             'case "$1" in\n'
             '  build.py) exit "${FAKE_BUILD_STATUS:-0}" ;;\n'
             '  push.py) echo \'{"posts": {"x": {"linkedin": {"post_id": "p1"}}}}\' '
-            "> state/pushed.json; exit 1 ;;\n"
+            "> state/pushed.json\n"
+            # $FAKE_RACE: another clone pushes to origin while the push is running.
+            '    if [ -n "${FAKE_RACE:-}" ]; then\n'
+            '      git -C "$FAKE_RACE" commit -q --allow-empty -m race\n'
+            '      git -C "$FAKE_RACE" push -q origin main\n'
+            "    fi\n"
+            "    exit 1 ;;\n"
             "esac\n"
         )
         self.fake_py.chmod(self.fake_py.stat().st_mode | stat.S_IXUSR)
@@ -162,6 +168,24 @@ class RunShTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0, "the build failure must still fail the unit")
         self.assertEqual(self._calls(), ["build.py", "push.py --live"])
         self.assertIn("chore(state)", self._git("log", "-1", "--format=%s", "origin/main"))
+
+    def test_a_push_that_lands_meanwhile_is_merged_not_left_diverged(self) -> None:
+        # The swarm lane or a session can push to main while push.py runs. The rejected
+        # state push left a local commit that diverged main from origin, so every later
+        # Sunday stopped at `git pull --ff-only` with nothing scheduled and nobody told.
+        other = Path(self._tmp.name) / "other"
+        subprocess.run(
+            ["git", "clone", "-q", self._git("remote", "get-url", "origin").strip(), str(other)],
+            check=True,
+            env=self.env,
+        )
+        result = self._run_sh(FAKE_RACE=str(other))
+        self.assertNotEqual(result.returncode, 0, "push.py's alert still fails the unit")
+        on_origin = self._git("log", "--format=%s", "origin/main")
+        self.assertIn("chore(state)", on_origin)
+        self.assertIn("race", on_origin)
+        self.assertEqual(self._git("rev-parse", "HEAD"), self._git("rev-parse", "origin/main"))
+        self.assertEqual(self._git("status", "--porcelain"), "")
 
     def test_waits_while_an_author_run_holds_the_lock(self) -> None:
         # The author units used Conflicts=airep-social.service, which in systemd's
