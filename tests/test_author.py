@@ -265,10 +265,10 @@ class RunLockTests(unittest.TestCase):
 class LandTests(unittest.TestCase):
     """land() merges a session's commits; it must never throw away work it did not commit."""
 
-    def _repo(self, tmp: Path) -> tuple[Path, Path, str, str]:
+    @staticmethod
+    def _git(*args: str, cwd: Path) -> str:
         import subprocess
 
-        root, wt, branch = tmp / "repo", tmp / "wt", "author/film-2027-01"
         env = {
             **author.os.environ,
             "GIT_AUTHOR_NAME": "t",
@@ -276,11 +276,15 @@ class LandTests(unittest.TestCase):
             "GIT_COMMITTER_NAME": "t",
             "GIT_COMMITTER_EMAIL": "t@example.com",
         }
+        return subprocess.run(
+            ["git", *args], cwd=cwd, env=env, check=True, capture_output=True, text=True
+        ).stdout
+
+    def _repo(self, tmp: Path) -> tuple[Path, Path, str, str]:
+        root, wt, branch = tmp / "repo", tmp / "wt", "author/film-2027-01"
 
         def git(*args: str, cwd: Path = root) -> str:
-            return subprocess.run(
-                ["git", *args], cwd=cwd, env=env, check=True, capture_output=True, text=True
-            ).stdout
+            return self._git(*args, cwd=cwd)
 
         root.mkdir()
         git("init", "-q", "-b", "main")
@@ -320,6 +324,42 @@ class LandTests(unittest.TestCase):
                 landed = author.land(wt, branch, base, report)
             self.assertTrue(landed)
             self.assertTrue(report.ok)
+            self.assertFalse(wt.exists())
+
+    def test_a_push_that_landed_during_the_session_is_merged_then_pushed(self) -> None:
+        # A write run takes hours and the swarm lane ships this repo on green meanwhile.
+        # The rejected push raised after the merge, leaving local main diverged from
+        # origin, so every later Sunday stopped at run.sh's `git pull --ff-only`.
+        with tempfile.TemporaryDirectory() as tmp:
+            root, wt, branch, base = self._repo(Path(tmp))
+            origin, other = Path(tmp) / "origin.git", Path(tmp) / "other"
+            self._git("init", "-q", "--bare", "-b", "main", str(origin), cwd=root)
+            self._git("remote", "add", "origin", str(origin), cwd=root)
+            self._git("push", "-q", "-u", "origin", "main", cwd=root)
+            post = wt / "content" / "2027-01-05-x.yaml"
+            post.parent.mkdir()
+            post.write_text("x\n")
+            self._git("add", "content", cwd=wt)
+            self._git("commit", "-q", "-m", "write: January", cwd=wt)
+            self._git("clone", "-q", str(origin), str(other), cwd=root)
+            (other / "fix.py").write_text("x\n")
+            self._git("add", "fix.py", cwd=other)
+            self._git("commit", "-q", "-m", "fix: from the lane", cwd=other)
+            self._git("push", "-q", "origin", "main", cwd=other)
+            report = author.RunReport("write")
+            with (
+                unittest.mock.patch.object(author, "ROOT", root),
+                unittest.mock.patch("builtins.print"),
+            ):
+                landed = author.land(wt, branch, base, report)
+            self.assertTrue(landed, report.lines)
+            on_origin = self._git("log", "--format=%s", "origin/main", cwd=root)
+            self.assertIn("write: January", on_origin)
+            self.assertIn("fix: from the lane", on_origin)
+            self.assertEqual(
+                self._git("rev-parse", "main", cwd=root),
+                self._git("rev-parse", "origin/main", cwd=root),
+            )
             self.assertFalse(wt.exists())
 
 

@@ -568,6 +568,30 @@ def refresh_shots(python: str, report: RunReport) -> None:
     report.say(f"site screenshots refreshed ({len(changed.splitlines())} file(s))")
 
 
+def push_main(root: Path, attempts: int = 3) -> None:
+    """Push main; when origin moved meanwhile, merge it and try again (RuntimeError if not).
+
+    A session runs for hours and the swarm lane ships this repo on green in the meantime.
+    The rejected push left local main diverged from origin, and run.sh's `git pull
+    --ff-only` then stopped every later Sunday with nothing scheduled. The same merge
+    and retry as run.sh's push_main.
+    """
+    for _ in range(attempts):
+        proc = subprocess.run(
+            ["git", "push", "origin", "main"], cwd=root, text=True, capture_output=True
+        )
+        if proc.returncode == 0:
+            return
+        sh(["git", "fetch", "origin", "main"], root)
+        merge = subprocess.run(
+            ["git", "merge", "--no-edit", "origin/main"], cwd=root, text=True, capture_output=True
+        )
+        if merge.returncode != 0:
+            subprocess.run(["git", "merge", "--abort"], cwd=root, capture_output=True)
+            raise RuntimeError(f"main conflicts with origin/main in {root}:\n{merge.stdout}")
+    raise RuntimeError(f"git push origin main was rejected {attempts} times in {root}")
+
+
 def land(wt: Path, branch: str, base: str, report: RunReport) -> bool:
     """Merge the worktree's commits into main and push; tidy the worktree."""
     count = int(sh(["git", "rev-list", "--count", f"{base}..HEAD"], wt).strip() or 0)
@@ -584,7 +608,7 @@ def land(wt: Path, branch: str, base: str, report: RunReport) -> bool:
         sh(["git", "branch", "-D", branch], ROOT)
         return True
     sh(["git", "merge", "--no-edit", branch], ROOT)
-    sh(["git", "push", "origin", "main"], ROOT)
+    push_main(ROOT)
     sh(["git", "worktree", "remove", str(wt)], ROOT)
     sh(["git", "branch", "-d", branch], ROOT)
     report.say(f"merged {count} commit(s) into main and pushed")
