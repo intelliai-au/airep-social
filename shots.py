@@ -216,6 +216,10 @@ def encode_frames(frames: Path, out: Path, fps: int = FILM_FPS) -> None:
     cmd = [mpv, f"mf://{frames}/*.png", f"--mf-fps={fps}", f"--o={tmp_out}", *MPV_ARGS]
     proc = subprocess.run(cmd, text=True, capture_output=True)
     if proc.returncode != 0 or not tmp_out.exists():
+        # mpv opens its output before the first frame, so a failed encode leaves a broken
+        # .part.mp4 in site/video/, and author.py's refresh_shots commits that directory
+        # to main (and Pages) as it stands. .gitignore covers a run killed mid-encode.
+        tmp_out.unlink(missing_ok=True)
         raise RuntimeError(f"mpv failed: {(proc.stderr or proc.stdout).strip()[-400:]}")
     tmp_out.replace(out)
 

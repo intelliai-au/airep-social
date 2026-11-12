@@ -6,3 +6,5 @@ build/
 # Never: the env file lives in ~/.config/airep-social/, not here
 env
 .env
+# shots.py's half-encoded film: never committed, even when a run is killed mid-encode
+site/video/*.part.mp4

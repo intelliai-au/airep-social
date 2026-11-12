@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import os
 import shutil
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import shots
 
@@ -63,6 +66,41 @@ class EncodeTests(unittest.TestCase):
         self.assertEqual(data[4:8], b"ftyp")
         # faststart: the moov index comes before the media data.
         self.assertLess(data.find(b"moov"), data.find(b"mdat"))
+
+    def test_a_failed_encode_leaves_no_half_written_film_to_commit(self) -> None:
+        # mpv writes its output as it goes; one that dies part-way left
+        # website_<slug>_scroll.part.mp4 in site/video/, which refresh_shots then committed.
+        with tempfile.TemporaryDirectory() as tmp:
+            bin_dir = Path(tmp) / "bin"
+            bin_dir.mkdir()
+            fake = bin_dir / "mpv"
+            fake.write_text(
+                "#!/bin/sh\n"
+                'for a in "$@"; do case "$a" in --o=*) printf partial > "${a#--o=}";; esac; done\n'
+                "echo 'encode failed' >&2\nexit 1\n"
+            )
+            fake.chmod(0o755)
+            frames = Path(tmp) / "frames"
+            frames.mkdir()
+            video = Path(tmp) / "video"
+            video.mkdir()
+            out = video / "website_acme_scroll.mp4"
+            with mock.patch.dict(os.environ, {"PATH": f"{bin_dir}:{os.environ['PATH']}"}):
+                with self.assertRaises(RuntimeError):
+                    shots.encode_frames(frames, out, fps=6)
+            self.assertEqual(list(video.iterdir()), [])
+
+    def test_git_never_picks_up_a_half_written_film(self) -> None:
+        # A run killed mid-encode (author.py's shots timeout) cannot clean up after itself.
+        proc = subprocess.run(
+            ["git", "check-ignore", "-q", "site/video/website_acme_scroll.part.mp4"],
+            cwd=shots.ROOT,
+        )
+        self.assertEqual(proc.returncode, 0)
+        proc = subprocess.run(
+            ["git", "check-ignore", "-q", "site/video/website_acme_scroll.mp4"], cwd=shots.ROOT
+        )
+        self.assertEqual(proc.returncode, 1)
 
 
 if __name__ == "__main__":
