@@ -279,9 +279,17 @@ def main(argv: list[str] | None = None) -> int:
         "facebook": env["BUFFER_FACEBOOK_CHANNEL_ID"],
     }
     alerts: list[str] = []
-    live_channels = {ch["id"]: ch for ch in buffer_api.list_channels(token)}
+    try:
+        live_channels = {ch["id"]: ch for ch in buffer_api.list_channels(token)}
+    except buffer_api.BufferError as exc:
+        # A Buffer outage is an alert like any other: raising here skipped the Telegram
+        # message, so the week's posts went unscheduled with only a journal traceback.
+        alerts.append(f"Buffer did not list the channels, nothing scheduled: {exc}")
+        live_channels = None
     usable = set()
     for service, channel_id in channel_ids.items():
+        if live_channels is None:
+            break
         ch = live_channels.get(channel_id)
         if ch is None:
             alerts.append(f"{service} channel id is not visible to this API key")

@@ -118,6 +118,39 @@ class LiveGuardTests(unittest.TestCase):
         self.assertEqual(code, 2)
         self.assertIn("--today is for dry runs", err.getvalue())
 
+    def test_a_buffer_outage_on_sunday_still_sends_the_alert(self) -> None:
+        # list_channels raised straight out of main(): no Telegram, a traceback in the
+        # journal, and the week's posts silently unscheduled.
+        with tempfile.TemporaryDirectory() as tmp:
+            env_path = Path(tmp) / "env"
+            env_path.write_text(
+                "BUFFER_API_KEY=k\nBUFFER_LINKEDIN_CHANNEL_ID=l\n"
+                "BUFFER_FACEBOOK_CHANNEL_ID=f\nASTRID_WEBHOOK_URL=u\n"
+            )
+            os.chmod(env_path, 0o600)
+            state_path = Path(tmp) / "pushed.json"
+
+            def outage(*_a, **_k):
+                raise buffer_api.BufferError("Buffer HTTP 503: upstream unavailable")
+
+            def boom(*_a, **_k):
+                raise AssertionError("createPost was called")
+
+            sent: list[str] = []
+            with (
+                unittest.mock.patch.object(buffer_api, "list_channels", outage),
+                unittest.mock.patch.object(buffer_api, "create_post", boom),
+                unittest.mock.patch.object(push, "notify", lambda _u, _s, text: sent.append(text)),
+                contextlib.redirect_stdout(io.StringIO()),
+            ):
+                code = push.main(
+                    ["--live", "--env", str(env_path), "--state", str(state_path), "--skip-head"]
+                )
+            self.assertFalse(state_path.exists())  # nothing recorded as pushed
+        self.assertEqual(code, 1)
+        self.assertEqual(len(sent), 1)
+        self.assertIn("Buffer HTTP 503", sent[0])
+
 
 class EnvTests(unittest.TestCase):
     def test_env_file_must_be_private(self) -> None:
