@@ -32,10 +32,12 @@ SLOTS: frozenset[str] = frozenset().union(*WEEKDAY_SLOTS.values())
 PLAN_START = date(2026, 11, 17)
 PLAN_END = date(2027, 11, 11)
 
-# push.py schedules the next fortnight: four posts a week, so eight a channel at most,
-# which fits the Free plan's ten queued posts a channel with room for a hand-made one.
+# push.py looks a fortnight ahead but never leaves more than six posts queued a channel
+# (Keiran's rule; the Free plan holds ten, so a hand-made post still fits). The cap counts
+# what earlier Sundays already queued: four posts go out a week, so each run tops the
+# queue back up to six and every post is still scheduled before its day.
 HORIZON_DAYS = 14
-CHANNEL_CAP = 8
+CHANNEL_CAP = 6
 
 # Fewer than six weeks of unpushed calendar left means the author run (author.py, on
 # the box's Max login) is overdue for the next month (plan doc, "Writing ahead").
@@ -108,6 +110,26 @@ class Planned:
     due_at: datetime
 
 
+def queued(pushed: dict[str, dict[str, object]], now: datetime) -> dict[str, int]:
+    """Posts per channel already in Buffer's queue: pushed records still due after *now*.
+
+    push.py records each post's dueAt as UTC ISO ('...Z'). A record without a readable
+    due time is left out rather than counted forever, since it would never age out.
+    """
+    counts = dict.fromkeys(CHANNELS, 0)
+    for channels in pushed.values():
+        for channel, record in channels.items():
+            if channel not in counts or not isinstance(record, dict):
+                continue
+            try:
+                when = datetime.fromisoformat(str(record.get("due_at", "")))
+            except ValueError:
+                continue
+            if when.tzinfo is not None and when > now:
+                counts[channel] += 1
+    return counts
+
+
 def plan(
     posts: list[Schedulable],
     now: datetime,
@@ -118,13 +140,15 @@ def plan(
     """Posts to schedule now: due within the horizon, not yet pushed, oldest first.
 
     *pushed* is state.pushed.json's mapping (slug -> channel -> record). A channel
-    stops at *cap* so the Free plan's queue never overflows; the rest wait for the
-    next Sunday run.
+    stops once *cap* posts sit in its Buffer queue, counting the ones earlier runs
+    queued that are still ahead of *now*; the rest wait for the next Sunday run.
     """
     today = now.astimezone(AEST).date()
     last_day = today + timedelta(days=horizon_days)
     out: list[Planned] = []
-    per_channel = dict.fromkeys(CHANNELS, 0)
+    # Start from what is already waiting in Buffer: counting only this run's calls let a
+    # Sunday add a full cap on top of the posts the last Sunday queued.
+    per_channel = queued(pushed, now)
     for post in sorted(posts, key=lambda p: p.date):
         if post.date > last_day:
             break

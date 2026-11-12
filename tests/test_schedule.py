@@ -70,21 +70,71 @@ class DueAtTests(unittest.TestCase):
         self.assertEqual(schedule.due_at_iso(date(2027, 1, 5), "linkedin"), "2027-01-04T21:30:00Z")
 
 
+def as_pushed(plan: list[schedule.Planned], pushed: dict | None = None) -> dict:
+    """Record *plan* the way push.py --live does (due_at = the UTC dueAt sent to Buffer)."""
+    pushed = {} if pushed is None else pushed
+    for p in plan:
+        pushed.setdefault(p.slug, {})[p.channel] = {
+            "post_id": f"id-{p.slug}-{p.channel}",
+            "due_at": schedule.due_at_iso(p.date, p.channel),
+            "pushed_at": "2026-11-15T18:00:00+10:00",
+        }
+    return pushed
+
+
 class PlanTests(unittest.TestCase):
     def setUp(self) -> None:
-        self.posts = [FakePost(d.isoformat(), d) for d in schedule.cadence()[:12]]  # 4 weeks
+        self.posts = [FakePost(d.isoformat(), d) for d in schedule.cadence()[:12]]  # 3 weeks
         self.sunday = datetime(2026, 11, 15, 18, 0, tzinfo=schedule.AEST)
 
-    def test_fortnight_is_eight_posts_a_channel(self) -> None:
+    def test_first_run_queues_six_a_channel(self) -> None:
         plan = schedule.plan(self.posts, self.sunday, {})
-        self.assertEqual(len(plan), 16)
+        self.assertEqual(len(plan), 12)
         for channel in schedule.CHANNELS:
-            self.assertEqual(sum(1 for p in plan if p.channel == channel), 8)
+            self.assertEqual(sum(1 for p in plan if p.channel == channel), 6)
         self.assertEqual(plan[0].slug, "2026-11-17")
-        self.assertEqual(plan[-1].date, date(2026, 11, 27))  # the second Friday
+        self.assertEqual(plan[-1].date, date(2026, 11, 25))  # Thu 26 and Fri 27 wait a week
         self.assertTrue(all(p.date <= date(2026, 11, 29) for p in plan))
-        # Eight queued a channel stays under the Free plan's ten.
-        self.assertLessEqual(schedule.CHANNEL_CAP, 9)
+        # Keiran's rule: never more than six queued a channel (the Free plan holds ten).
+        self.assertLessEqual(schedule.CHANNEL_CAP, 6)
+
+    def test_cap_counts_posts_already_queued(self) -> None:
+        # The bug: the cap counted only this run's calls, so the second Sunday added six
+        # more on top of the two still waiting from the first: eight queued a channel.
+        first = schedule.plan(self.posts, self.sunday, {})
+        pushed = as_pushed(first)
+        next_sunday = self.sunday + timedelta(weeks=1)
+        self.assertEqual(schedule.queued(pushed, next_sunday), {"linkedin": 2, "facebook": 2})
+        second = schedule.plan(self.posts, next_sunday, pushed)
+        for channel in schedule.CHANNELS:
+            self.assertEqual(sum(1 for p in second if p.channel == channel), 4)
+        self.assertEqual(
+            sorted({p.slug for p in second}),
+            ["2026-11-26", "2026-11-27", "2026-12-01", "2026-12-02"],
+        )
+
+    def test_weekly_runs_never_queue_more_than_the_cap_and_miss_nothing(self) -> None:
+        posts = [FakePost(d.isoformat(), d) for d in schedule.cadence()[:40]]
+        pushed: dict = {}
+        sunday = self.sunday
+        for _ in range(8):
+            plan = schedule.plan(posts, sunday, pushed)
+            as_pushed(plan, pushed)
+            depth = schedule.queued(pushed, sunday)
+            self.assertTrue(all(n <= schedule.CHANNEL_CAP for n in depth.values()), depth)
+            sunday += timedelta(weeks=1)
+        # Every post due before the last run was queued on both channels, ahead of time.
+        for post in posts:
+            if schedule.due_at(post.date, "facebook") < sunday - timedelta(weeks=1):
+                self.assertEqual(set(pushed.get(post.slug, {})), set(schedule.CHANNELS), post)
+
+    def test_queued_ignores_past_and_unreadable_due_times(self) -> None:
+        pushed = {
+            "past": {"linkedin": {"due_at": "2026-11-10T21:30:00Z"}},
+            "ahead": {"linkedin": {"due_at": "2026-11-16T21:30:00Z"}},
+            "junk": {"facebook": {"due_at": "due"}, "linkedin": {"post_id": "x"}},
+        }
+        self.assertEqual(schedule.queued(pushed, self.sunday), {"linkedin": 1, "facebook": 0})
 
     def test_cap_limits_each_channel(self) -> None:
         plan = schedule.plan(self.posts, self.sunday, {}, cap=4)
@@ -93,13 +143,13 @@ class PlanTests(unittest.TestCase):
         self.assertEqual(len(plan), 12)  # the cap, not the horizon, is the limit here
 
     def test_already_pushed_channels_are_skipped(self) -> None:
-        pushed = {"2026-11-17": {"linkedin": {"post_id": "x"}}}
+        pushed = {"2026-11-17": {"linkedin": {"post_id": "x", "due_at": "2026-11-16T21:30:00Z"}}}
         plan = schedule.plan(self.posts, self.sunday, pushed)
         self.assertNotIn(("2026-11-17", "linkedin"), [(p.slug, p.channel) for p in plan])
         self.assertIn(("2026-11-17", "facebook"), [(p.slug, p.channel) for p in plan])
-        # Only eight posts sit inside the fortnight, so LinkedIn has seven left to make.
-        self.assertEqual(sum(1 for p in plan if p.channel == "linkedin"), 7)
-        self.assertEqual(sum(1 for p in plan if p.channel == "facebook"), 8)
+        # LinkedIn already holds one queued post, so it gets five more to reach six.
+        self.assertEqual(sum(1 for p in plan if p.channel == "linkedin"), 5)
+        self.assertEqual(sum(1 for p in plan if p.channel == "facebook"), 6)
 
     def test_past_due_times_are_not_scheduled(self) -> None:
         tuesday_10am = datetime(2026, 11, 17, 10, 0, tzinfo=schedule.AEST)

@@ -245,6 +245,12 @@ def main(argv: list[str] | None = None) -> int:
     runs_out, write_ahead = schedule.content_runs_out(post_list, now)
 
     print(f"airep-social push · now {now:%a %d %b %Y %H:%M} AEST · horizon {args.horizon} days")
+    # Shown so a dry run makes the queue cap checkable by eye: queued + planned <= cap.
+    depth = schedule.queued(pushed, now)
+    print(
+        f"Already queued in Buffer: LinkedIn {depth['linkedin']}, "
+        f"Facebook {depth['facebook']} (cap {args.cap} a channel)"
+    )
     print(f"{len(plan)} createPost call(s) planned:")
     for line in plan_lines(plan, by_slug, base):
         print("  " + line)

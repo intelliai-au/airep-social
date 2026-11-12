@@ -61,9 +61,11 @@ runs `deploy/run.sh`:
    for Pages.
 3. `push.py --live`: for every post dated in the next 14 days whose channel is not yet
    in `state/pushed.json`, HEAD-check the asset URL (retrying for ~3.5 min while Pages rebuilds), then `createPost` with
-   `mode: customScheduled` and the slot's `dueAt`. At most **8 posts a channel** per
-   run (four a week), so Buffer's Free plan (10 queued a channel) never overflows. Both channels are
-   checked for `isDisconnected` first.
+   `mode: customScheduled` and the slot's `dueAt`. Never more than **6 posts queued a
+   channel**, counting the ones earlier Sundays queued that have not gone out yet, so
+   Buffer's Free plan (10 queued a channel) never overflows. Four go out a week, so each
+   Sunday tops the queue back up to six. Both channels are checked for `isDisconnected`
+   first.
 4. Commit and push `state/pushed.json`.
 5. A Telegram message arrives through Astrid: what was queued, each asset's link, the
    next post, and any alert (page disconnected, asset not reachable, content running

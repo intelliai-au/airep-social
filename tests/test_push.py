@@ -8,7 +8,7 @@ import os
 import tempfile
 import unittest
 import unittest.mock
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
 import buffer_api
@@ -37,15 +37,46 @@ class DryRunTests(unittest.TestCase):
             text = out.getvalue()
         self.assertEqual(code, 0)
         self.assertIn("DRY RUN", text)
-        # Four posts a week (the Friday website post since 2026-11-08), two weeks ahead.
-        self.assertIn("16 createPost call(s) planned", text)
+        # Four posts a week, but never more than six queued a channel: Thu 26 and
+        # Fri 27 Nov wait for the next Sunday.
+        self.assertIn("Already queued in Buffer: LinkedIn 0, Facebook 0 (cap 6 a channel)", text)
+        self.assertIn("12 createPost call(s) planned", text)
         self.assertIn("Tue 17 Nov 07:30 LI", text)
-        self.assertIn("Fri 27 Nov 18:30 FB", text)
+        self.assertIn("Wed 25 Nov 18:30 FB", text)
+        self.assertNotIn("Thu 26 Nov", text)
         self.assertIn("video/airep_reorder_music.mp4", text)
         self.assertIn("images/2026-11-20-website-gripswich.png", text)
         self.assertIn(push.VETO_LINE, text)
-        self.assertIn("LinkedIn 8, Facebook 8", text)
+        self.assertIn("LinkedIn 6, Facebook 6", text)
         self.assertIn("the author timer writes December", text)
+
+    def test_next_sunday_tops_the_queue_back_up_to_six(self) -> None:
+        # State as the 15 Nov live run leaves it (17-25 Nov queued on both pages).
+        with tempfile.TemporaryDirectory() as tmp:
+            state_path = Path(tmp) / "pushed.json"
+            import state as state_mod
+
+            now = datetime(2026, 11, 15, 18, 0, tzinfo=schedule.AEST)
+            data: dict = {}
+            for item in schedule.plan(posts.load_posts(), now, {}):
+                state_mod.record(
+                    data,
+                    item.slug,
+                    item.channel,
+                    "id",
+                    schedule.due_at_iso(item.date, item.channel),
+                    "at",
+                )
+            state_mod.save_state(data, state_path)
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                push.main(["--today", "2026-11-22", "--state", str(state_path)])
+        text = out.getvalue()
+        self.assertIn("Already queued in Buffer: LinkedIn 2, Facebook 2", text)
+        self.assertIn("8 createPost call(s) planned", text)
+        self.assertIn("Thu 26 Nov 07:30 LI", text)
+        self.assertIn("Wed 02 Dec 18:30 FB", text)
+        self.assertNotIn("Thu 03 Dec", text)
 
     def test_second_run_after_a_push_plans_nothing_new(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -161,14 +192,14 @@ class TelegramTextTests(unittest.TestCase):
             plan,
             by_slug,
             "https://pages/site/",
-            scheduled=16,
+            scheduled=12,
             alerts=["facebook page is no longer authorised"],
             runs_out=date(2026, 11, 26),
             write_ahead=True,
             dry_run=False,
         )
         self.assertEqual(text.count("airep_reorder_music.mp4"), 1)
-        self.assertIn("Scheduled 16 of 16", text)
+        self.assertIn("Scheduled 12 of 12", text)
         self.assertIn("Fri 20 Nov · website", text)
         self.assertIn("⚠ facebook page is no longer authorised", text)
         self.assertIn("Content runs out Thu 26 Nov", text)
