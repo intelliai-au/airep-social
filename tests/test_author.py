@@ -220,3 +220,43 @@ class ShippedRefreshTests(unittest.TestCase):
 
     def test_not_due_when_the_month_has_no_shipped_post(self) -> None:
         self.assertIsNone(author.shipped_refresh_due(date(2027, 1, 3), [], {}))
+
+
+class RunLockTests(unittest.TestCase):
+    """author.py and deploy/run.sh share one lock instead of systemd's Conflicts=."""
+
+    def test_the_lock_is_held_inside_and_released_after(self) -> None:
+        import subprocess
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "state" / "run.lock"
+
+            def free() -> bool:
+                # flock(1) is what run.sh waits with; -n answers at once.
+                return subprocess.run(["flock", "-n", str(path), "true"]).returncode == 0
+
+            with author.hold_run_lock(path):
+                self.assertFalse(free())
+            self.assertTrue(free())
+
+    def test_the_default_is_the_lock_run_sh_takes(self) -> None:
+        with unittest.mock.patch.dict(author.os.environ, {}, clear=False):
+            author.os.environ.pop("AIREP_SOCIAL_LOCK", None)
+            self.assertEqual(
+                author.run_lock_path(), Path.home() / ".local/state/airep-social/run.lock"
+            )
+        run_sh = (author.ROOT / "deploy" / "run.sh").read_text(encoding="utf-8")
+        self.assertIn('"${AIREP_SOCIAL_LOCK:-$HOME/.local/state/airep-social/run.lock}"', run_sh)
+
+    def test_a_dry_run_never_takes_it(self) -> None:
+        import contextlib
+        import io
+
+        def refuse(*_args, **_kwargs):
+            raise AssertionError("a dry run took the run lock")
+
+        with (
+            unittest.mock.patch.object(author, "hold_run_lock", refuse),
+            contextlib.redirect_stdout(io.StringIO()),
+        ):
+            author.main(["film", "--dry-run", "--today", "2026-11-08", "--python", "python3"])

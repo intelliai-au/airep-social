@@ -126,6 +126,17 @@ class BuildTests(unittest.TestCase):
             build.build([v], self.site, renderer=self._renderer, log=lambda _: None), []
         )
 
+    def test_one_bad_post_does_not_stop_the_others_rendering(self) -> None:
+        # build.py renders every post, not only this fortnight's. A December film the
+        # film run never made used to stop it at that post, so the posts after it went
+        # unrendered and run.sh (set -e) skipped the whole Sunday push.
+        v = posts.Post("v", date(2026, 12, 1), "feature", "x", "x", video="video/x.mp4")
+        a = _post("a", "images/a.png")
+        with self.assertRaisesRegex(build.BuildError, "v: film video/x.mp4") as caught:
+            build.build([v, a], self.site, renderer=self._renderer, log=lambda _: None)
+        self.assertTrue((self.site / "images" / "a.png").exists())
+        self.assertEqual([p.name for p in caught.exception.written], ["a.png"])
+
     def test_legacy_png_is_flattened_to_rgb(self) -> None:
         try:
             from PIL import Image

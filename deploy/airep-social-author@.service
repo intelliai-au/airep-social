@@ -2,8 +2,8 @@
 Description=AIREP social authoring (%i): a headless Claude Code run on the box's Max login
 After=network-online.target
 Wants=network-online.target
-# Never alongside the Sunday push: both commit to main.
-Conflicts=airep-social.service
+# Never alongside the Sunday push (both commit to main), by the lock author.py and
+# run.sh share, not Conflicts=: that SIGTERMs whichever unit was already running.
 
 [Service]
 Type=oneshot

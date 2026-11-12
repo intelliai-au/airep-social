@@ -20,11 +20,13 @@ from __future__ import annotations
 import argparse
 import asyncio
 import calendar
+import contextlib
+import fcntl
 import os
 import re
 import subprocess
 import sys
-from collections.abc import Iterable
+from collections.abc import Iterable, Iterator
 from dataclasses import dataclass, field
 from datetime import date, datetime
 from pathlib import Path
@@ -338,6 +340,31 @@ def run_session(prompt: str, cwd: Path, *, phase: str, system_append: str) -> Se
 
 
 # ----------------------------------------------------------------------------- git + checks
+
+
+def run_lock_path() -> Path:
+    """The lock deploy/run.sh takes too; AIREP_SOCIAL_LOCK overrides it (the tests do)."""
+    return Path(os.environ.get("AIREP_SOCIAL_LOCK") or STATE_DIR / "run.lock")
+
+
+@contextlib.contextmanager
+def hold_run_lock(path: Path | None = None) -> Iterator[None]:
+    """Wait for, then hold, the lock the Sunday push holds while it runs.
+
+    Both commit to main. The author units used Conflicts=airep-social.service instead,
+    which in systemd's default replace mode SIGTERMs whichever unit was already running:
+    a push killed after Buffer took its posts but before state/pushed.json was committed.
+    Python opens the file non-inheritable, so the sessions this run spawns never hold it.
+    """
+    path = path or run_lock_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a") as handle:
+        try:
+            fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            print(f"waiting for {path}: the Sunday push is running", flush=True)
+            fcntl.flock(handle, fcntl.LOCK_EX)
+        yield
 
 
 def sh(args: list[str], cwd: Path) -> str:
@@ -757,19 +784,21 @@ def main(argv: list[str] | None = None) -> int:
     today = date.fromisoformat(args.today) if args.today else datetime.now(schedule.AEST).date()
 
     report = RunReport(args.phase)
-    if not args.dry_run:
-        sh(["git", "pull", "--ff-only"], ROOT)
-    try:
-        if args.phase == "write":
-            phase_write(today, args.python, report, dry_run=args.dry_run, only=args.month)
-            if not args.month:  # a one-month rerun by hand is not the monthly run
-                phase_shipped(today, args.python, report, dry_run=args.dry_run)
-        else:
-            phase_film(today, args.python, report, dry_run=args.dry_run, only=args.month)
-    except RuntimeError as exc:
-        report.fail(str(exc))
-    if not args.dry_run:
-        notify(report)
+    # A dry run commits nothing, so it never waits on (or holds up) the Sunday push.
+    with contextlib.nullcontext() if args.dry_run else hold_run_lock():
+        if not args.dry_run:
+            sh(["git", "pull", "--ff-only"], ROOT)
+        try:
+            if args.phase == "write":
+                phase_write(today, args.python, report, dry_run=args.dry_run, only=args.month)
+                if not args.month:  # a one-month rerun by hand is not the monthly run
+                    phase_shipped(today, args.python, report, dry_run=args.dry_run)
+            else:
+                phase_film(today, args.python, report, dry_run=args.dry_run, only=args.month)
+        except RuntimeError as exc:
+            report.fail(str(exc))
+        if not args.dry_run:
+            notify(report)
     return 0 if report.ok else 1
 
 

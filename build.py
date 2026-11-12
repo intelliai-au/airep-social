@@ -46,7 +46,15 @@ _EMPHASIS = re.compile(r"\*(.+?)\*")
 
 
 class BuildError(RuntimeError):
-    """A post cannot be rendered; the message names the post."""
+    """A post cannot be rendered; the message names the post.
+
+    From build() it covers every post that failed, one per line, and ``written`` holds
+    what the other posts rendered.
+    """
+
+    def __init__(self, message: str, written: list[Path] | None = None) -> None:
+        super().__init__(message)
+        self.written = written or []
 
 
 def _value(value: object) -> str:
@@ -157,40 +165,68 @@ def build(
     force: bool = False,
     log: Callable[[str], None] = print,
 ) -> list[Path]:
-    """Render what is missing and return the paths written."""
+    """Render what is missing and return the paths written.
+
+    A post that cannot be built does not stop the rest: this runs over every post, not
+    just the fortnight being pushed, and one stopping at a film due in a month left the
+    posts after it unrendered. Every failure is raised together at the end.
+    """
     written: list[Path] = []
+    failures: list[str] = []
     for post in post_list:
-        if post.is_video:
-            if not (site_dir / post.video).exists():
-                raise BuildError(f"{post.slug}: film {post.video} is not in site/")
+        try:
+            out = _build_one(post, site_dir, templates_dir, renderer, legacy_dir, force, log)
+        except BuildError as exc:
+            log(f"FAIL    {exc}")
+            failures.append(str(exc))
             continue
-        out = site_dir / post.image
-        if out.exists() and not force:
-            log(f"skip    {post.image} (exists)")
-            continue
-        if post.image.startswith("images/legacy/"):
-            src = legacy_dir / Path(post.image).name
-            if not src.exists():
-                raise BuildError(f"{post.slug}: legacy PNG {src.name} is not in assets/legacy/")
-            flatten_legacy(src, out)
-            log(f"legacy  {post.image}")
-        elif post.template:
-            if renderer is None:
-                raise BuildError(f"{post.slug}: needs rendering but no renderer was given")
-            renderer(
-                render_html(post.template, post.fields, templates_dir, site_dir),
-                out,
-                _size(post),
-            )
-            log(f"render  {post.image} ({post.template})")
-        elif out.exists():
-            # Only reachable with --force: a hand-placed PNG has nothing to re-render from.
-            log(f"keep    {post.image} (hand-placed, no template to re-render)")
-            continue
-        else:
-            raise BuildError(f"{post.slug}: {post.image} is missing and the post has no template")
-        written.append(out)
+        if out is not None:
+            written.append(out)
+    if failures:
+        raise BuildError("\n".join(failures), written)
     return written
+
+
+def _build_one(
+    post: posts_mod.Post,
+    site_dir: Path,
+    templates_dir: Path,
+    renderer: Renderer | None,
+    legacy_dir: Path,
+    force: bool,
+    log: Callable[[str], None],
+) -> Path | None:
+    """Build one post's asset; the path written, or None when nothing was."""
+    if post.is_video:
+        if not (site_dir / post.video).exists():
+            raise BuildError(f"{post.slug}: film {post.video} is not in site/")
+        return None
+    out = site_dir / post.image
+    if out.exists() and not force:
+        log(f"skip    {post.image} (exists)")
+        return None
+    if post.image.startswith("images/legacy/"):
+        src = legacy_dir / Path(post.image).name
+        if not src.exists():
+            raise BuildError(f"{post.slug}: legacy PNG {src.name} is not in assets/legacy/")
+        flatten_legacy(src, out)
+        log(f"legacy  {post.image}")
+    elif post.template:
+        if renderer is None:
+            raise BuildError(f"{post.slug}: needs rendering but no renderer was given")
+        renderer(
+            render_html(post.template, post.fields, templates_dir, site_dir),
+            out,
+            _size(post),
+        )
+        log(f"render  {post.image} ({post.template})")
+    elif out.exists():
+        # Only reachable with --force: a hand-placed PNG has nothing to re-render from.
+        log(f"keep    {post.image} (hand-placed, no template to re-render)")
+        return None
+    else:
+        raise BuildError(f"{post.slug}: {post.image} is missing and the post has no template")
+    return out
 
 
 def _size(post: posts_mod.Post) -> tuple[int, int]:
@@ -220,12 +256,17 @@ def main(argv: list[str] | None = None) -> int:
                     render_html(post.template, post.fields), encoding="utf-8"
                 )
     renderer = PlaywrightRenderer()
+    status = 0
     try:
         written = build(post_list, renderer=renderer, force=args.force)
+    except BuildError as exc:
+        # The rest still rendered; run.sh commits them and pushes before failing the unit.
+        print(f"cannot build:\n{exc}", file=sys.stderr)
+        written, status = exc.written, 1
     finally:
         renderer.close()
     print(f"{len(written)} image(s) written, {len(post_list) - len(written)} untouched")
-    return 0
+    return status
 
 
 if __name__ == "__main__":

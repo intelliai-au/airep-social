@@ -53,12 +53,15 @@ Thu 11 Nov 2027. `posts.py` refuses a file whose slot does not match its weekday
 ## How the timer runs
 
 Every Sunday at 18:00 AEST, `airep-social.timer` starts `airep-social.service`, which
-runs `deploy/run.sh`:
+runs `deploy/run.sh`. It first takes `~/.local/state/airep-social/run.lock`, which
+`author.py` holds for a whole authoring run, so the two never commit to main at once (a
+push that finds an author run going waits for it; the unit allows 3h30m):
 
 1. `git pull --ff-only`
 2. `build.py`: render any post image that does not exist yet (Playwright, Chromium from
    Astrid's venv, 1080 CSS px at device scale 2). Commit and push `site/images/`, wait
-   for Pages.
+   for Pages. A post that cannot be built (a film that never arrived) does not stop the
+   others or the push; the unit fails at the end so it is seen.
 3. `push.py --live`: for every post dated in the next 14 days whose channel is not yet
    in `state/pushed.json`, HEAD-check the asset URL (retrying for ~3.5 min while Pages rebuilds), then `createPost` with
    `mode: customScheduled` and the slot's `dueAt`. Never more than **6 posts queued a

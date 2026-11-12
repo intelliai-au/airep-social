@@ -12,4 +12,6 @@ ExecStart=/usr/bin/env bash "/home/keiran/Documents/Github Projects/airep-social
 # Playwright + Chromium live in Astrid's venv; run.sh honours this override. Quoted: systemd
 # splits an unquoted Environment= line on spaces, and this path has one ("Github Projects").
 Environment="AIREP_SOCIAL_PYTHON=/home/keiran/Documents/Github Projects/nova/Nova/venv/bin/python"
-TimeoutStartSec=20min
+# Twenty minutes of work, plus up to 3h waiting for an author run to free the lock
+# (run.sh; the author units' own limit is 3h).
+TimeoutStartSec=3h30min
