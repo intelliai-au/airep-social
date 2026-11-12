@@ -505,13 +505,15 @@ def disallowed_changes(paths: Iterable[str]) -> list[str]:
 
 
 def session_paths(wt: Path, base: str) -> list[str]:
-    """Every path the session's own commits touched (first-parent, so a main merged in by
-    catch_up does not count against it)."""
-    shas = sh(["git", "log", "--first-parent", "--no-merges", "--format=%H", f"{base}..HEAD"], wt)
-    paths: set[str] = set()
-    for sha in shas.split():
-        paths.update(sh(["git", "show", "--name-only", "--format=", sha], wt).split("\n"))
-    return sorted(p for p in paths if p)
+    """Every path the worktree's branch changes, i.e. what land() would merge into main.
+
+    The diff from where the branch and *base* meet, so a main merged in by catch_up does
+    not count against the session. Not a walk of the session's own commits: that read a
+    `git mv` as its new path only (moving a template into site/images/ deleted it from
+    main unseen) and skipped merge commits, so a side branch merged in was never checked.
+    """
+    out = sh(["git", "diff", "--name-only", "--no-renames", f"{base}...HEAD"], wt)
+    return sorted(p for p in out.splitlines() if p)
 
 
 def guard(wt: Path, base: str, report: RunReport) -> bool:

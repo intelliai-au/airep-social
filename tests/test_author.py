@@ -6,6 +6,7 @@ import sys
 import tempfile
 import unittest
 import unittest.mock
+from collections.abc import Callable
 from datetime import date
 from pathlib import Path
 
@@ -195,6 +196,65 @@ class GuardTests(unittest.TestCase):
                 "tests/test_push.py",
             ],
         )
+
+    def _session_repo(self, tmp: Path) -> tuple[Path, Path, str, Callable[..., str]]:
+        root, wt = tmp / "repo", tmp / "wt"
+
+        def git(*args: str, cwd: Path = wt) -> str:
+            return LandTests._git(*args, cwd=cwd)
+
+        root.mkdir()
+        git("init", "-q", "-b", "main", cwd=root)
+        (root / "templates").mkdir()
+        (root / "templates" / "feature.html").write_text("".join(f"{i}\n" for i in range(50)))
+        (root / "push.py").write_text("print('push')\n")
+        git("add", ".", cwd=root)
+        git("commit", "-q", "-m", "init", cwd=root)
+        base = git("rev-parse", "HEAD", cwd=root).strip()
+        git("worktree", "add", "-q", "-b", "author/write-2027-01", str(wt), "main", cwd=root)
+        return root, wt, base, git
+
+    def test_a_moved_file_counts_where_it_left_from(self) -> None:
+        # `git show --name-only` names a rename by its new path only, so moving a template
+        # into site/images/ passed the guard and deleted it from main.
+        with tempfile.TemporaryDirectory() as tmp:
+            _root, wt, base, git = self._session_repo(Path(tmp))
+            (wt / "site" / "images").mkdir(parents=True)
+            git("mv", "templates/feature.html", "site/images/feature.html")
+            git("commit", "-q", "-m", "write: tidy")
+            report = author.RunReport("write")
+            self.assertFalse(author.guard(wt, base, report))
+            self.assertIn("templates/feature.html", "\n".join(report.lines))
+
+    def test_a_side_branch_merged_by_the_session_is_checked(self) -> None:
+        # The walk skipped merge commits, so code merged in from a side branch went unseen.
+        with tempfile.TemporaryDirectory() as tmp:
+            _root, wt, base, git = self._session_repo(Path(tmp))
+            git("checkout", "-q", "-b", "side")
+            (wt / "push.py").write_text("print('changed')\n")
+            git("commit", "-q", "-am", "side")
+            git("checkout", "-q", "author/write-2027-01")
+            git("merge", "-q", "--no-ff", "-m", "write: merge", "side")
+            report = author.RunReport("write")
+            self.assertFalse(author.guard(wt, base, report))
+            self.assertIn("push.py", "\n".join(report.lines))
+
+    def test_main_merged_in_by_catch_up_does_not_count_against_the_session(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root, wt, base, git = self._session_repo(Path(tmp))
+            (wt / "content").mkdir()
+            (wt / "content" / "2027-01-05-x.yaml").write_text("slug: x\n")
+            git("add", "content")
+            git("commit", "-q", "-m", "write: January")
+            (root / "push.py").write_text("print('fixed on main')\n")
+            git("commit", "-q", "-am", "fix: push", cwd=root)
+            self.assertEqual(author.session_paths(wt, base), ["content/2027-01-05-x.yaml"])
+            git("merge", "-q", "--no-edit", "main")  # catch_up, then the run stops short
+            # The resumed run reads base from main again, so the fix is main's, not ours.
+            new_base = git("rev-parse", "HEAD", cwd=root).strip()
+            report = author.RunReport("write")
+            self.assertTrue(author.guard(wt, new_base, report), report.lines)
+            self.assertEqual(author.session_paths(wt, new_base), ["content/2027-01-05-x.yaml"])
 
 
 class ShippedRefreshTests(unittest.TestCase):
