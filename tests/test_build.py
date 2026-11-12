@@ -137,6 +137,25 @@ class BuildTests(unittest.TestCase):
         self.assertTrue((self.site / "images" / "a.png").exists())
         self.assertEqual([p.name for p in caught.exception.written], ["a.png"])
 
+    def test_a_crash_in_one_post_does_not_stop_the_others_either(self) -> None:
+        # Only BuildError was caught: a Chromium timeout, or `rows:` on a template with
+        # no row partial, raised out of the loop and left every later post unrendered,
+        # so Sunday's push skipped them all as missing.
+        def flaky(html: str, out: Path, size: tuple[int, int]) -> None:
+            if out.name == "a.png":
+                raise TimeoutError("Timeout 30000ms exceeded")
+            self._renderer(html, out, size)
+
+        a = _post("a", "images/a.png")
+        d = _post("d", "images/d.png", template="date_post")
+        b = _post("b", "images/b.png")
+        with self.assertRaises(build.BuildError) as caught:
+            build.build([a, d, b], self.site, renderer=flaky, log=lambda _: None)
+        message = str(caught.exception)
+        self.assertIn("a: TimeoutError", message)
+        self.assertIn("d: FileNotFoundError", message)
+        self.assertEqual([p.name for p in caught.exception.written], ["b.png"])
+
     def test_legacy_png_is_flattened_to_rgb(self) -> None:
         try:
             from PIL import Image

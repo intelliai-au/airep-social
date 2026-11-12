@@ -180,6 +180,13 @@ def build(
             log(f"FAIL    {exc}")
             failures.append(str(exc))
             continue
+        except Exception as exc:  # noqa: BLE001 - one post's crash is that post's failure
+            # A Chromium timeout, or `rows:` on a template with no row partial, raised out
+            # of the loop and left every later post unrendered for Sunday's push.
+            failure = f"{post.slug}: {type(exc).__name__}: {exc}"
+            log(f"FAIL    {failure}")
+            failures.append(failure)
+            continue
         if out is not None:
             written.append(out)
     if failures:
