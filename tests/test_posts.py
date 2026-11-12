@@ -133,6 +133,19 @@ class ValidationTests(unittest.TestCase):
         film = GOOD.replace("image: images/x.png\ntemplate: field_note", "video: video/a_b-c.mp4")
         self.assertTrue(posts.parse_post(_write(self.tmp, "2026-11-18-x.yaml", film)).is_video)
 
+    def test_thumbnail_offset_is_whole_milliseconds(self) -> None:
+        # push.py int()s it while building createPost; "3s" raised ValueError mid-run on
+        # Sunday, after some posts were already in Buffer, and no Telegram went out.
+        film = GOOD.replace("image: images/x.png\ntemplate: field_note", "video: video/x.mp4")
+        for bad in ("3s", "-1", "true", "'3000'"):
+            body = film + f"thumbnail_offset_ms: {bad}\n"
+            with self.assertRaisesRegex(posts.ContentError, "thumbnail_offset_ms", msg=bad):
+                posts.parse_post(_write(self.tmp, "2026-11-18-x.yaml", body))
+        post = posts.parse_post(
+            _write(self.tmp, "2026-11-18-x.yaml", film + "thumbnail_offset_ms: 0\n")
+        )
+        self.assertEqual(post.thumbnail_offset_ms, 0)
+
     def test_one_post_per_day(self) -> None:
         _write(self.tmp, "2026-11-18-a.yaml", GOOD)
         _write(self.tmp, "2026-11-18-b.yaml", GOOD)

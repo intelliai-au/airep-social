@@ -112,6 +112,11 @@ def parse_post(path: Path) -> Post:
         errors.append(f"image must be images/<name>.png under site/, not {image!r}")
     if video and not _VIDEO_PATH.match(str(video)):
         errors.append(f"video must be video/<name>.mp4 under site/, not {video!r}")
+    thumb = raw.get("thumbnail_offset_ms")
+    # push.py int()s this while building createPost, so a "3s" would raise mid-run on
+    # Sunday, after earlier posts were already in Buffer. bool is an int subclass: refused.
+    if thumb is not None and (not isinstance(thumb, int) or isinstance(thumb, bool) or thumb < 0):
+        errors.append(f"thumbnail_offset_ms must be whole milliseconds, e.g. 3000, not {thumb!r}")
     template = raw.get("template")
     if template and video:
         errors.append("a video post has no template")
@@ -145,7 +150,7 @@ def parse_post(path: Path) -> Post:
         template=template,
         fields=dict(raw.get("fields") or {}),
         alt=str(raw.get("alt", "")),
-        thumbnail_offset_ms=raw.get("thumbnail_offset_ms"),
+        thumbnail_offset_ms=thumb,
     )
 
 
