@@ -559,15 +559,18 @@ def refresh_shots(python: str, report: RunReport) -> None:
 def land(wt: Path, branch: str, base: str, report: RunReport) -> bool:
     """Merge the worktree's commits into main and push; tidy the worktree."""
     count = int(sh(["git", "rev-list", "--count", f"{base}..HEAD"], wt).strip() or 0)
+    # Checked before the empty case: a session that ended ok without committing (a film
+    # run's mp4s, a refreshed caption whose PNG did not change) has no commits, and the
+    # forced remove below would delete its work while reporting success.
+    dirty = sh(["git", "status", "--porcelain"], wt).strip()
+    if dirty:
+        report.fail(f"uncommitted changes left in {wt}; not merged")
+        return False
     if count == 0:
         report.say("nothing committed; worktree removed")
         sh(["git", "worktree", "remove", "--force", str(wt)], ROOT)
         sh(["git", "branch", "-D", branch], ROOT)
         return True
-    dirty = sh(["git", "status", "--porcelain"], wt).strip()
-    if dirty:
-        report.fail(f"uncommitted changes left in {wt}; not merged")
-        return False
     sh(["git", "merge", "--no-edit", branch], ROOT)
     sh(["git", "push", "origin", "main"], ROOT)
     sh(["git", "worktree", "remove", str(wt)], ROOT)

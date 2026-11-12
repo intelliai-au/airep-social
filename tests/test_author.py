@@ -260,3 +260,64 @@ class RunLockTests(unittest.TestCase):
             contextlib.redirect_stdout(io.StringIO()),
         ):
             author.main(["film", "--dry-run", "--today", "2026-11-08", "--python", "python3"])
+
+
+class LandTests(unittest.TestCase):
+    """land() merges a session's commits; it must never throw away work it did not commit."""
+
+    def _repo(self, tmp: Path) -> tuple[Path, Path, str, str]:
+        import subprocess
+
+        root, wt, branch = tmp / "repo", tmp / "wt", "author/film-2027-01"
+        env = {
+            **author.os.environ,
+            "GIT_AUTHOR_NAME": "t",
+            "GIT_AUTHOR_EMAIL": "t@example.com",
+            "GIT_COMMITTER_NAME": "t",
+            "GIT_COMMITTER_EMAIL": "t@example.com",
+        }
+
+        def git(*args: str, cwd: Path = root) -> str:
+            return subprocess.run(
+                ["git", *args], cwd=cwd, env=env, check=True, capture_output=True, text=True
+            ).stdout
+
+        root.mkdir()
+        git("init", "-q", "-b", "main")
+        (root / "README.md").write_text("x\n")
+        git("add", "README.md")
+        git("commit", "-q", "-m", "init")
+        base = git("rev-parse", "HEAD").strip()
+        git("worktree", "add", "-q", "-b", branch, str(wt), "main")
+        return root, wt, branch, base
+
+    def test_uncommitted_work_with_no_commits_is_kept_not_removed(self) -> None:
+        # A film session that ends "ok" but never commits leaves its mp4s untracked; the
+        # empty-branch path force-removed the worktree with them and reported success.
+        with tempfile.TemporaryDirectory() as tmp:
+            root, wt, branch, base = self._repo(Path(tmp))
+            film = wt / "site" / "video" / "airep_x_music.mp4"
+            film.parent.mkdir(parents=True)
+            film.write_bytes(b"two hours of filming")
+            report = author.RunReport("film")
+            with (
+                unittest.mock.patch.object(author, "ROOT", root),
+                unittest.mock.patch("builtins.print"),
+            ):
+                landed = author.land(wt, branch, base, report)
+            self.assertFalse(landed)
+            self.assertFalse(report.ok)
+            self.assertTrue(film.is_file())
+
+    def test_a_clean_empty_worktree_is_still_tidied(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root, wt, branch, base = self._repo(Path(tmp))
+            report = author.RunReport("write")
+            with (
+                unittest.mock.patch.object(author, "ROOT", root),
+                unittest.mock.patch("builtins.print"),
+            ):
+                landed = author.land(wt, branch, base, report)
+            self.assertTrue(landed)
+            self.assertTrue(report.ok)
+            self.assertFalse(wt.exists())
