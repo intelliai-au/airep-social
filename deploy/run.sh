@@ -57,8 +57,15 @@ if ! git diff --quiet -- site/images || [ -n "$(git ls-files --others --exclude-
   git add site/images
   git commit -q -m "chore(build): render images for the next fortnight"
   # Buffer HEAD-checks each asset at push time, so the images must be on Pages first.
-  push_main
-  sleep 90  # GitHub Pages usually rebuilds within a minute of a push
+  if push_main; then
+    sleep 90  # GitHub Pages usually rebuilds within a minute of a push
+  else
+    # A push that still fails (GitHub refusing it, a re-render on origin that conflicts)
+    # ended the run here under set -e: nothing scheduled and no Telegram. push.py still
+    # schedules what is already on Pages, and its summary names each post it skipped.
+    echo "run.sh: the rendered images did not reach origin" >&2
+    build_status=1
+  fi
 fi
 
 # push.py exits 1 whenever the run had an alert (a HEAD miss, a page that needs

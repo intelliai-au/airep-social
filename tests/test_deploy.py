@@ -120,7 +120,11 @@ class RunShTests(unittest.TestCase):
             "#!/usr/bin/env bash\n"
             'echo "$*" >> "$FAKE_LOG"\n'
             'case "$1" in\n'
-            '  build.py) exit "${FAKE_BUILD_STATUS:-0}" ;;\n'
+            # $FAKE_IMAGE: build.py renders a new PNG, as on most Sundays.
+            '  build.py) if [ -n "${FAKE_IMAGE:-}" ]; then\n'
+            "      mkdir -p site/images && echo png > site/images/x.png\n"
+            "    fi\n"
+            '    exit "${FAKE_BUILD_STATUS:-0}" ;;\n'
             '  push.py) if [ "$2" = "--alert" ]; then exit 0; fi\n'
             '    echo \'{"posts": {"x": {"linkedin": {"post_id": "p1"}}}}\' '
             "> state/pushed.json\n"
@@ -187,6 +191,18 @@ class RunShTests(unittest.TestCase):
         self.assertIn("race", on_origin)
         self.assertEqual(self._git("rev-parse", "HEAD"), self._git("rev-parse", "origin/main"))
         self.assertEqual(self._git("status", "--porcelain"), "")
+
+    def test_an_image_push_that_fails_still_runs_the_push(self) -> None:
+        # push_main giving up on the rendered images (GitHub refusing the push) ended the
+        # run under set -e before push.py: nothing scheduled and no Telegram at all.
+        origin = Path(self._git("remote", "get-url", "origin").strip())
+        hook = origin / "hooks" / "pre-receive"
+        hook.write_text("#!/bin/sh\necho refused >&2\nexit 1\n")
+        hook.chmod(0o755)
+        result = self._run_sh(FAKE_IMAGE="1")
+        self.assertNotEqual(result.returncode, 0, "the failed push must still fail the unit")
+        self.assertEqual(self._calls(), ["build.py", "push.py --live"])
+        self.assertIn("did not reach origin", result.stderr)
 
     def test_a_pull_that_fails_is_reported_on_telegram(self) -> None:
         # Local changes in the way or a diverged main stop the run at the pull, before
