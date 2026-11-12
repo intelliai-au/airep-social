@@ -109,6 +109,30 @@ class ValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(posts.ContentError, "exactly one"):
             posts.parse_post(_write(self.tmp, "2026-11-18-x.yaml", both))
 
+    def test_asset_paths_stay_under_site_images_and_video(self) -> None:
+        # build.py writes site/<image> (with --force from author.py, outside the writer's
+        # sandbox), so a path that climbs out of site/ would overwrite a file anywhere;
+        # a stray "site/" prefix would build site/site/... and 404 on Pages at push time.
+        for bad in (
+            "../../deploy/run.sh",
+            "/home/x/.bashrc",
+            "images/../../author.py",
+            "site/images/x.png",
+            "images/x.yaml",
+        ):
+            body = GOOD.replace("image: images/x.png", f"image: {bad}")
+            with self.assertRaisesRegex(posts.ContentError, "image must be", msg=bad):
+                posts.parse_post(_write(self.tmp, "2026-11-18-x.yaml", body))
+        for bad in ("../x.mp4", "video/../../x.mp4", "/tmp/x.mp4", "images/x.mp4"):
+            body = GOOD.replace("image: images/x.png\ntemplate: field_note", f"video: {bad}")
+            with self.assertRaisesRegex(posts.ContentError, "video must be", msg=bad):
+                posts.parse_post(_write(self.tmp, "2026-11-18-x.yaml", body))
+        legacy = GOOD.replace("images/x.png", "images/legacy/AIREP-Educational-01.png")
+        post = posts.parse_post(_write(self.tmp, "2026-11-18-x.yaml", legacy))
+        self.assertEqual(post.image, "images/legacy/AIREP-Educational-01.png")
+        film = GOOD.replace("image: images/x.png\ntemplate: field_note", "video: video/a_b-c.mp4")
+        self.assertTrue(posts.parse_post(_write(self.tmp, "2026-11-18-x.yaml", film)).is_video)
+
     def test_one_post_per_day(self) -> None:
         _write(self.tmp, "2026-11-18-a.yaml", GOOD)
         _write(self.tmp, "2026-11-18-b.yaml", GOOD)

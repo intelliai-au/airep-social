@@ -23,6 +23,12 @@ _FILENAME = re.compile(r"^(\d{4}-\d{2}-\d{2})-[a-z0-9-]+\.yaml$")
 # One word per tag: caption() adds the "#", and a space or a second "#" would publish a
 # broken tag. A bare string here (hashtags: ERP) would otherwise become "#E #R #P".
 _HASHTAG = re.compile(r"^[A-Za-z0-9_]+$")
+# build.py writes site/<image> (author.py runs it with --force, outside the writing
+# session's sandbox) and push.py publishes the same path from Pages, so an asset is one
+# plain file name under images/ (images/legacy/ for the flattened originals) or video/:
+# no "..", no absolute path, no stray "site/" prefix.
+_IMAGE_PATH = re.compile(r"^images/(legacy/)?[A-Za-z0-9][A-Za-z0-9._-]*\.(png|jpe?g)$")
+_VIDEO_PATH = re.compile(r"^video/[A-Za-z0-9][A-Za-z0-9._-]*\.mp4$")
 
 
 class ContentError(ValueError):
@@ -102,6 +108,10 @@ def parse_post(path: Path) -> Post:
     image, video = raw.get("image"), raw.get("video")
     if bool(image) == bool(video):
         errors.append("exactly one of image: or video: is required")
+    if image and not _IMAGE_PATH.match(str(image)):
+        errors.append(f"image must be images/<name>.png under site/, not {image!r}")
+    if video and not _VIDEO_PATH.match(str(video)):
+        errors.append(f"video must be video/<name>.mp4 under site/, not {video!r}")
     template = raw.get("template")
     if template and video:
         errors.append("a video post has no template")
