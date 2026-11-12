@@ -15,7 +15,9 @@ fields:
     - { label: "Enquiries", text: "A form that lands in your inbox, a number that dials on tap.", tag: "included" }
     - { label: "Google", text: "Page titles, a sitemap and the local-business details.", tag: "included" }
     - { label: "Your address", text: "Your web address and email kept; old links still land.", tag: "included" }
-    - { label: "Running it", text: "Hosting, backups, padlock and fixes from $30 + GST a month.", tag: "$30/mo" }
+    # Not "and fixes": Keiran's 11 Nov pricing makes $30 hosting only (fixes are the $80 plan
+    # or hourly), while intelliai.au/websites/ still folds fixes into $30. True under both.
+    - { label: "Running it", text: "Hosting, backups and the padlock from $30 + GST a month.", tag: "$30/mo" }
   test: "Test: ask any quote what happens to the site, the domain and the email if you stop paying. The answer should be: you keep them."
   foot_link: "intelliai.au/websites →"
 linkedin: |
