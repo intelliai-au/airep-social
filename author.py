@@ -564,7 +564,8 @@ def refresh_shots(python: str, report: RunReport) -> None:
         return
     sh(["git", "add", "site/shots", "site/video"], ROOT)
     sh(["git", "commit", "-q", "-m", "chore(shots): refresh the site screenshots"], ROOT)
-    sh(["git", "push", "origin", "main"], ROOT)
+    # shots.py runs for minutes; a push that lands meanwhile is merged, not fatal.
+    push_main(ROOT)
     report.say(f"site screenshots refreshed ({len(changed.splitlines())} file(s))")
 
 

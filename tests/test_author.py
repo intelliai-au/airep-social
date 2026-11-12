@@ -362,6 +362,45 @@ class LandTests(unittest.TestCase):
             )
             self.assertFalse(wt.exists())
 
+    def test_a_push_that_landed_while_shots_ran_is_merged_then_pushed(self) -> None:
+        # shots.py takes minutes (a film per new site). A lane push meanwhile rejected the
+        # shots commit's push: the write run died before writing the month, with local
+        # main diverged from origin.
+        with tempfile.TemporaryDirectory() as tmp:
+            root, _wt, _branch, _base = self._repo(Path(tmp))
+            (root / "site" / "video").mkdir(parents=True)
+            (root / "site" / "video" / "old.mp4").write_bytes(b"mp4")
+            self._git("add", "site", cwd=root)
+            self._git("commit", "-q", "-m", "films", cwd=root)
+            origin, other = Path(tmp) / "origin.git", Path(tmp) / "other"
+            self._git("init", "-q", "--bare", "-b", "main", str(origin), cwd=root)
+            self._git("remote", "add", "origin", str(origin), cwd=root)
+            self._git("push", "-q", "-u", "origin", "main", cwd=root)
+            self._git("clone", "-q", str(origin), str(other), cwd=root)
+            fake = Path(tmp) / "fakepy"
+            fake.write_text(
+                "#!/usr/bin/env bash\n"
+                "mkdir -p site/shots && echo png > site/shots/x-phone.png\n"
+                f'git -C "{other}" -c user.name=t -c user.email=t@x '
+                "commit -q --allow-empty -m race\n"
+                f'git -C "{other}" push -q origin main\n'
+            )
+            fake.chmod(0o755)
+            report = author.RunReport("write")
+            with (
+                unittest.mock.patch.object(author, "ROOT", root),
+                unittest.mock.patch("builtins.print"),
+            ):
+                author.refresh_shots(str(fake), report)
+            self.assertTrue(report.ok, report.lines)
+            on_origin = self._git("log", "--format=%s", "origin/main", cwd=root)
+            self.assertIn("chore(shots)", on_origin)
+            self.assertIn("race", on_origin)
+            self.assertEqual(
+                self._git("rev-parse", "main", cwd=root),
+                self._git("rev-parse", "origin/main", cwd=root),
+            )
+
 
 class MainNotifyTests(unittest.TestCase):
     def test_a_failed_pull_is_reported_on_telegram(self) -> None:
