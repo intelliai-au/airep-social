@@ -413,6 +413,18 @@ def written_days(wt: Path) -> set[date]:
     return {p.date for p in posts_mod.load_posts(wt / "content")}
 
 
+def month_written(wt: Path, days: Iterable[date]) -> bool:
+    """True when the worktree holds a valid post for every one of *days*.
+
+    An invalid file means unfinished, not a crash: an attempt cut short can leave a
+    half-written post, and the resumed session is the one that finishes it.
+    """
+    try:
+        return not (set(days) - written_days(wt))
+    except posts_mod.ContentError:
+        return False
+
+
 def completeness(
     phase: str, wt: Path, days: list[date], brief: MonthBrief, report: RunReport
 ) -> bool:
@@ -645,7 +657,7 @@ def phase_write(
         wt, branch, resumed = made
         # A resumed attempt may already hold every post, and the review: a session is
         # not re-run for work that is done (the sessions are paid for in plan allowance).
-        have_all = resumed and not (set(days) - written_days(wt))
+        have_all = resumed and month_written(wt, days)
         reviewed = have_all and has_review_commit(wt, base)
         res = SessionResult(True)
         if have_all:
@@ -800,7 +812,9 @@ def main(argv: list[str] | None = None) -> int:
                     phase_shipped(today, args.python, report, dry_run=args.dry_run)
             else:
                 phase_film(today, args.python, report, dry_run=args.dry_run, only=args.month)
-        except RuntimeError as exc:
+        # ContentError too (a ValueError): an invalid post on main or in a worktree crashed
+        # the run with a journal traceback and no Telegram.
+        except (RuntimeError, posts_mod.ContentError) as exc:
             report.fail(str(exc))
         if not args.dry_run:
             notify(report)

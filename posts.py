@@ -90,7 +90,14 @@ def parse_post(path: Path) -> Post:
     match = _FILENAME.match(path.name)
     if not match:
         raise ContentError(f"{path.name}: name must be YYYY-MM-DD-slug.yaml")
-    raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    try:
+        raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    except yaml.YAMLError as exc:
+        # An unquoted colon in a caption is the usual one. Callers handle ContentError
+        # (push.py's error line, author.py's resume); a bare YAMLError went past them.
+        raise ContentError(f"{path.name}: not valid YAML: {exc}") from exc
+    if not isinstance(raw, dict):
+        raise ContentError(f"{path.name}: must be a YAML mapping of the post's fields")
     errors: list[str] = []
 
     day = raw.get("date")
@@ -130,6 +137,10 @@ def parse_post(path: Path) -> Post:
     elif any(not isinstance(t, str) or not _HASHTAG.match(t) for t in raw_tags):
         errors.append("each hashtag is one word without the #, e.g. SmallBusiness")
 
+    fields = raw.get("fields") or {}
+    if not isinstance(fields, dict):
+        errors.append("fields must be a mapping, e.g. fields: {headline: ...}")
+
     linkedin = str(raw.get("linkedin", ""))
     facebook = str(raw.get("facebook", ""))
     errors += _caption_errors(linkedin, "linkedin")
@@ -148,7 +159,7 @@ def parse_post(path: Path) -> Post:
         image=image,
         video=video,
         template=template,
-        fields=dict(raw.get("fields") or {}),
+        fields=dict(fields),
         alt=str(raw.get("alt", "")),
         thumbnail_offset_ms=thumb,
     )

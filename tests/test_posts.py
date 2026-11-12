@@ -146,6 +146,18 @@ class ValidationTests(unittest.TestCase):
         )
         self.assertEqual(post.thumbnail_offset_ms, 0)
 
+    def test_a_file_that_is_not_a_post_is_a_content_error(self) -> None:
+        # Every caller handles ContentError (push.py's error line, author.py's resume);
+        # an unquoted colon in a caption raised a bare YAMLError past all of them.
+        bad = {
+            "linkedin: Fix: this\n": "not valid YAML",
+            "- a list\n- not a post\n": "mapping",
+            GOOD + "fields: [shot]\n": "fields must be a mapping",
+        }
+        for body, reason in bad.items():
+            with self.assertRaisesRegex(posts.ContentError, reason, msg=body):
+                posts.parse_post(_write(self.tmp, "2026-11-18-x.yaml", body))
+
     def test_one_post_per_day(self) -> None:
         _write(self.tmp, "2026-11-18-a.yaml", GOOD)
         _write(self.tmp, "2026-11-18-b.yaml", GOOD)

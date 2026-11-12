@@ -346,3 +346,62 @@ class MainNotifyTests(unittest.TestCase):
         self.assertEqual(len(sent), 1)
         self.assertFalse(sent[0].ok)
         self.assertIn("fast-forward", "\n".join(sent[0].lines))
+
+    def test_an_invalid_post_on_main_is_reported_on_telegram(self) -> None:
+        # A ContentError is a ValueError, not the RuntimeError main() caught: a bad file
+        # on main crashed the monthly run with a journal traceback and no Telegram.
+        import contextlib
+
+        def load_posts(*_args: object) -> list:
+            raise author.posts_mod.ContentError("2027-01-05-x.yaml: not valid YAML")
+
+        sent: list[author.RunReport] = []
+        with (
+            unittest.mock.patch.object(author, "hold_run_lock", contextlib.nullcontext),
+            unittest.mock.patch.object(author, "sh", lambda *_a: ""),
+            unittest.mock.patch.object(author.posts_mod, "load_posts", load_posts),
+            unittest.mock.patch.object(author, "notify", sent.append),
+            unittest.mock.patch("builtins.print"),
+        ):
+            code = author.main(["write", "--python", "python3"])
+        self.assertEqual(code, 1)
+        self.assertEqual(len(sent), 1)
+        self.assertIn("not valid YAML", "\n".join(sent[0].lines))
+
+
+class ResumeTests(unittest.TestCase):
+    def test_a_resumed_month_with_a_half_written_post_reruns_the_writer(self) -> None:
+        # Resuming exists for an attempt cut short (out of turns, a reboot), which is when
+        # a post is likeliest to be half-written. Reading it crashed the resume before the
+        # writer could finish the month, so every later run stopped at the same file.
+        with tempfile.TemporaryDirectory() as tmp:
+            wt = Path(tmp)
+            (wt / "CLAUDE.md").write_text("rules\n")
+            (wt / "content").mkdir()
+            (wt / "content" / "2027-01-05-half.yaml").write_text("linkedin: Fix: this\n")
+            real = author.posts_mod.load_posts
+            sessions: list[str] = []
+
+            def load_posts(content_dir: Path | None = None) -> list:
+                return [] if content_dir is None else real(content_dir)
+
+            def run_session(_prompt: str, _cwd: Path, *, phase: str, **_kw: str):
+                sessions.append(phase)
+                return author.SessionResult(False, reason="out of turns")
+
+            report = author.RunReport("write")
+            with (
+                unittest.mock.patch.object(author.posts_mod, "load_posts", load_posts),
+                unittest.mock.patch.object(author, "refresh_shots", lambda *_a: None),
+                unittest.mock.patch.object(author, "sh", lambda *_a: "base\n"),
+                unittest.mock.patch.object(
+                    author, "worktree_for", lambda *_a: (wt, "author/write-2027-01", True)
+                ),
+                unittest.mock.patch.object(author, "run_session", run_session),
+                unittest.mock.patch("builtins.print"),
+            ):
+                author.phase_write(
+                    date(2026, 11, 12), "python3", report, dry_run=False, only="2027-01"
+                )
+            self.assertEqual(sessions, ["write"])
+            self.assertFalse(report.ok)
