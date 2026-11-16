@@ -42,8 +42,8 @@ Four slots a week, the same asset on both pages, LinkedIn at 07:30 and Facebook 
 - **Thursday** `pain`, `price`, `shipped` (this month's changes from the airep log) or `date_post`
 - **Friday** `website`: the website-build service, for a different reader (a trade, a
   studio, a shop). A real screenshot of a site we built in a phone or laptop frame, a
-  web Field Note, a phone scroll-through film, or the offer card ($2,500 + GST, from
-  $30 + GST a month), each linking intelliai.au/websites/. Only the sites in
+  web Field Note, a phone scroll-through film, or the offer card ($2,500 + GST, then
+  $80 + GST a month, looked after), each linking intelliai.au/websites/. Only the sites in
   `sites.yaml` are shown; facts come from `docs/WEBSITES.md`. No paid ads (Keiran,
   2026-11-08: organic only).
 

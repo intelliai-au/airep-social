@@ -27,9 +27,10 @@ dated, no internal refactors); a `date_post` for each dated hook above; `price` 
 Fridays sell websites, not AIREP: a different reader (a tradie, a studio, a shop wanting
 a site) and a different link. This month's angle: $web
 
-- Facts and prices come from `docs/WEBSITES.md` only ($2,500 + GST build, from $30 + GST
-  a month, live in about two weeks, you own it, no lock-in). Every Friday caption links
-  `https://intelliai.au/websites/` exactly once; never `/pricing/`.
+- Facts and prices come from `docs/WEBSITES.md` only ($2,500 + GST build, then $80 + GST
+  a month looked after, live in about two weeks, you own it, no lock-in). There is no
+  hosting-only price: never write $30, $60 or "hosting only" as a monthly. Every Friday
+  caption links `https://intelliai.au/websites/` exactly once; never `/pricing/`.
 - The only sites a post may show, and the screenshots and films that exist for them:
 $sites
   A site not on that list is never shown or named, whatever you know about it.

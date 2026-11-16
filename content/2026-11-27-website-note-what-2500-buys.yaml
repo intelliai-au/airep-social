@@ -2,7 +2,7 @@ date: 2026-11-27
 slot: website
 image: images/2026-11-27-website-note-what-2500-buys.png
 template: field_note
-alt: "Field note: what a $2,500 + GST website includes. Up to ten pages, built for phones first, an enquiry form, set up for Google, your address and email kept, yours to keep, from $30 + GST a month to run."
+alt: "Field note: what a $2,500 + GST website includes. Up to ten pages, built for phones first, an enquiry form, set up for Google, your address and email kept, yours to keep, then $80 + GST a month, looked after."
 fields:
   kicker_left: "Field notes · websites"
   kicker_right: "Small business · AU"
@@ -15,17 +15,16 @@ fields:
     - { label: "Enquiries", text: "A form that lands in your inbox, a number that dials on tap.", tag: "included" }
     - { label: "Google", text: "Page titles, a sitemap and the local-business details.", tag: "included" }
     - { label: "Your address", text: "Your web address and email kept; old links still land.", tag: "included" }
-    # Not "and fixes": Keiran's 11 Nov pricing makes $30 hosting only (fixes are the $80 plan
-    # or hourly), while intelliai.au/websites/ still folds fixes into $30. True under both.
-    - { label: "Running it", text: "Hosting, backups and the padlock from $30 + GST a month.", tag: "$30/mo" }
+    # One plan since 16 Nov 2026 (no hosting only): $80 looked after, fixes included.
+    - { label: "Looked after", text: "Hosting, backups, updates, and fixes at no extra cost.", tag: "$80/mo" }
   test: "Test: ask any quote what happens to the site, the domain and the email if you stop paying. The answer should be: you keep them."
   foot_link: "intelliai.au/websites →"
 linkedin: |
   A website for your business, for one flat price: $2,500 + GST.
   Up to ten pages, built for phones first, an enquiry form, set up for Google, your address and email kept working, and live in about two weeks once we have your content.
-  Then from $30 + GST a month to run it, no contract, and the words, photos and web address stay yours.
+  Then $80 + GST a month and we look after it, fixes included, no contract, and the words, photos and web address stay yours.
   https://intelliai.au/websites/
 facebook: |
   A website for your business, for one flat price: $2,500 + GST.
-  Up to ten pages, built for phones first, live in about two weeks. Yours to keep, from $30 + GST a month to run.
+  Up to ten pages, built for phones first, live in about two weeks. Yours to keep, then $80 + GST a month and we look after it.
   https://intelliai.au/websites/

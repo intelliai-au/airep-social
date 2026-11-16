@@ -18,7 +18,7 @@ sites a post may show in `sites.yaml`).
 | 2026-12 | Get paid before the break: quote to invoice, payments, aged receivables, statements | `airep_quote_to_invoice_music.mp4`, `airep_payment_music.mp4` (existing) | Christmas shutdown date post; Tuesday-only from 22 Dec | A site that answers while you are shut: holiday hours, your Google listing, an enquiry form that reaches you; no Fridays from 22 Dec |
 | 2027-01 | One system, no spreadsheets: every module included, CRM and pipeline | `airep_modules_music.mp4`, `airep_no_ui_stage_music.mp4` (existing) | New-year reset; BAS Q2 one month out | Who owns your website: the domain, the photos, the words, no lock-in; replacing an old site keeps your address |
 | 2027-02 | BAS and the bank: bank feeds, reconciliation, GST control, supplier bills | Bank-feed reconciliation; supplier bill three-way match (new) | BAS Q2 due 28 Feb | Phone first: local searches happen on a phone, tap-to-call, the Mike Trace Engineering rebuild |
-| 2027-03 | Manufacturing: production orders, bill of materials, QC, the workshop tablet | Production order from BOM to QC; workshop schedule on the tablet (new) | Shipped this month | Online bookings from real availability: the Ascot Vale Driving School site, the $60 database plan |
+| 2027-03 | Manufacturing: production orders, bill of materials, QC, the workshop tablet | Production order from BOM to QC; workshop schedule on the tablet (new) | Shipped this month | Online bookings from real availability: the Ascot Vale Driving School site, on the $80 looked-after plan |
 | 2027-04 | Shipping and freight: carrier quotes from item dimensions, dispatch | Freight quotes from a sales order; dispatch and labels (new) | BAS Q3 due 28 Apr; Easter 2 to 5 Apr | Taking money on your site: card, Apple Pay, direct debit, the provider fees said plainly |
 | 2027-05 | Workforce: timesheets, pay calendar, timesheet seats at $25 | Timesheet to pay run; the phone app clock-on (new) | Federal Budget week | Showing up on Maps: Google Business Profile, hours, services, the area you cover, structured data |
 | 2027-06 | EOFY: stocktake, write-offs, asset records, the 7-year records test | Stocktake; aged receivables and statements run (new) | EOFY 30 Jun; stocktake date post | A website is a business asset you own: what the build and the monthly cover, invoiced before 30 Jun if you want it this year |
@@ -42,7 +42,7 @@ sites a post may show in `sites.yaml`).
 | Friday | `website` showcase: a real screenshot of a site we built, in a phone or laptop frame | 20 |
 | Friday | `website` Field Note (`field_note` template): one plain fact about small-business websites | 12 |
 | Friday | `website` scroll film: a phone scroll-through of one site (`shots.py`) | 9 |
-| Friday | `website` offer card (`price` template): $2,500 + GST, from $30 + GST a month, two weeks | 8 |
+| Friday | `website` offer card (`price` template): $2,500 + GST, $80 + GST a month looked after, two weeks | 8 |
 
 The Thursday mix inside a month: `shipped` on the last Thursday, a `date_post` in any
 month with a dated hook, `price` once a month, `pain` on the rest.
