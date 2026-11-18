@@ -1,0 +1,15 @@
+date: 2026-12-01
+slot: website
+# Hand-placed: Intelli AI's DL card (tools/leave-behind-card, build.py -> out/card-social-front.png),
+# front first. Its QR is tagged utm_source=social-card, so a scan off a screen is not a card visit.
+# The 2 Dec film opens on the same line, "Five logins and a spreadsheet?", and follows this one.
+image: images/2026-12-01-website-card-five-logins.png
+alt: "Both sides of Intelli AI's card. Front: Five logins and a spreadsheet? We build bookings, payments and the rest into your website, with a free live demo in 48 hours. Back: tell us what you need, see it in 48 hours free, approve it for $2,500 + GST, then live and looked after for $120 + GST a month."
+linkedin: |
+  Bookings in one app, payments in another, and the gaps filled with a spreadsheet and a Word invoice. Five logins, and a Sunday night matching them up.
+  We build what you need into your website instead: one place for your customers, and one sign-in for you and your staff. Bookings, payments, a members' area and a staff roster are all included in a $2,500 + GST build.
+  See a free live demo of yours in 48 hours, on your phone, before you pay anything.
+  https://intelliai.au/
+facebook: |
+  Five logins and a spreadsheet? We build bookings, payments and the rest into your website instead. See a free demo of yours in 48 hours, before you pay anything.
+  https://intelliai.au/
