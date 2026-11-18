@@ -1,11 +1,13 @@
-# The websites a Friday post may show. Only sites Intelli AI built, that are live under
+# The websites a website post may show. Only sites Intelli AI built, that are live under
 # the client's own name, and that the client already lets intelliai.au/work/ list: the
 # "Sites we've built" strip there is the consent line. A concept site for a business that
 # has not said yes (the pitch demos) never appears here, however good it looks.
 #
 # shots.py screenshots `url` (and each extra `pages` path) at phone and laptop size into
-# site/shots/<slug>-phone.png / <slug>-laptop.png, and films a phone scroll-through into
-# site/video/website_<slug>_scroll.mp4. Facts under `facts` are what the writer may say;
+# site/shots/<slug>-phone.png / <slug>-laptop.png (a page: <slug>-<page>-phone.png), and
+# films a phone scroll-through of each into site/video/website_<slug>_scroll.mp4
+# (website_<slug>-<page>_scroll.mp4), plus the home page on a laptop
+# (website_<slug>_laptop.mp4). Facts under `facts` are what the writer may say;
 # they mirror intelliai.au/work/ (airep core/views/public.py `_CASE_STUDIES`). A writer
 # that wants to say more checks the live site, not its memory.
 sites:
@@ -15,7 +17,24 @@ sites:
     display_url: gripswich.au
     sector: Indoor climbing gym, Ipswich QLD
     plan: Full online system
-    hide: [".site-notice"]  # the day's busy/announcement bar; true today, stale by Friday
+    # The day's announcement bar and the live "Time to climb?" level: true today, stale
+    # by the day the post runs (the strip's label stays, so the bar still shows).
+    # .sendband is the season standings and Member of the Week: members' names and a
+    # member's own clip, opted in for the gym's page, not for our marketing.
+    # .card__video is a clip over each card that headless Chromium (no H.264) draws as
+    # a black box; hidden, the card shows as it does with no clip set.
+    # On /classes/: .class-card__slot-coach is a coach's first name (the gym's staff, on
+    # its page, not ours), and .class-card__slot-left the places left this season, stale
+    # by the day the post runs.
+    hide:
+      - .site-notice
+      - .visitbar__now
+      - .visitbar__dot
+      - .sendband
+      - .card__video
+      - .class-card__slot-coach
+      - .class-card__slot-left
+    pages: ["/pricing/", "/classes/"]  # memberships and passes; the class lineup
     facts:
       - A complete gym management platform, replacing the off-the-shelf system the gym opened on
       - Memberships and direct debit, front-desk check-in, point of sale, class bookings, staff rostering and a member portal in one system instead of four
@@ -28,6 +47,7 @@ sites:
     display_url: ascotvaledrivingschool.au
     sector: Driving instruction, Melbourne VIC
     plan: Site with a database
+    pages: ["/pricing/"]  # the lesson prices and packages, each with its booking button
     facts:
       - A booking-led website for a driving school
       - Live instructor availability and online lesson booking
@@ -39,6 +59,7 @@ sites:
     display_url: miketraceeng.au
     sector: Road sweeper specialists, Brisbane QLD
     plan: Simple site
+    pages: ["/contact-us/"]  # the workshop's number and the enquiry form
     facts:
       - A trading business operating since 2002 that had no meaningful web presence
       - A fast, mobile-first site that explains the service range and puts the workshop's contact details one tap away

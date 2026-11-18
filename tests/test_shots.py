@@ -28,9 +28,15 @@ class SiteListTests(unittest.TestCase):
         for banned in ("rb-electrical", "hfr-sweeping", "tallowwood", "onrender.com"):
             self.assertNotIn(f"url: https://{banned}", text)
 
-    def test_gripswich_hides_its_day_notice_bar(self) -> None:
+    def test_gripswich_hides_its_day_notice_bar_and_peoples_names(self) -> None:
         site = next(s for s in shots.load_sites() if s.slug == "gripswich")
-        self.assertEqual(site.hide, (".site-notice",))
+        self.assertEqual(site.hide[:3], (".site-notice", ".visitbar__now", ".visitbar__dot"))
+        # The standings board and Member of the Week name members, and the class
+        # lineup names its coaches: never in a post.
+        self.assertIn(".sendband", site.hide)
+        self.assertIn(".class-card__slot-coach", site.hide)
+        self.assertIn(".card__video", site.hide)
+        self.assertIn(".class-card__slot-left", site.hide)
 
     def test_output_paths_follow_the_slug(self) -> None:
         site = shots.Site("acme", "Acme", "https://acme.au", "acme.au")
@@ -39,6 +45,14 @@ class SiteListTests(unittest.TestCase):
         self.assertEqual(site.film, "video/website_acme_scroll.mp4")
         self.assertEqual(shots.page_slug(site, "/prices/"), "acme-prices")
         self.assertEqual(shots.page_slug(site, "/"), "acme-home")
+
+    def test_every_page_films_on_the_phone_and_the_home_page_on_the_laptop(self) -> None:
+        site = shots.Site("acme", "Acme", "https://acme.au", "acme.au", pages=("/prices/",))
+        self.assertEqual(site.laptop_film, "video/website_acme_laptop.mp4")
+        self.assertEqual(site.film_for("acme", "phone"), site.film)
+        page = shots.page_slug(site, "/prices/")
+        self.assertEqual(site.film_for(page, "phone"), "video/website_acme-prices_scroll.mp4")
+        self.assertIsNone(site.film_for(page, "laptop"))
 
     def test_film_is_long_enough_and_even_sized_for_the_networks(self) -> None:
         self.assertGreaterEqual(shots.FILM_SECONDS, 3)
@@ -66,6 +80,36 @@ class EncodeTests(unittest.TestCase):
         self.assertEqual(data[4:8], b"ftyp")
         # faststart: the moov index comes before the media data.
         self.assertLess(data.find(b"moov"), data.find(b"mdat"))
+
+    def test_a_laptop_film_is_scaled_down_to_its_css_size(self) -> None:
+        # 2880 x 1800 frames are past H.264 level 4.0; the film is encoded at 1440 x 900.
+        if not shutil.which("mpv"):
+            self.skipTest("mpv not installed")
+        try:
+            from PIL import Image
+        except ImportError:  # pragma: no cover
+            self.skipTest("Pillow not installed")
+        with tempfile.TemporaryDirectory() as tmp:
+            frames = Path(tmp) / "frames"
+            frames.mkdir()
+            for i in range(4):
+                Image.new("RGB", (128, 80), (i * 40, 80, 120)).save(frames / f"{i:04d}.png")
+            out = Path(tmp) / "out.mp4"
+            shots.encode_frames(frames, out, fps=4, size=(64, 40))
+            probe = subprocess.run(
+                [
+                    "mpv",
+                    "--no-config",
+                    "--vo=null",
+                    "--ao=null",
+                    "--frames=1",
+                    "--term-playing-msg=SIZE=${width}x${height}",
+                    str(out),
+                ],
+                capture_output=True,
+                text=True,
+            )
+        self.assertIn("SIZE=64x40", probe.stdout)
 
     def test_a_failed_encode_leaves_no_half_written_film_to_commit(self) -> None:
         # mpv writes its output as it goes; one that dies part-way left

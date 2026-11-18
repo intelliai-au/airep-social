@@ -1,10 +1,10 @@
-"""Screenshot and film the client sites in sites.yaml for the Friday website posts (shots.py).
+"""Screenshot and film the client sites in sites.yaml for the website posts (shots.py).
 
 Runs outside the writer's sandbox (it needs the public web): author.py calls it before a
 writing run, and it can be run by hand. Idempotent in effect, not in bytes: every run
 retakes every shot, so a site that changed shows its current self.
 
-    shots.py                 # every site: phone + laptop PNGs; a scroll film if missing
+    shots.py                 # every site and page: phone + laptop PNGs; films if missing
     shots.py --films always  # re-film too (a film is a few MB in git, so not monthly)
     shots.py --only gripswich --films never
 """
@@ -35,7 +35,9 @@ PHONE = (390, 844)
 LAPTOP = (1440, 900)
 DEVICE_SCALE = 2
 
-# The scroll film: frames are screenshots, not a screencast, so the text stays crisp.
+# The scroll films: every page in sites.yaml on the phone, and each home page on the
+# laptop (added 2026-11-18 for the website-led quarter, which needs more than three
+# films). Frames are screenshots, not a screencast, so the text stays crisp.
 # 30 fps for FILM_SECONDS: a one-second hold, a smooth scroll of SCROLL_SCREENS screens,
 # a one-second hold. LinkedIn and Facebook both want at least three seconds and an even
 # pixel size (yuv420p); 780 x 1688 is both.
@@ -50,7 +52,6 @@ HOLD_SECONDS = 1.0
 MPV_ARGS = (
     "--ovc=libx264",
     "--ovcopts=preset=slow,crf=20,profile=high,level=4.0",
-    "--vf=format=yuv420p",
     "--ofopts=movflags=+faststart",
     "--no-audio",
     "--msg-level=all=error",
@@ -59,7 +60,7 @@ MPV_ARGS = (
 
 @dataclass(frozen=True)
 class Site:
-    """One site the Friday posts may show."""
+    """One site the website posts may show."""
 
     slug: str
     name: str
@@ -83,8 +84,25 @@ class Site:
 
     @property
     def film(self) -> str:
-        """Path under site/ of the phone scroll-through film."""
-        return f"video/website_{self.slug}_scroll.mp4"
+        """Path under site/ of the home page's phone scroll-through film."""
+        return self.film_for(self.slug, "phone") or ""
+
+    @property
+    def laptop_film(self) -> str:
+        """Path under site/ of the home page's laptop scroll-through film."""
+        return self.film_for(self.slug, "laptop") or ""
+
+    def film_for(self, slug: str, label: str) -> str | None:
+        """The film one shot also makes: every page on the phone, the home page on the laptop.
+
+        *slug* is the shot's slug (the site's, or page_slug() for an extra page). A page's
+        laptop shot makes no film: it would be the phone film again, only wider.
+        """
+        if label == "phone":
+            return f"video/website_{slug}_scroll.mp4"
+        if label == "laptop" and slug == self.slug:
+            return f"video/website_{self.slug}_laptop.mp4"
+        return None
 
 
 def load_sites(path: Path = SITES_YAML) -> list[Site]:
@@ -136,13 +154,18 @@ def _settle(page) -> None:
 
 
 def shoot(site: Site, browser, out_dir: Path, *, films: str = "missing", log=print) -> list[Path]:
-    """Phone and laptop PNGs for the site (and each extra page), plus the scroll film.
+    """Phone and laptop PNGs for the site (and each extra page), plus their scroll films.
 
     *films* is ``always``, ``missing`` (the default: film only when site/video/ lacks it,
     since every new film is a few MB more in git) or ``never``.
     """
     written: list[Path] = []
-    want_film = films == "always" or (films == "missing" and not (out_dir / site.film).is_file())
+
+    def want_film(rel: str | None) -> bool:
+        if rel is None or films == "never":
+            return False
+        return films == "always" or not (out_dir / rel).is_file()
+
     targets = [(site.url, site.slug)] + [
         (site.url.rstrip("/") + p, page_slug(site, p)) for p in site.pages
     ]
@@ -172,9 +195,12 @@ def shoot(site: Site, browser, out_dir: Path, *, films: str = "missing", log=pri
                 page.screenshot(path=str(out), full_page=False, type="png")
                 written.append(out)
                 log(f"shot    {out.relative_to(out_dir)}")
-                if want_film and label == "phone" and slug == site.slug:
-                    film = out_dir / site.film
-                    _film(page, film)
+                rel = site.film_for(slug, label)
+                if want_film(rel):
+                    film = out_dir / str(rel)
+                    # The laptop's frames are 2880 x 1800, past H.264 level 4.0 (what the
+                    # networks play everywhere), so that film is scaled to the CSS viewport.
+                    _film(page, film, size=size if label == "laptop" else None)
                     written.append(film)
                     log(f"film    {film.relative_to(out_dir)}")
             finally:
@@ -182,8 +208,8 @@ def shoot(site: Site, browser, out_dir: Path, *, films: str = "missing", log=pri
     return written
 
 
-def _film(page, out: Path) -> None:
-    """Frame-by-frame scroll-through of the current page, encoded with mpv."""
+def _film(page, out: Path, size: tuple[int, int] | None = None) -> None:
+    """Frame-by-frame scroll-through of the current page, encoded with mpv (scaled to *size*)."""
     total = FILM_FPS * FILM_SECONDS
     hold = int(FILM_FPS * HOLD_SECONDS)
     moving = total - 2 * hold
@@ -204,16 +230,26 @@ def _film(page, out: Path) -> None:
             page.screenshot(path=str(frames / f"{i:04d}.png"), full_page=False, type="png")
         page.evaluate(_JUMP % "0")
         out.parent.mkdir(parents=True, exist_ok=True)
-        encode_frames(frames, out)
+        encode_frames(frames, out, size=size)
 
 
-def encode_frames(frames: Path, out: Path, fps: int = FILM_FPS) -> None:
-    """Encode ``frames/0000.png…`` into an H.264 mp4 with mpv."""
+def encode_frames(
+    frames: Path, out: Path, fps: int = FILM_FPS, size: tuple[int, int] | None = None
+) -> None:
+    """Encode ``frames/0000.png…`` into an H.264 mp4 with mpv, scaled to *size* if given."""
     mpv = shutil.which("mpv")
     if not mpv:
         raise RuntimeError("mpv is not installed; it encodes the scroll films")
     tmp_out = out.with_suffix(".part.mp4")
-    cmd = [mpv, f"mf://{frames}/*.png", f"--mf-fps={fps}", f"--o={tmp_out}", *MPV_ARGS]
+    scale = f"scale={size[0]}:{size[1]}," if size else ""
+    cmd = [
+        mpv,
+        f"mf://{frames}/*.png",
+        f"--mf-fps={fps}",
+        f"--o={tmp_out}",
+        f"--vf={scale}format=yuv420p",
+        *MPV_ARGS,
+    ]
     proc = subprocess.run(cmd, text=True, capture_output=True)
     if proc.returncode != 0 or not tmp_out.exists():
         # mpv opens its output before the first frame, so a failed encode leaves a broken
