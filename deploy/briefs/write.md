@@ -6,6 +6,9 @@ company voice, caption rules, real dates, nothing unshipped, no invented numbers
 
 ## What to write
 
+Days in `schedule.RESERVED` are held for films still being made and never appear below:
+leave them empty.
+
 One `content/YYYY-MM-DD-<slug>.yaml` per posting day below. The slot is fixed by the
 weekday; `posts.py` refuses anything else.
 
@@ -27,20 +30,27 @@ dated, no internal refactors); a `date_post` for each dated hook above; `price` 
 Fridays sell websites, not AIREP: a different reader (a tradie, a studio, a shop wanting
 a site) and a different link. This month's angle: $web
 
-- Facts and prices come from `docs/WEBSITES.md` only ($2,500 + GST build, then $80 + GST
-  a month looked after, live in about two weeks, you own it, no lock-in). There is no
-  hosting-only price: never write $30, $60 or "hosting only" as a monthly. Every Friday
-  caption links `https://intelliai.au/websites/` exactly once; never `/pricing/`.
+- Facts and prices come from `docs/WEBSITES.md` only:
+  - the build is $2,500 + GST, with every feature included
+  - "Hosting and fixes" is then $120 + GST a month, plus $15 + GST a month for Email that
+    arrives (bookings needs it)
+  - the site is live within two weeks of the content
+  - the business owns it, and there is no lock-in
+
+  Never write $80, $30, $60, "hosting only" or "looked after" as a monthly, and never an
+  add-on setup price. Every website caption links `https://intelliai.au/` exactly once
+  (the front page; `/websites/` only redirects). Never link `/pricing/`.
 - The only sites a post may show, and the screenshots and films that exist for them:
 $sites
   A site not on that list is never shown or named, whatever you know about it.
 - The mix: first Friday a showcase (`template: website`, `fields.shot:` one of the
   screenshots above, `fields.frame: phone` or `laptop`, chips in `rows: [{text: …}]`, a
   footer line, and `sub` from that site's facts in `sites.yaml`); second Friday a web
-  Field Note (`template: field_note` with `foot_link: "intelliai.au/websites →"`); third
+  Field Note (`template: field_note` with `foot_link: "intelliai.au →"`); third
   Friday the scroll film of a site that has one (`video: video/website_<slug>_scroll.mp4`,
   `thumbnail_offset_ms: 0`), else a showcase; fourth Friday the offer card
-  (`template: price` with `foot_link: "intelliai.au/websites →"` and the three plans);
+  (`template: price` with `foot_link: "intelliai.au →"` and three cards: Build, Hosting and
+  fixes, Changes);
   a fifth Friday a showcase. Rotate the sites so none appears twice in the month.
 - Hashtags default to `[WebDesign, SmallBusiness, Australia]` for this slot; a post about
   one site may swap the third for its city (`Ipswich`, `Brisbane`, `Melbourne`).

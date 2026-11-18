@@ -1,8 +1,9 @@
 # airep-social
 
 A year of organic LinkedIn and Facebook posts for [AIREP](https://intelliai.au), Intelli
-AI's ERP, and (Fridays, since 2026-11-08) for Intelli AI's
-[website-build service](https://intelliai.au/websites/), with no weekly step for anyone. One YAML file per post in `content/`, images
+AI's ERP, and (Fridays since 2026-11-08, and leading the plan from 23 Nov 2026 to
+26 Feb 2027) for Intelli AI's [website-build service](https://intelliai.au/), with no
+weekly step for anyone. One YAML file per post in `content/`, images
 rendered from HTML templates, films from the AIREP film rig, everything scheduled through
 Buffer by a Sunday timer on the home box. The plan behind it is the
 [AIREP Organic Social Plan](https://claude.ai/artifact/27LBWaY3iycCT6Nd321GGQ) (2026-11-03).
@@ -20,9 +21,9 @@ early, which is fine.
 | `templates/` | The HTML templates (`field_note`, `feature`, `pain`, `shipped`, `price`, `date_post`, `website`) and `base.css` |
 | `site/images/` | Rendered PNGs (2160 × 2160; the pain series is 2160 × 1130), committed |
 | `site/shots/` | Phone and laptop screenshots of the client sites in `sites.yaml`, retaken by `shots.py` before each writing run |
-| `site/video/` | The six scored 4:5 films from 2026-09-06, plus a silent phone scroll-through per client site (`website_<slug>_scroll.mp4`) |
-| `sites.yaml` | The sites a Friday post may show (live client sites listed on intelliai.au/work/; never a pitch demo) |
-| `docs/WEBSITES.md` | The website offer as a post may state it: a mirror of intelliai.au/websites/ |
+| `site/video/` | The six scored 4:5 films from 2026-09-06; a silent phone scroll-through per client site and page (`website_<slug>_scroll.mp4`, `website_<slug>-<page>_scroll.mp4`) and a laptop film per site (`website_<slug>_laptop.mp4`); the front page's bakery film (`website_film_9x16.mp4`, `website_film_16x9.mp4`) |
+| `sites.yaml` | The sites a website post may show (live client sites listed on intelliai.au/work/; never a pitch demo), the extra pages to film, and what to hide |
+| `docs/WEBSITES.md` | The website offer as a post may state it: a mirror of intelliai.au's front page |
 | `assets/legacy/` | The 2026 PNG series (Field Notes, Feature Posts, Switcher, LinkedIn ads, trial). No Founder image |
 | `state/pushed.json` | Every Buffer post id `push.py` has created, by slug and channel |
 | `schedule.py` | Cadence, AEST due times, the fortnight plan (pure) |
@@ -42,10 +43,20 @@ Four slots a week, the same asset on both pages, LinkedIn at 07:30 and Facebook 
 - **Thursday** `pain`, `price`, `shipped` (this month's changes from the airep log) or `date_post`
 - **Friday** `website`: the website-build service, for a different reader (a trade, a
   studio, a shop). A real screenshot of a site we built in a phone or laptop frame, a
-  web Field Note, a phone scroll-through film, or the offer card ($2,500 + GST, then
-  $80 + GST a month, looked after), each linking intelliai.au/websites/. Only the sites in
-  `sites.yaml` are shown; facts come from `docs/WEBSITES.md`. No paid ads (Keiran,
-  2026-11-08: organic only).
+  web Field Note, a phone scroll-through film, or the offer card ($2,500 + GST with every
+  feature included, then $120 + GST a month for hosting and fixes), each linking
+  <https://intelliai.au/>. Only the sites in `sites.yaml` are shown; facts come from
+  `docs/WEBSITES.md`. No paid ads (Keiran, 2026-11-08: organic only).
+
+**The website-led quarter, 23 Nov 2026 to 26 Feb 2027** (`schedule.WEBSITE_LED_SLOTS`)
+has three posts a week, and about half are films:
+
+- Tuesday is `website`, or an AIREP `feature` at most once a fortnight, linking
+  <https://intelliai.au/airep/>.
+- Wednesday and Thursday are `website`.
+
+Four Wednesdays are held empty in `schedule.RESERVED` for the front page's four films:
+2 Dec, 16 Dec, 13 Jan and 3 Feb. After 26 Feb the grid above resumes.
 
 22 Dec to 4 Jan keeps only the Tuesday post. The calendar runs Tue 17 Nov 2026 to
 Thu 11 Nov 2027. `posts.py` refuses a file whose slot does not match its weekday.
@@ -66,8 +77,8 @@ push that finds an author run going waits for it; the unit allows 3h30m):
    in `state/pushed.json`, HEAD-check the asset URL (retrying for ~3.5 min while Pages rebuilds), then `createPost` with
    `mode: customScheduled` and the slot's `dueAt`. Never more than **6 posts queued a
    channel**, counting the ones earlier Sundays queued that have not gone out yet, so
-   Buffer's Free plan (10 queued a channel) never overflows. Four go out a week, so each
-   Sunday tops the queue back up to six. Both channels are checked for `isDisconnected`
+   Buffer's Free plan (10 queued a channel) never overflows. Three or four go out a
+   week, so each Sunday tops the queue back up to six. Both channels are checked for `isDisconnected`
    first.
 4. Commit and push `state/pushed.json`.
 5. A Telegram message arrives through Astrid: what was queued, each asset's link, the
@@ -77,6 +88,10 @@ push that finds an author run going waits for it; the unit allows 3h30m):
 Everything is idempotent, so a failed run can simply run again.
 
 ### Install (installed on the home box since 2026-11-08)
+
+**Stopped since 16 Nov 2026.** The three timers are disabled and the Buffer queue was
+emptied. The website-led content is written and waiting. Re-enabling the timers below is
+Keiran's call.
 
 ```
 # Same style as linux-setup/install.sh: copy the units, reload, enable the timer.

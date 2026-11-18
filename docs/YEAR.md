@@ -12,13 +12,24 @@ already; new ones are made by the film run on the third Sunday two months earlie
 website-build service (added 2026-11-08; the offer itself is in `docs/WEBSITES.md`, the
 sites a post may show in `sites.yaml`).
 
+**From 23 Nov 2026 to 26 Feb 2027 the plan is website-led** (Keiran, 18 Nov 2026). All
+of those posts are written already, so the rows below for 2026-11 to 2027-02 no longer
+describe what runs. Each week has three posts:
+
+- Tuesday is a website post, or an AIREP feature at most once a fortnight.
+- Wednesday and Thursday are website posts.
+
+Four Wednesdays (2 Dec, 16 Dec, 13 Jan and 3 Feb) are held in `schedule.RESERVED` for
+the front page's films. The author run's next month to write is 2027-03, when this grid
+resumes.
+
 | Month | Theme | Films (2 a month) | Dated hooks | Website Fridays |
 | --- | --- | --- | --- | --- |
 | 2026-11 | Stock before the Christmas shutdown: reorder points, lead times, MOQ, supplier POs | `airep_reorder_music.mp4`, `airep_no_ui_po_music.mp4` (existing) | Supplier Christmas cut-offs; first Shipped this month | What $2,500 buys: up to ten pages, live in about two weeks, you own it; GRIPswich showcase first |
 | 2026-12 | Get paid before the break: quote to invoice, payments, aged receivables, statements | `airep_quote_to_invoice_music.mp4`, `airep_payment_music.mp4` (existing) | Christmas shutdown date post; Tuesday-only from 22 Dec | A site that answers while you are shut: holiday hours, your Google listing, an enquiry form that reaches you; no Fridays from 22 Dec |
 | 2027-01 | One system, no spreadsheets: every module included, CRM and pipeline | `airep_modules_music.mp4`, `airep_no_ui_stage_music.mp4` (existing) | New-year reset; BAS Q2 one month out | Who owns your website: the domain, the photos, the words, no lock-in; replacing an old site keeps your address |
 | 2027-02 | BAS and the bank: bank feeds, reconciliation, GST control, supplier bills | Bank-feed reconciliation; supplier bill three-way match (new) | BAS Q2 due 28 Feb | Phone first: local searches happen on a phone, tap-to-call, the Mike Trace Engineering rebuild |
-| 2027-03 | Manufacturing: production orders, bill of materials, QC, the workshop tablet | Production order from BOM to QC; workshop schedule on the tablet (new) | Shipped this month | Online bookings from real availability: the Ascot Vale Driving School site, on the $80 looked-after plan |
+| 2027-03 | Manufacturing: production orders, bill of materials, QC, the workshop tablet | Production order from BOM to QC; workshop schedule on the tablet (new) | Shipped this month | Online bookings from real availability: the Ascot Vale Driving School site; bookings are inside the $2,500 build |
 | 2027-04 | Shipping and freight: carrier quotes from item dimensions, dispatch | Freight quotes from a sales order; dispatch and labels (new) | BAS Q3 due 28 Apr; Easter 2 to 5 Apr | Taking money on your site: card, Apple Pay, direct debit, the provider fees said plainly |
 | 2027-05 | Workforce: timesheets, pay calendar, timesheet seats at $25 | Timesheet to pay run; the phone app clock-on (new) | Federal Budget week | Showing up on Maps: Google Business Profile, hours, services, the area you cover, structured data |
 | 2027-06 | EOFY: stocktake, write-offs, asset records, the 7-year records test | Stocktake; aged receivables and statements run (new) | EOFY 30 Jun; stocktake date post | A website is a business asset you own: what the build and the monthly cover, invoiced before 30 Jun if you want it this year |
@@ -42,7 +53,7 @@ sites a post may show in `sites.yaml`).
 | Friday | `website` showcase: a real screenshot of a site we built, in a phone or laptop frame | 20 |
 | Friday | `website` Field Note (`field_note` template): one plain fact about small-business websites | 12 |
 | Friday | `website` scroll film: a phone scroll-through of one site (`shots.py`) | 9 |
-| Friday | `website` offer card (`price` template): $2,500 + GST, $80 + GST a month looked after, two weeks | 8 |
+| Friday | `website` offer card (`price` template): $2,500 + GST with every feature included, $120 + GST a month hosting and fixes, two weeks | 8 |
 
 The Thursday mix inside a month: `shipped` on the last Thursday, a `date_post` in any
 month with a dated hook, `price` once a month, `pain` on the rest.
@@ -50,5 +61,5 @@ month with a dated hook, `price` once a month, `pain` on the rest.
 The Friday mix inside a month: a showcase on the first Friday, a web Field Note on the
 second, a scroll film on the third (a showcase when the site has no film yet), the offer
 card on the fourth, a showcase on a fifth. Sites rotate so none appears twice in a month.
-Every Friday caption links `intelliai.au/websites/`, and only sites in `sites.yaml` are
-ever shown.
+Every website caption links `https://intelliai.au/` (the front page since 16 Nov 2026;
+`/websites/` only redirects), and only sites in `sites.yaml` are ever shown.
