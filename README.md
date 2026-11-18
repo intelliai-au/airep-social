@@ -55,8 +55,9 @@ has three posts a week, and about half are films:
   <https://intelliai.au/airep/>.
 - Wednesday and Thursday are `website`.
 
-Four Wednesdays are held empty in `schedule.RESERVED` for the front page's four films:
-2 Dec, 16 Dec, 13 Jan and 3 Feb. After 26 Feb the grid above resumes.
+Four Wednesdays in `schedule.RESERVED` carry the front page's four films: 2 Dec
+spreadsheets, 16 Dec one invoice, 13 Jan software and 3 Feb demo
+(`site/video/website_film_<name>_9x16.mp4`). After 26 Feb the grid above resumes.
 
 22 Dec to 4 Jan keeps only the Tuesday post. The calendar runs Tue 17 Nov 2026 to
 Thu 11 Nov 2027. `posts.py` refuses a file whose slot does not match its weekday.

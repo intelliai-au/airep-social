@@ -73,12 +73,13 @@ class DryRunTests(unittest.TestCase):
                 push.main(["--today", "2026-11-22", "--state", str(state_path)])
         text = out.getvalue()
         self.assertIn("Already queued in Buffer: LinkedIn 2, Facebook 2", text)
-        # Three a week from 23 Nov, and Wed 2 Dec is held for a front-page film, so the
-        # fortnight to 6 Dec holds Thu 26 Nov, Tue 1 and Thu 3 Dec: under the cap of six.
-        self.assertIn("6 createPost call(s) planned", text)
+        # Three a week from 23 Nov, so the fortnight to 6 Dec holds Thu 26 Nov and Tue 1,
+        # Wed 2 (the spreadsheets film, on a day held for it) and Thu 3 Dec: four a channel
+        # on top of the two queued fills the cap of six exactly.
+        self.assertIn("8 createPost call(s) planned", text)
         self.assertIn("Thu 26 Nov 07:30 LI", text)
+        self.assertIn("Wed 02 Dec 07:30 LI", text)
         self.assertIn("Thu 03 Dec 18:30 FB", text)
-        self.assertNotIn("Wed 02 Dec", text)
         self.assertNotIn("Tue 08 Dec", text)
 
     def test_second_run_after_a_push_plans_nothing_new(self) -> None:

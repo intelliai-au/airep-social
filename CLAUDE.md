@@ -60,10 +60,13 @@ all written already, about half of them films.
   links `https://intelliai.au/airep/`. That is an editorial rule; the code doesn't
   enforce it.
 - **Reserved days** (`schedule.RESERVED`): Wed 2 Dec, Wed 16 Dec, Wed 13 Jan and Wed 3 Feb
-  are held for the four intelliai.au front-page films (`website-film-spreadsheets`,
-  `-software`, `-one-invoice`, `-demo` in airep `core/static/core/video/`). The author run
-  skips them. Keiran picks which film goes on which day. Copy the film into `site/video/`
-  and write its post then.
+  carry the four intelliai.au front-page films (`website-film-spreadsheets`,
+  `-one-invoice`, `-software`, `-demo` in airep `core/static/core/video/`, in that order),
+  copied to `site/video/website_film_<name>_9x16.mp4` on 18 Nov 2026. The author run
+  skips them. Each film sits after the post on the same theme (1 Dec five logins, 15 Dec
+  the monthly, 12 Jan the software bill); to swap two days, rename the files and change
+  `date:`. If the front page's prices change, re-copy the films (airep's
+  `test_the_films_prices_match_the_page` keeps them matched there).
 - **Christmas:** the posts on 22 Dec and 29 Dec don't push the 48-hour demo.
 - **Films:** `shots.py` films each site in `sites.yaml` (`website_<slug>_scroll.mp4`,
   `website_<slug>-pricing_scroll.mp4` and similar, plus `website_<slug>_laptop.mp4`).

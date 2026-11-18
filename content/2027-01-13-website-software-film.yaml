@@ -1,0 +1,19 @@
+date: 2027-01-13
+slot: website
+video: video/website_film_software_9x16.mp4
+# A front-page film (airep core/static/core/video/website-film-software-9x16.mp4, copied
+# 18 Nov 2026). Its prices match the page (airep test_the_films_prices_match_the_page):
+# re-copy it if they change. Lantern Hill Pilates and its bill are made up, and the film
+# says so. Like the film, the captions claim no saving: in year one $2,500 + 12 x $120 is
+# more than 12 x $249, so they compare renting with owning, never a dollar figure saved.
+# 3.5 s in is its opening card: "Paying $200 or more a month for software?"
+thumbnail_offset_ms: 3500
+linkedin: |
+  Lantern Hill Pilates is made up, and so is its software bill: a $199 plan, $29 for text reminders and $21 for extra staff logins, every month, for software made for everyone.
+  Your own website can do that job, built around how you work: classes booked and paid online, memberships by direct debit, and a staff console for the day.
+  $2,500 + GST once, every feature included, then $120 + GST a month for hosting and fixes. No lock-in: 30 days' notice, and rises are capped at CPI + 3% once a year.
+  https://intelliai.au/
+facebook: |
+  Booking software made for everyone, with the extras costing extra? Your own website can do that job, built around how you work.
+  A free live demo in 48 hours. No payment, no sign-up.
+  https://intelliai.au/

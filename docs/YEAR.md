@@ -19,9 +19,9 @@ describe what runs. Each week has three posts:
 - Tuesday is a website post, or an AIREP feature at most once a fortnight.
 - Wednesday and Thursday are website posts.
 
-Four Wednesdays (2 Dec, 16 Dec, 13 Jan and 3 Feb) are held in `schedule.RESERVED` for
-the front page's films. The author run's next month to write is 2027-03, when this grid
-resumes.
+Four Wednesdays in `schedule.RESERVED` carry the front page's four films (filled 18 Nov
+2026): 2 Dec spreadsheets, 16 Dec one invoice, 13 Jan software, 3 Feb demo. The author
+run's next month to write is 2027-03, when this grid resumes.
 
 | Month | Theme | Films (2 a month) | Dated hooks | Website Fridays |
 | --- | --- | --- | --- | --- |

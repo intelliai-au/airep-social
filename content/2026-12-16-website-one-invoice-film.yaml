@@ -1,0 +1,18 @@
+date: 2026-12-16
+slot: website
+video: video/website_film_one-invoice_9x16.mp4
+# A front-page film (airep core/static/core/video/website-film-one-invoice-9x16.mp4,
+# copied 18 Nov 2026). Its prices match the page (airep test_the_films_prices_match_the_page):
+# re-copy it if they change. Bramble & Bone Dog Grooming is made up, and the film says so.
+# Like the film, the captions keep the web address and email as their own costs, never
+# "included": the plan covers the website, not all of a business's IT.
+# 3.5 s in is its opening card: "One website. Five bills to juggle."
+thumbnail_offset_ms: 3500
+linkedin: |
+  Hosting due on the 1st, a security certificate about to expire, backups to renew, updates waiting, and a developer by the hour when something breaks. Five bills for one website.
+  We take all of it on for one invoice: Hosting and fixes, $120 + GST a month, and anything that breaks is fixed at no extra cost.
+  That covers your website, not all your IT: a .com.au is about $30 a year in your business's name, and email from your own domain is $15 + GST a month on the same invoice.
+  https://intelliai.au/
+facebook: |
+  One website, five bills to juggle? We take them off your hands: one invoice, $120 + GST a month, and anything that breaks is fixed at no extra cost.
+  https://intelliai.au/

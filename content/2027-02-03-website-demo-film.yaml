@@ -1,0 +1,18 @@
+date: 2027-02-03
+slot: website
+video: video/website_film_demo_9x16.mp4
+# A front-page film (airep core/static/core/video/website-film-demo-9x16.mp4, copied
+# 18 Nov 2026). Its prices match the page (airep test_the_films_prices_match_the_page):
+# re-copy it if they change. Lantern Hill Yoga is made up, and the film says so.
+# The 4 Feb post walks the same steps as a field note, so these captions lead with the
+# form and the demo.
+# 3.5 s in is its opening card: "Free live demo. See your website before you pay anything."
+thumbnail_offset_ms: 3500
+linkedin: |
+  See your new website before you pay anything. Send a short form with your name, your email and your current web address, and we take your logo, colours and wording from it.
+  Within 48 hours you get a link to a live demo of your own website, on your phone and ready to try. No payment, no sign-up.
+  If you like it, it is $2,500 + GST once, half when you approve and half once it's live, then $120 + GST a month for hosting and fixes.
+  https://intelliai.au/
+facebook: |
+  Free live demo: send a short form, and within 48 hours you're trying your own new website on your phone. No payment, no sign-up.
+  https://intelliai.au/

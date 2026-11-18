@@ -1,0 +1,18 @@
+date: 2026-12-02
+slot: website
+video: video/website_film_spreadsheets_9x16.mp4
+# A front-page film (airep core/static/core/video/website-film-spreadsheets-9x16.mp4,
+# copied 18 Nov 2026). Its prices match the page (airep test_the_films_prices_match_the_page):
+# re-copy it if they change. Thistle Row Dog Grooming is made up, and the film says so.
+# 3.5 s in is its opening card: "Five logins and a spreadsheet?" It follows the 1 Dec
+# "five logins" post, so the captions open differently.
+thumbnail_offset_ms: 3500
+linkedin: |
+  Thistle Row Dog Grooming is made up, and so is its set-up: bookings in one app, payments in another, the roster in a spreadsheet and the customer list in a document.
+  We would put it all in the website instead. Customers book from real availability and pay as they book, and the staff run the day from one console.
+  $2,500 + GST once to build it, every feature included, then $120 + GST a month for hosting and fixes. Booking emails add $15 + GST a month.
+  https://intelliai.au/
+facebook: |
+  Bookings here, payments there, the roster in a spreadsheet. This example dog groomer puts all of it in one website, with one sign-in for the staff.
+  A free live demo of your own website in 48 hours. No payment, no sign-up.
+  https://intelliai.au/
