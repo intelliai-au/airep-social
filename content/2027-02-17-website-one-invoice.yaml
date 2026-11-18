@@ -1,0 +1,25 @@
+date: 2027-02-17
+slot: website
+image: images/2027-02-17-website-one-invoice.png
+template: price
+alt: "A different bill for every part? With Intelli AI: $2,500 + GST once to build with every feature included, $120 + GST a month for hosting and fixes, and $15 + GST a month for Email that arrives, on one monthly invoice."
+fields:
+  kicker: "Sound familiar? · the bills"
+  headline: "A different bill *for every part?*"
+  sub: "A website plan, a booking app, hosting, add-ons. With us the website, its hosting, security, backups, fixes and every system we build into it come on one monthly invoice."
+  # Source: the front page's "Sound familiar?" (airep templates/pages/websites.html),
+  # in its words, and the prices in airep core/views/public.py.
+  rows:
+    - { label: "Build", amount: "$2,500", unit: "+ GST once, every feature included" }
+    - { label: "Hosting and fixes", amount: "$120", unit: "+ GST a month" }
+    - { label: "Email that arrives", amount: "$15", unit: "+ GST a month, on the same invoice" }
+  footer: "Not on it: your web address, about $30 a year in your business's name, and Stripe's and Square's fees, paid straight to them."
+  foot_link: "intelliai.au →"
+linkedin: |
+  A website plan, a booking app, hosting, add-ons: a different bill for every part.
+  With us the website, its hosting, security, backups, fixes and every system we build into it come on one monthly invoice: $120 + GST, plus $15 + GST if the site sends email.
+  The build is $2,500 + GST once, with every feature included.
+  https://intelliai.au/
+facebook: |
+  A different bill for every part? With us the website, hosting, fixes and every system in it come on one monthly invoice.
+  https://intelliai.au/

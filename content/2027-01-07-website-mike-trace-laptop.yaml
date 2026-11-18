@@ -1,0 +1,16 @@
+date: 2027-01-07
+slot: website
+video: video/website_mike-trace-engineering_laptop.mp4
+hashtags: [WebDesign, SmallBusiness, Brisbane]
+# Facts from sites.yaml (intelliai.au/work/). The film is the live home page on a
+# laptop (shots.py).
+thumbnail_offset_ms: 1000
+linkedin: |
+  Mike Trace Engineering's website on a desktop: the service range for road sweepers, the areas served, and the workshop's number at the top of every page.
+  A trade business trading since 2002 with no meaningful website, until this one.
+  No website yet, or one you'd rather nobody saw? We'll build a free live demo of your new one in 48 hours, before you pay anything.
+  https://intelliai.au/
+facebook: |
+  Mike Trace Engineering's site: the service range, the areas served, and the number on every page.
+  Free live demo of yours in 48 hours, before you pay anything.
+  https://intelliai.au/

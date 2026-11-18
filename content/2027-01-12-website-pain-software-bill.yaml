@@ -1,0 +1,31 @@
+date: 2027-01-12
+slot: website
+image: images/2027-01-12-website-pain-software-bill.png
+template: pain
+alt: "A made-up spreadsheet of monthly software subscriptions adding up to $200 a month, $2,400 a year: a website plan, a booking app, a payments add-on, a forms add-on and email marketing."
+fields:
+  kicker: "Sound familiar? · the software bill"
+  headline: "Paying $200 a month *for software?*"
+  sub: "That is $2,400 a year for a system made for everyone else. We build yours into your website for $2,500 + GST once."
+  button: "Your own, built in"
+  sheet_title: "monthly_subscriptions_2026.xlsx"
+  sheet_meta: "an example, made up"
+  columns: ["Subscription", "Monthly", "Since", "Note"]
+  # An invented example business: generic labels only, never a real product's name.
+  # The $200 and $2,400 are the front page's own figures ("Sound familiar?", airep
+  # templates/pages/websites.html); the rows add up to them.
+  rows:
+    - { c1: "Website plan", c2: "$79", c2_class: "", c3: "2021", c4: "rose 2x", c4_class: "warn" }
+    - { c1: "Booking app", c2: "$59", c2_class: "", c3: "2022", c4: "own pw", c4_class: "scrawl" }
+    - { c1: "Payments add-on", c2: "$29", c2_class: "", c3: "2023", c4: "+ fees?", c4_class: "warn" }
+    - { c1: "Forms add-on", c2: "$19", c2_class: "", c3: "2023", c4: "used 2x", c4_class: "scrawl" }
+    - { c1: "Email marketing", c2: "$14", c2_class: "", c3: "2024", c4: "", c4_class: "" }
+    - { c1: "Total", c2: "$200", c2_class: "warn", c3: "", c4: "$2,400", c4_class: "warn" }
+linkedin: |
+  Paying $200 a month for software? That is $2,400 a year for a system made for everyone else.
+  We build yours into your website for $2,500 + GST once, then from $120 + GST a month, and it works the way your business does.
+  Bookings, payments, direct debit and a members' area are all inside that build price.
+  https://intelliai.au/
+facebook: |
+  $200 a month for software is $2,400 a year. We build yours into your website for $2,500 + GST once, then $120 + GST a month.
+  https://intelliai.au/

@@ -1,0 +1,30 @@
+date: 2026-12-01
+slot: website
+image: images/2026-12-01-website-pain-five-logins.png
+template: pain
+alt: "A made-up bookings spreadsheet, BOOKINGS_MASTER_final_v3.xlsx, full of question marks: bookings in one app, payments in another, invoices in Word."
+fields:
+  kicker: "Sound familiar? · five logins"
+  headline: "Five logins *and a spreadsheet.*"
+  sub: "Bookings in one app, payments in another, and the gaps filled with Excel and Word."
+  button: "One place, one sign-in"
+  sheet_title: "BOOKINGS_MASTER_final_v3.xlsx"
+  sheet_meta: "last saved Sun 9:47 pm"
+  columns: ["Booking", "Paid?", "Updated", "Note"]
+  # Illustrative cells, invented: no real customer or business. The theme is the front
+  # page's "Sound familiar?" (airep templates/pages/websites.html), in its words.
+  rows:
+    - { c1: "Sat 9:00, new", c2: "?", c2_class: "warn", c3: "Fri", c4: "2nd app", c4_class: "scrawl" }
+    - { c1: "Sat 10:30", c2: "yes", c2_class: "", c3: "Thu", c4: "deposit??", c4_class: "warn" }
+    - { c1: "Sun 2:00, x6", c2: "—", c2_class: "", c3: "", c4: "in Word", c4_class: "scrawl" }
+    - { c1: "Mon 4:00", c2: "twice?", c2_class: "warn", c3: "Mon", c4: "refund 1", c4_class: "warn" }
+    - { c1: "Tue 9:00, moved", c2: "yes", c2_class: "", c3: "last wk", c4: "old time", c4_class: "scrawl" }
+    - { c1: "Gift voucher", c2: "paid", c2_class: "", c3: "", c4: "sticky", c4_class: "scrawl" }
+linkedin: |
+  Bookings in one app, payments in another, and the gaps filled with a spreadsheet and a Word invoice. Five logins, and a Sunday night matching them up.
+  We build what you need into your website instead: one place for your customers, and one sign-in for you and your staff.
+  Bookings, payments, a members' area and a staff roster are all included in a $2,500 + GST build.
+  https://intelliai.au/
+facebook: |
+  Five logins and a spreadsheet? We build bookings, payments and the rest into your website instead: one place for customers, one sign-in for you.
+  https://intelliai.au/

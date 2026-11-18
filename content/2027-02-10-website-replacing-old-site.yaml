@@ -1,0 +1,29 @@
+date: 2027-02-10
+slot: website
+image: images/2027-02-10-website-replacing-old-site.png
+template: field_note
+alt: "Field note: replacing an old website. The web address stays, old page links are sent to the new ones, email keeps working, Google is set up, you check it on a private link first, and the words, photos, design and address are yours."
+fields:
+  kicker_left: "Websites · replacing a site"
+  kicker_right: "Built in Ipswich"
+  headline: "Replacing an old site, *without losing anything.*"
+  sub: "Moving to a new website should not cost you your address, your email or the places Google already sends people."
+  # Source: airep templates/pages/websites.html (what a build includes; "Yours to keep")
+  # and the free demo's "We take your logo, colours and wording from it".
+  rows:
+    - { label: "Address", text: "Your web address stays the same.", tag: "kept" }
+    - { label: "Old links", text: "Links to your old pages are sent to the new ones.", tag: "kept" }
+    - { label: "Email", text: "Your email keeps working through the move.", tag: "kept" }
+    - { label: "Google", text: "Page titles, a sitemap and local-business details.", tag: "set up" }
+    - { label: "Checking", text: "A private link to check it on your phone first.", tag: "private" }
+    - { label: "Ownership", text: "The words, photos, design and address are yours.", tag: "yours" }
+  test: "For a free demo, your current web address is all we need: we take your logo, colours and wording from it."
+  foot_link: "intelliai.au →"
+linkedin: |
+  Replacing an old website? Your web address stays the same, your email keeps working, and links to your old pages are sent to the new ones.
+  It is set up for Google from the start, and you check it on a private link before it goes live. The words, photos, design and address stay yours.
+  For a free live demo, your current web address is all we need: we take your logo, colours and wording from it.
+  https://intelliai.au/
+facebook: |
+  Replacing an old site? Same address, email still working, old links redirected. For a free demo, your current address is all we need.
+  https://intelliai.au/

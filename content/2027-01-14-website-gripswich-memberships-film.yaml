@@ -1,0 +1,15 @@
+date: 2027-01-14
+slot: website
+video: video/website_gripswich-pricing_scroll.mp4
+hashtags: [WebDesign, SmallBusiness, Ipswich]
+# Facts from sites.yaml (intelliai.au/work/). The film scrolls the live /pricing/ page
+# on a phone (shots.py).
+thumbnail_offset_ms: 1000
+linkedin: |
+  GRIPswich Bouldering's memberships and passes, on the gym's own website. Members join and pay there, and direct debit and card billing run in-house, not through a gym software company.
+  It is part of the system we built for the gym, which replaced the off-the-shelf one it opened on.
+  Direct debit through Stripe is included in every $2,500 + GST website we build: memberships, subscriptions and payment plans.
+  https://intelliai.au/
+facebook: |
+  GRIPswich Bouldering's memberships are sold on its own website, with direct debit and card billing run in-house.
+  https://intelliai.au/

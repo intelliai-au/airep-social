@@ -37,20 +37,20 @@ class DryRunTests(unittest.TestCase):
             text = out.getvalue()
         self.assertEqual(code, 0)
         self.assertIn("DRY RUN", text)
-        # Four posts a week, but never more than six queued a channel: Thu 26 and
-        # Fri 27 Nov wait for the next Sunday.
+        # Never more than six queued a channel: Thu 26 Nov waits for the next Sunday.
         self.assertIn("Already queued in Buffer: LinkedIn 0, Facebook 0 (cap 6 a channel)", text)
         self.assertIn("12 createPost call(s) planned", text)
         self.assertIn("Tue 17 Nov 07:30 LI", text)
         self.assertIn("Wed 25 Nov 18:30 FB", text)
-        self.assertNotIn("Thu 26 Nov", text)
+        self.assertNotIn("Thu 26 Nov 07:30", text)
         self.assertIn("video/airep_reorder_music.mp4", text)
         self.assertIn("images/2026-11-20-website-gripswich.png", text)
         self.assertIn(push.VETO_LINE, text)
         self.assertIn("LinkedIn 6, Facebook 6", text)
-        self.assertIn("the author timer writes December", text)
+        # The last November post is Thu 26 Nov (the tree is pinned to November above).
+        self.assertIn("Content runs out Thu 26 Nov: the author timer writes December", text)
 
-    def test_next_sunday_tops_the_queue_back_up_to_six(self) -> None:
+    def test_next_sunday_queues_the_next_fortnight_under_the_cap(self) -> None:
         # State as the 15 Nov live run leaves it (17-25 Nov queued on both pages).
         with tempfile.TemporaryDirectory() as tmp:
             state_path = Path(tmp) / "pushed.json"
@@ -73,10 +73,13 @@ class DryRunTests(unittest.TestCase):
                 push.main(["--today", "2026-11-22", "--state", str(state_path)])
         text = out.getvalue()
         self.assertIn("Already queued in Buffer: LinkedIn 2, Facebook 2", text)
-        self.assertIn("8 createPost call(s) planned", text)
+        # Three a week from 23 Nov, and Wed 2 Dec is held for a front-page film, so the
+        # fortnight to 6 Dec holds Thu 26 Nov, Tue 1 and Thu 3 Dec: under the cap of six.
+        self.assertIn("6 createPost call(s) planned", text)
         self.assertIn("Thu 26 Nov 07:30 LI", text)
-        self.assertIn("Wed 02 Dec 18:30 FB", text)
-        self.assertNotIn("Thu 03 Dec", text)
+        self.assertIn("Thu 03 Dec 18:30 FB", text)
+        self.assertNotIn("Wed 02 Dec", text)
+        self.assertNotIn("Tue 08 Dec", text)
 
     def test_second_run_after_a_push_plans_nothing_new(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

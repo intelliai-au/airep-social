@@ -1,0 +1,26 @@
+date: 2026-12-09
+slot: website
+image: images/2026-12-09-website-three-prices.png
+template: price
+alt: "Intelli AI websites: $2,500 + GST to build with every feature included, $120 + GST a month for hosting and fixes, and changes at $100 + GST an hour, quoted first. The monthly can only rise once a year, capped at CPI + 3%."
+fields:
+  kicker: "Websites · the prices"
+  headline: "Three prices, *all of them in writing.*"
+  sub: "A fixed build, one monthly plan, and an hourly rate for changes later. If your site sends email, such as booking confirmations, Email that arrives adds $15 + GST a month."
+  # Source: airep core/views/public.py (WEBSITE_BUILD_PRICE, WEBSITE_LOOKED_PRICE,
+  # WEBSITE_EMAIL_PRICE, WEBSITE_SYSTEMS_NOTE, WEBSITE_PRICE_PROMISE) and the
+  # front page's fine print (the hourly rate, "quoted before we start").
+  rows:
+    - { label: "Build", amount: "$2,500", unit: "+ GST once, every feature included" }
+    - { label: "Hosting and fixes", amount: "$120", unit: "+ GST a month" }
+    - { label: "Changes", amount: "$100", unit: "+ GST an hour, quoted first" }
+  footer: "The monthly can only rise once a year, capped at CPI + 3%, in writing. Stop it on 30 days' notice."
+  foot_link: "intelliai.au →"
+linkedin: |
+  Our website prices: $2,500 + GST to build with every feature included, and $120 + GST a month for hosting and fixes.
+  Email that arrives adds $15 + GST a month when your site sends booking confirmations, receipts or enquiry alerts. Changes later are $100 + GST an hour, quoted before we start.
+  The monthly can only rise once a year, capped at CPI + 3%, in writing, for as long as you're a customer.
+  https://intelliai.au/
+facebook: |
+  $2,500 + GST to build, every feature included. $120 + GST a month for hosting and fixes. Changes $100 + GST an hour, quoted first.
+  https://intelliai.au/

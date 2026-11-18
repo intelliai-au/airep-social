@@ -1,0 +1,28 @@
+date: 2027-01-27
+slot: website
+image: images/2027-01-27-website-review-koala.png
+template: field_note
+alt: "A five-star Google review of Intelli AI by Edward Kennedy of Koala Music, quoted in full."
+fields:
+  kicker_left: "Websites · a Google review"
+  kicker_right: "Five stars"
+  headline: "In a client's *own words.*"
+  # Word for word from Intelli AI's Google Business Profile, as the front page quotes it
+  # (airep core/views/public.py GOOGLE_REVIEWS, 6 Nov 2026). "produce's" and the closing
+  # ".." are the reviewer's own: a quote stays as written, never tidied or shortened.
+  # Koala Music's new site is not live yet (sites.yaml "Not yet"), so no shot of it.
+  sub: "“I run a music publishing business called Koala Music, which produce's ensemble music for schools and community ensembles. I requested Intelli AI to construct an effective and practical website for my business two years ago. Intelli AI completed this task with great professionalism and competence. I am most satisfied with the outcome, and my business has thrived ever since..”"
+  rows:
+    - { label: "Reviewer", text: "Edward Kennedy, Koala Music", tag: "Google" }
+    - { label: "Business", text: "Ensemble music for schools and community ensembles", tag: "" }
+    - { label: "Posted", text: "6 November 2026, on our Google Business Profile", tag: "5 stars" }
+  test: "Quoted in full, as it appears on Google."
+  foot_link: "intelliai.au →"
+linkedin: |
+  A five-star Google review from Edward Kennedy of Koala Music, in full:
+  “I run a music publishing business called Koala Music, which produce's ensemble music for schools and community ensembles. I requested Intelli AI to construct an effective and practical website for my business two years ago. Intelli AI completed this task with great professionalism and competence. I am most satisfied with the outcome, and my business has thrived ever since..”
+  Thank you, Edward.
+  https://intelliai.au/
+facebook: |
+  A five-star Google review from Edward Kennedy of Koala Music, in full on the card. Thank you, Edward.
+  https://intelliai.au/

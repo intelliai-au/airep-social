@@ -1,0 +1,29 @@
+date: 2027-02-24
+slot: website
+image: images/2027-02-24-website-count-your-logins.png
+template: field_note
+alt: "Field note: a five-minute test. Count the logins your business uses for bookings, payments, customers, staff, the website and the spreadsheet that joins them up."
+fields:
+  kicker_left: "Field notes · a five-minute test"
+  kicker_right: "Small business · AU"
+  headline: "Count your logins. *Then count the bills.*"
+  sub: "Five logins and a spreadsheet? We build what you need into your website instead: one place for your customers, and one sign-in for you and your staff."
+  # The theme is the front page's "Sound familiar?" (airep templates/pages/websites.html),
+  # in its words. The rows are a checklist for the reader, not a claim about anyone.
+  rows:
+    - { label: "Bookings", text: "Where do customers book, and who logs in to see it?", tag: "1" }
+    - { label: "Payments", text: "Where does the money land, and in which app?", tag: "2" }
+    - { label: "Customers", text: "Where do their details and history live?", tag: "3" }
+    - { label: "Staff", text: "Where is the roster, and who updates it?", tag: "4" }
+    - { label: "Website", text: "Who can change a price or a photo on it?", tag: "5" }
+    - { label: "Spreadsheet", text: "What do you copy into it by hand each week?", tag: "+1" }
+  test: "More than two? Add up what each one costs a month, then ask us for a free demo."
+  foot_link: "intelliai.au →"
+linkedin: |
+  A five-minute test: count the logins your business uses for bookings, payments, customers, the staff roster and the website, then the spreadsheet you copy between them.
+  Then add up the monthly bills that come with them.
+  We build what you need into your website instead: one place for your customers, one sign-in for you and your staff, from $120 + GST a month after a $2,500 + GST build.
+  https://intelliai.au/
+facebook: |
+  Count your logins: bookings, payments, customers, roster, website, and the spreadsheet in between. Then count the bills.
+  https://intelliai.au/

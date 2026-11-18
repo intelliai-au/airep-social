@@ -1,0 +1,17 @@
+date: 2027-01-21
+slot: website
+video: video/website_film_16x9.mp4
+# The front page's film again, landscape this time (airep
+# core/static/core/video/website-film-16x9.mp4). Its prices match the page: re-copy
+# it if they change. The bakery and its old costs are made up, and the film says so.
+# 28 s in is step 3, "$2,500 + GST, once", beside the new site on a phone.
+thumbnail_offset_ms: 28000
+linkedin: |
+  Same bakery, better website. Cobble Lane Bakery and its old costs are made up, but the set-up may be familiar: a slow site, tiny on a phone, no way to order a cake, and $268 a month for it.
+  The fix is a website that is fast on a phone and takes the orders: $2,500 + GST once with every feature included, then $120 + GST a month, looked after.
+  See yours first: a free live demo of your website in 48 hours, before you pay anything.
+  https://intelliai.au/
+facebook: |
+  Same bakery, better website. An example, made up, of what $2,500 + GST builds.
+  Free live demo of yours in 48 hours.
+  https://intelliai.au/

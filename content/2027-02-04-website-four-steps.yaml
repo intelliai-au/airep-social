@@ -1,0 +1,28 @@
+date: 2027-02-04
+slot: website
+image: images/2027-02-04-website-four-steps.png
+template: field_note
+alt: "Field note: how a website with Intelli AI happens. Tell us what you need, see a free live demo in 48 hours, approve and pay half, check it on a private link, and go live within two weeks of your content and pay the other half."
+fields:
+  kicker_left: "Websites · how it works"
+  kicker_right: "Built in Ipswich"
+  headline: "Tell us. See it. *Approve. Live.*"
+  sub: "$2,500 + GST, fixed. Half when you approve, half once it's live and you're happy. Nothing to pay before you've seen it working."
+  # Source: the front page's film steps and how-it-works text (airep
+  # core/views/public.py WEBSITE_FILMS and the page's own wording).
+  rows:
+    - { label: "Tell us", text: "What your business does and what the site should do.", tag: "free" }
+    - { label: "See it", text: "A free live demo of your website, on your phone.", tag: "48 hrs" }
+    - { label: "Approve", text: "Half the build price when you say go.", tag: "$1,250" }
+    - { label: "Check it", text: "A private link, with corrections until you're happy.", tag: "" }
+    - { label: "Live", text: "Your own address, within 2 weeks of your content.", tag: "$1,250" }
+  test: "Then $120 + GST a month for hosting and fixes. Either side can stop it on 30 days' notice."
+  foot_link: "intelliai.au →"
+linkedin: |
+  How a website with us happens: tell us what you need, and see a free live demo of it on your phone in 48 hours, before you pay anything.
+  Approve it and pay half of the $2,500 + GST. Check it on a private link, with corrections until you're happy.
+  It goes live on your own web address within two weeks of getting your content, and the other half is due then. After that, $120 + GST a month, looked after.
+  https://intelliai.au/
+facebook: |
+  Tell us. See a free demo in 48 hours. Approve. Live within two weeks. $2,500 + GST, half up front, half when you're happy.
+  https://intelliai.au/

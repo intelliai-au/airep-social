@@ -1,0 +1,27 @@
+date: 2027-02-25
+slot: website
+image: images/2027-02-25-website-free-demo.png
+template: field_note
+alt: "Field note: see your new website before you pay anything. A free live demo in 48 hours: with a website, the address is all we need; without one, your business name, what you do and a logo if you have one."
+fields:
+  kicker_left: "Websites · free demo"
+  kicker_right: "Built in Ipswich"
+  headline: "See your new website *before you pay anything.*"
+  sub: "Get a free live demo of your website in 48 hours. No payment, no sign-up, no strings attached. Tell us where to send it and we build it for your business."
+  # Source: the front page's demo form (airep templates/pages/websites.html and
+  # core/views/public.py), in its words.
+  rows:
+    - { label: "Have a site", text: "Your address is all we need: we take your logo, colours and wording from it.", tag: "free" }
+    - { label: "No site yet", text: "Your business name, what you do, and a logo if you have one.", tag: "free" }
+    - { label: "Then", text: "A live demo of your own website, on your phone.", tag: "48 hrs" }
+    - { label: "Like it?", text: "$2,500 + GST, fixed. Live within 2 weeks of your content.", tag: "" }
+  test: "Then $120 + GST a month for hosting and fixes, with 30 days' notice to leave."
+  foot_link: "intelliai.au →"
+linkedin: |
+  See your new website before you pay anything: a free live demo of it in 48 hours. No payment, no sign-up, no strings attached.
+  Have a website already? The address is all we need: we take your logo, colours and wording from it. No website yet? Your business name, what you do, and a logo if you have one.
+  If you like it, it's $2,500 + GST, fixed, and live within two weeks of getting your content.
+  https://intelliai.au/
+facebook: |
+  Free live demo of your new website in 48 hours. No payment, no sign-up. Tell us where to send it.
+  https://intelliai.au/

@@ -1,0 +1,29 @@
+date: 2027-02-18
+slot: website
+image: images/2027-02-18-website-gripswich-classes.png
+template: website
+hashtags: [WebDesign, SmallBusiness, Ipswich]
+alt: "The GRIPswich Bouldering classes page on a phone, built by Intelli AI: the class lineup, times and prices, with an Enrol button on each class."
+fields:
+  kicker: "Websites · built by Intelli AI"
+  headline: "The class lineup, *booked from a phone.*"
+  # Facts from sites.yaml (intelliai.au/work/). The shot hides coaches' names and
+  # places-left counts (sites.yaml hide).
+  sub: "GRIPswich Bouldering's classes: the lineup, the times and an Enrol button on each, in the same system as the gym's memberships, check-in and rostering."
+  rows:
+    - { text: "Class bookings" }
+    - { text: "Memberships" }
+    - { text: "Check-in" }
+    - { text: "Member portal" }
+  shot: shots/gripswich-classes-phone.png
+  frame: phone
+  site_url: gripswich.au
+  footer: "$2,500 + GST to build, online bookings and a members' area included. Then $120 + GST a month for hosting and fixes."
+linkedin: |
+  GRIPswich Bouldering's members enrol in classes from a phone: the lineup, the times and the price, with an Enrol button on each.
+  It runs in the same system as their memberships, check-in and the staff roster, which we built for the gym.
+  Online bookings and a members' area are included in every $2,500 + GST website we build.
+  https://intelliai.au/
+facebook: |
+  GRIPswich Bouldering's classes, booked from a phone, in the same system as the memberships. Built by us.
+  https://intelliai.au/

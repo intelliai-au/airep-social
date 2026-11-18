@@ -1,0 +1,15 @@
+date: 2027-02-09
+slot: website
+video: video/website_mike-trace-engineering-contact-us_scroll.mp4
+hashtags: [WebDesign, SmallBusiness, Brisbane]
+# Facts from sites.yaml (intelliai.au/work/). The film scrolls the live /contact-us/
+# page on a phone (shots.py): the workshop's number and the enquiry form.
+thumbnail_offset_ms: 1000
+linkedin: |
+  Mike Trace Engineering's contact page: the workshop's number one tap away, and an enquiry form that lands in the inbox.
+  The 24/7 emergency line is on every page of the site, because a broken-down sweeper does not wait for business hours.
+  An enquiry form to your inbox comes with every website we build.
+  https://intelliai.au/
+facebook: |
+  The number one tap away, an enquiry form to the inbox, and the 24/7 line on every page. Mike Trace Engineering's site, built by us.
+  https://intelliai.au/

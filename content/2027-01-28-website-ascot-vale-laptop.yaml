@@ -1,0 +1,16 @@
+date: 2027-01-28
+slot: website
+video: video/website_ascot-vale-driving_laptop.mp4
+hashtags: [WebDesign, SmallBusiness, Melbourne]
+# Facts from sites.yaml (intelliai.au/work/). The film is the live home page on a
+# laptop (shots.py). The Google Business Profile line is our feature list's, not a
+# claim about this client.
+thumbnail_offset_ms: 1000
+linkedin: |
+  Ascot Vale Driving School's website was built for local search from day one, with the structured data search engines need to surface a local service business.
+  Then the booking does the rest: live instructor availability and online lesson booking, with the prices on the page.
+  Every website we build is set up for Google, and we'll claim or tidy up your free Google Business Profile as part of the build.
+  https://intelliai.au/
+facebook: |
+  A Melbourne driving school's website, built for local search from day one, with online booking behind it.
+  https://intelliai.au/

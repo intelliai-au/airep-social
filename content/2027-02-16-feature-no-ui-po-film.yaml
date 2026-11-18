@@ -1,0 +1,16 @@
+date: 2027-02-16
+slot: feature
+video: video/airep_no_ui_po_music.mp4
+# AIREP keeps one post a fortnight, on a Tuesday, while the website posts lead.
+# The film's own captions: "Type it. Don't fill it in." / both codes resolved, priced
+# at what the supplier charges you / "It asks before it writes" / a draft PO.
+# The headline caption lands just after the trimmed lead-in.
+thumbnail_offset_ms: 3000
+linkedin: |
+  Type the purchase order in one sentence: the supplier, the item codes and the quantities. Nova reads it against your own data, resolves the codes and prices each line at what that supplier charges you.
+  It shows the draft first, and nothing exists until you say so; the purchase order lands as a draft for a buyer to check.
+  Same rules and permissions as the form, without the form.
+  https://intelliai.au/airep/
+facebook: |
+  Type it, don't fill it in. One sentence becomes a priced draft purchase order in AIREP, and nothing is written until you say so.
+  https://intelliai.au/airep/

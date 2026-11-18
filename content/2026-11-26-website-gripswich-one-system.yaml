@@ -1,0 +1,15 @@
+date: 2026-11-26
+slot: website
+video: video/website_gripswich_laptop.mp4
+hashtags: [WebDesign, SmallBusiness, Ipswich]
+# Facts from sites.yaml (intelliai.au/work/). The film is the live home page on a
+# laptop (shots.py), with members' names and the day's notices hidden.
+thumbnail_offset_ms: 1000
+linkedin: |
+  GRIPswich Bouldering in Ipswich opened on an off-the-shelf system. Since August 2026 its memberships, direct debit, check-in, class bookings, point of sale and rostering run in one system we built, instead of four.
+  Members book, pay and see their progress on the gym's own website.
+  Want something like it? Online bookings, direct debit, a members' area, check-in and a staff roster are all included in a $2,500 + GST build.
+  https://intelliai.au/
+facebook: |
+  GRIPswich Bouldering's memberships, direct debit, check-in, class bookings, till and roster: one system we built, instead of four.
+  https://intelliai.au/

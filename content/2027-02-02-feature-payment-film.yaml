@@ -1,0 +1,15 @@
+date: 2027-02-02
+slot: feature
+video: video/airep_payment_music.mp4
+# AIREP keeps one post a fortnight, on a Tuesday, while the website posts lead.
+# Copy from the retired 15 Dec post, linked to /airep/.
+# The headline caption lands just after the trimmed lead-in.
+thumbnail_offset_ms: 3000
+linkedin: |
+  A payment lands. In AIREP it is allocated to the invoice it pays, the receipt posts debit Bank, credit Trade Debtors, and the aged receivables report moves.
+  No second system to update and no spreadsheet to reconcile at month end.
+  Getting paid is only finished when the books say so.
+  https://intelliai.au/airep/
+facebook: |
+  Paid, allocated, posted. One receipt in AIREP clears the invoice and moves the ageing report.
+  https://intelliai.au/airep/

@@ -1,0 +1,15 @@
+date: 2026-12-10
+slot: website
+video: video/website_mike-trace-engineering_scroll.mp4
+hashtags: [WebDesign, SmallBusiness, Brisbane]
+# Facts from sites.yaml (intelliai.au/work/). The film scrolls the live home page on
+# a phone (shots.py).
+thumbnail_offset_ms: 1000
+linkedin: |
+  Mike Trace Engineering has kept road sweepers running in Brisbane and the Gold Coast since 2002, with no meaningful website until the one we built.
+  It is fast on a phone, explains the service range, and puts the workshop's number one tap away. The 24/7 breakdown line is on every page.
+  A trade business does not need a big site. It needs one that answers the phone.
+  https://intelliai.au/
+facebook: |
+  A road sweeper workshop, trading since 2002, with no real website until ours. Now the number is one tap away and the 24/7 line is on every page.
+  https://intelliai.au/

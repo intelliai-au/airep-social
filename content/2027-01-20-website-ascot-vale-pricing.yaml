@@ -1,0 +1,28 @@
+date: 2027-01-20
+slot: website
+image: images/2027-01-20-website-ascot-vale-pricing.png
+template: website
+hashtags: [WebDesign, SmallBusiness, Melbourne]
+alt: "The Ascot Vale Driving School pricing page on a phone, built by Intelli AI: lesson prices and packages, each with a booking button, and live instructor availability."
+fields:
+  kicker: "Websites · built by Intelli AI"
+  headline: "The prices on the page, *and a book button under each.*"
+  # Facts from sites.yaml (intelliai.au/work/): nothing here the client has not already let us say.
+  sub: "Ascot Vale Driving School in Melbourne: transparent package pricing, live instructor availability and online lesson booking, set up for local search from day one."
+  rows:
+    - { text: "Online booking" }
+    - { text: "Live availability" }
+    - { text: "Package pricing" }
+    - { text: "Local search" }
+  shot: shots/ascot-vale-driving-pricing-phone.png
+  frame: phone
+  site_url: ascotvaledrivingschool.au
+  footer: "$2,500 + GST to build, online bookings included. Then $120 + GST a month for hosting and fixes."
+linkedin: |
+  Ascot Vale Driving School puts its prices on the page, with a booking button under each package and live instructor availability behind it.
+  Learners see what it costs and book in one go, without ringing to ask.
+  Online bookings are included in every $2,500 + GST website we build.
+  https://intelliai.au/
+facebook: |
+  Prices on the page, a book button under each, live availability behind it. A Melbourne driving school's website, built by us.
+  https://intelliai.au/

@@ -1,0 +1,17 @@
+date: 2026-11-24
+slot: website
+video: video/website_film_9x16.mp4
+# The front page's film (airep core/static/core/video/website-film-9x16.mp4, copied
+# 18 Nov 2026). Its prices match the page (airep test_the_films_prices_match_the_page):
+# re-copy it if they change. The bakery and its old costs are made up, and the film says so.
+# 46 s in is the closing card: "Free live demo in 48 hours."
+thumbnail_offset_ms: 46000
+linkedin: |
+  Cobble Lane Bakery is made up, and so is its $268-a-month website bill. The set-up may be familiar: slow, tiny on a phone, no way to order a cake.
+  Here is how we would fix it. Tell us what you need, and see a free live demo of your new site on your phone in 48 hours, before you pay anything.
+  Then one fixed price, $2,500 + GST with every feature included, live within two weeks of getting your content, and $120 + GST a month for hosting and fixes.
+  https://intelliai.au/
+facebook: |
+  An example bakery with a familiar problem: a slow website that costs too much and takes no orders.
+  Free live demo in 48 hours, then $2,500 + GST once and $120 + GST a month. Every feature included.
+  https://intelliai.au/

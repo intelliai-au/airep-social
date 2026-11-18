@@ -1,0 +1,29 @@
+date: 2026-12-22
+slot: website
+image: images/2026-12-22-website-questions-before-you-sign.png
+template: field_note
+alt: "Field note: six questions to ask any web company before you sign. Is the price fixed? What does the monthly cover? Can it go up? Who owns the web address? What if I leave? What do changes cost?"
+fields:
+  kicker_left: "Field notes · websites"
+  kicker_right: "Small business · AU"
+  headline: "Six questions *before you sign.*"
+  sub: "Ask them of any web company, us included, and get the answers in writing. Worth the time over the break."
+  # Our own answers are in the tag column; each one is on airep templates/pages/websites.html.
+  # No 48-hour demo push this week or next: nobody builds a demo over Christmas.
+  rows:
+    - { label: "The price", text: "Is it fixed, or an estimate that can grow?", tag: "fixed" }
+    - { label: "The monthly", text: "What does it cover, and what costs extra?", tag: "listed" }
+    - { label: "Rises", text: "Can it go up, how often, and by how much?", tag: "capped" }
+    - { label: "Web address", text: "Is it registered in your business's name?", tag: "yours" }
+    - { label: "Leaving", text: "How much notice, and what do you get back?", tag: "30 days" }
+    - { label: "Changes", text: "What does a small change cost later?", tag: "quoted" }
+  test: "The tag column is our answer to each. Ask the same six of anyone else."
+  foot_link: "intelliai.au →"
+linkedin: |
+  Six questions to ask any web company before you sign: is the price fixed? What does the monthly cover? Can it go up, and by how much? Who owns the web address? What happens if you leave? What does a small change cost?
+  Our answers: fixed at $2,500 + GST, the monthly's list is on our page, rises capped at CPI + 3% once a year, the address is yours, 30 days' notice, and changes are quoted first.
+  Ask the same six of anyone else, and get the answers in writing.
+  https://intelliai.au/
+facebook: |
+  Six questions before you sign with a web company: fixed price? What's covered? Rises? Who owns the address? Leaving? Changes?
+  https://intelliai.au/

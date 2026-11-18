@@ -1,0 +1,16 @@
+date: 2027-02-11
+slot: website
+video: video/website_gripswich_scroll.mp4
+hashtags: [WebDesign, SmallBusiness, Ipswich]
+# Facts from sites.yaml (intelliai.au/work/). The film scrolls the live home page on
+# a phone (shots.py), with members' names and the day's notices hidden. The built-to-
+# order list is the front page's, not a claim about this client.
+thumbnail_offset_ms: 1000
+linkedin: |
+  GRIPswich Bouldering's website is the gym's front door: memberships, class bookings and the member portal all start here, in the one system we built for it.
+  Bookings, payments, direct debit, a members' area, check-in and a staff roster are included in a $2,500 + GST build.
+  Bigger pieces, such as door access, point of sale or online waivers, are built to order and quoted in writing before we start, never after.
+  https://intelliai.au/
+facebook: |
+  GRIPswich Bouldering's website is its front door: memberships, bookings and the member portal, in one system we built.
+  https://intelliai.au/

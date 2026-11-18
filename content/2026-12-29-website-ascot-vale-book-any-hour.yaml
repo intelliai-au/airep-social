@@ -1,0 +1,15 @@
+date: 2026-12-29
+slot: website
+video: video/website_ascot-vale-driving_scroll.mp4
+hashtags: [WebDesign, SmallBusiness, Melbourne]
+# Facts from sites.yaml (intelliai.au/work/). The film scrolls the live home page on
+# a phone (shots.py). No 48-hour demo push over Christmas.
+thumbnail_offset_ms: 1000
+linkedin: |
+  A learner can book a lesson at 10 pm. Ascot Vale Driving School's website shows live instructor availability, so they pick a time and book there and then.
+  No phone tag in the morning, and the prices are on the page before they ask.
+  We built it as a booking-led site for a Melbourne driving school, set up for local search from day one.
+  https://intelliai.au/
+facebook: |
+  Learners book lessons at any hour on Ascot Vale Driving School's website, from live instructor availability.
+  https://intelliai.au/

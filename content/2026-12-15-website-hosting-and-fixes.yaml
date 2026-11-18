@@ -1,0 +1,29 @@
+date: 2026-12-15
+slot: website
+image: images/2026-12-15-website-hosting-and-fixes.png
+template: field_note
+alt: "Field note: what $120 + GST a month covers. Hosting and its running costs, the security padlock renewed, every version backed up, security updates, watched for outages, and anything that breaks fixed at no extra cost."
+fields:
+  kicker_left: "Websites · the monthly"
+  kicker_right: "Built in Ipswich"
+  headline: "What $120 a month *actually covers.*"
+  sub: "Hosting and fixes, $120 + GST a month, on one invoice from us. Either side can stop it with 30 days' notice."
+  # Source: airep core/views/public.py _WEBSITE_PLANS["Hosting and fixes"]["includes"],
+  # word for word apart from the label column, and WEBSITE_DOMAIN_PRICE.
+  rows:
+    - { label: "Hosting", text: "Hosting and its running costs, paid by us.", tag: "covered" }
+    - { label: "Padlock", text: "The security padlock renewed.", tag: "covered" }
+    - { label: "Backups", text: "Every version of the site backed up.", tag: "covered" }
+    - { label: "Updates", text: "Security updates applied.", tag: "covered" }
+    - { label: "Outages", text: "Watched for outages.", tag: "covered" }
+    - { label: "Fixes", text: "Anything that breaks, fixed at no extra cost.", tag: "covered" }
+  test: "Not in it: your web address. A .com.au is about $30 a year, registered in your business's name."
+  foot_link: "intelliai.au →"
+linkedin: |
+  What our $120 + GST a month covers: hosting and its running costs, the security padlock renewed, every version backed up, security updates, and the site watched for outages.
+  And anything that breaks is fixed at no extra cost. That is the point of the plan.
+  Your web address is separate: a .com.au is about $30 a year, registered in your business's name.
+  https://intelliai.au/
+facebook: |
+  $120 + GST a month: hosting, the padlock, backups, security updates, outage watching, and anything that breaks fixed at no extra cost.
+  https://intelliai.au/

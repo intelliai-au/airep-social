@@ -1,0 +1,29 @@
+date: 2027-02-23
+slot: website
+image: images/2027-02-23-website-take-payments.png
+template: field_note
+alt: "Field note: getting paid through your website. Deposits, invoices, products and gift vouchers, Apple Pay and Google Pay, direct debit for memberships and payment plans, and card payments in person on a Square Terminal, all included in the build."
+fields:
+  kicker_left: "Websites · getting paid"
+  kicker_right: "Built in Ipswich"
+  headline: "Get paid *through your own website.*"
+  sub: "Every one of these is included in the $2,500 + GST build. Receipts go out on their own, and failed debits are flagged to you."
+  # Source: airep core/views/public.py _WEBSITE_FEATURES (payments, debit, inperson),
+  # with Stripe's and Square's published November 2026 rates as the page states them.
+  rows:
+    - { label: "Deposits", text: "Take a deposit when someone books.", tag: "Stripe" }
+    - { label: "Invoices", text: "Send an invoice they can pay by card.", tag: "Stripe" }
+    - { label: "Products", text: "Sell products or gift vouchers on the site.", tag: "Stripe" }
+    - { label: "Wallets", text: "Apple Pay and Google Pay as well as cards.", tag: "Stripe" }
+    - { label: "Debits", text: "Memberships, subscriptions and payment plans.", tag: "Stripe" }
+    - { label: "Counter", text: "Tap-and-go on your Square Terminal.", tag: "Square" }
+  test: "Fees go to Stripe and Square directly: about 1.65% + 30c per Australian card, 1% + 30c per debit (capped at $3.50), 1.6% in person."
+  foot_link: "intelliai.au →"
+linkedin: |
+  Getting paid through your own website: deposits when someone books, invoices paid by card, products and gift vouchers, with Apple Pay and Google Pay.
+  Memberships, subscriptions and payment plans by direct debit, and tap-and-go at the counter on your Square Terminal, beside your online sales.
+  All included in the $2,500 + GST build. Stripe's and Square's own fees are paid by you, straight to them.
+  https://intelliai.au/
+facebook: |
+  Deposits, invoices, gift vouchers, direct debit and tap-and-go at the counter, all through your own website. Included in the build.
+  https://intelliai.au/

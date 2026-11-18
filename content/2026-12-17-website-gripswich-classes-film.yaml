@@ -1,0 +1,15 @@
+date: 2026-12-17
+slot: website
+video: video/website_gripswich-classes_scroll.mp4
+hashtags: [WebDesign, SmallBusiness, Ipswich]
+# Facts from sites.yaml (intelliai.au/work/). The film scrolls the live /classes/ page
+# on a phone (shots.py), with coaches' names and places-left counts hidden.
+thumbnail_offset_ms: 1000
+linkedin: |
+  GRIPswich Bouldering's classes, on the gym's own website: the lineup, the times, and a booking from a phone.
+  Class bookings run in the same system as the gym's memberships, check-in and rostering, which we built and the gym cut over to in August 2026.
+  Online bookings are included in every $2,500 + GST website we build.
+  https://intelliai.au/
+facebook: |
+  GRIPswich Bouldering's members book classes from a phone, on the gym's own website, in the same system as their memberships.
+  https://intelliai.au/

@@ -1,0 +1,15 @@
+date: 2026-12-03
+slot: website
+video: video/website_ascot-vale-driving-pricing_scroll.mp4
+hashtags: [WebDesign, SmallBusiness, Melbourne]
+# Facts from sites.yaml (intelliai.au/work/). The film scrolls the live /pricing/ page
+# on a phone (shots.py).
+thumbnail_offset_ms: 1000
+linkedin: |
+  Ascot Vale Driving School's prices are on the page: a lesson by the length, a drive test package, and a booking button under each one.
+  Learners see live instructor availability and book online, without a phone call to ask what it costs.
+  We built the site for a driving school in Melbourne, set up for local search from day one.
+  https://intelliai.au/
+facebook: |
+  Lesson prices on the page, and a booking button under each one. Ascot Vale Driving School's learners book online, from live availability.
+  https://intelliai.au/

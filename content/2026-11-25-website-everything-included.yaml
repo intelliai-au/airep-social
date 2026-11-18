@@ -1,0 +1,32 @@
+date: 2026-11-25
+slot: website
+image: images/2026-11-25-website-everything-included.png
+template: field_note
+alt: "Field note: $2,500 + GST, every feature included. Online bookings, online payments, direct debit, card payments at the counter, a Google Business Profile, a members' area, check-in and a staff roster, and a price calculator, all inside the build price."
+fields:
+  kicker_left: "Websites · what's included"
+  kicker_right: "Built in Ipswich"
+  headline: "$2,500 + GST. *Every feature included.*"
+  sub: "Up to ten pages designed around your business, built for phones first. You pick which of these your site has; none of them changes the build price."
+  # Source: airep core/views/public.py _WEBSITE_FEATURES, every one inside
+  # WEBSITE_BUILD_PRICE since 16 Nov 2026, and WEBSITE_SYSTEMS_NOTE (the $15).
+  rows:
+    - { label: "Bookings", text: "Customers pick a time from your real availability.", tag: "included" }
+    - { label: "Payments", text: "Card, Apple Pay and Google Pay, through Stripe.", tag: "included" }
+    - { label: "Direct debit", text: "Memberships and payment plans, through Stripe.", tag: "included" }
+    - { label: "Counter", text: "Your Square Terminal, beside your online sales.", tag: "included" }
+    - { label: "Google", text: "Your free Business Profile claimed or tidied up.", tag: "included" }
+    - { label: "Members", text: "A members' area with their bookings and payments.", tag: "included" }
+    - { label: "Your staff", text: "Check-in, a roster and a console for your team.", tag: "included" }
+    - { label: "Quotes", text: "A price calculator built around how you charge.", tag: "included" }
+  test: "Stripe's and Square's fees go straight to them. Email that arrives, which bookings use, adds $15 + GST a month."
+  foot_link: "intelliai.au →"
+linkedin: |
+  Our website build is $2,500 + GST, and every feature we offer is inside that price: online bookings, payments, direct debit, a members' area, check-in, a staff roster and more.
+  You pick which ones your site has. None of them changes the build price.
+  The one extra monthly is Email that arrives, $15 + GST, which bookings use. Card fees go straight to Stripe or Square.
+  https://intelliai.au/
+facebook: |
+  $2,500 + GST builds your website, and every feature is included: bookings, payments, direct debit, members, check-in, rosters.
+  You pick what your site does. The price stays the same.
+  https://intelliai.au/
