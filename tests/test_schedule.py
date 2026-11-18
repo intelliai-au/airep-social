@@ -16,26 +16,39 @@ class FakePost:
 
 
 class CadenceTests(unittest.TestCase):
-    def test_year_has_tue_to_fri_minus_the_christmas_gap(self) -> None:
+    def test_year_has_tue_to_fri_around_the_website_led_quarter(self) -> None:
         days = schedule.cadence()
-        # 52 Tuesdays, 52 Wednesdays, 52 Thursdays and 51 Fridays from 17 Nov 2026 to
-        # 11 Nov 2027 (a Thursday), minus the four Wed/Thu and two Fridays inside
-        # 22 Dec - 4 Jan.
-        self.assertEqual(len(days), 156 - 4 + 51 - 2)
+        # Tue-Fri 17-20 Nov 2026 (4); the website-led quarter, Tue-Thu from 24 Nov to
+        # 25 Feb with only Tue 22 and 29 Dec over Christmas (12 weeks x 3 + 2 = 38); then
+        # the AIREP grid again from Tue 2 Mar to Thu 11 Nov 2027: 37 each of Tue, Wed and
+        # Thu, and 36 Fridays (147).
+        self.assertEqual(len(days), 4 + 38 + 147)
         self.assertEqual(days[0], date(2026, 11, 17))
         self.assertEqual(days[-1], date(2027, 11, 11))
         self.assertTrue(all(d.weekday() in (1, 2, 3, 4) for d in days))
-        self.assertEqual(sum(1 for d in days if d.weekday() == 4), 49)
+        self.assertEqual(sum(1 for d in days if d.weekday() == 4), 1 + 36)
+
+    def test_website_led_quarter_posts_three_a_week(self) -> None:
+        days = schedule.cadence(schedule.WEBSITE_LED_FROM, schedule.WEBSITE_LED_UNTIL)
+        self.assertEqual(len(days), 38)
+        self.assertEqual(days[0], date(2026, 11, 24))
+        self.assertEqual(days[-1], date(2027, 2, 25))
+        self.assertTrue(all(d.weekday() in (1, 2, 3) for d in days))
+        # The four days held for the front-page films are posting days, inside the window.
+        self.assertTrue(schedule.RESERVED <= set(days))
+        self.assertEqual(len(schedule.RESERVED), 4)
 
     def test_christmas_gap_keeps_only_tuesday(self) -> None:
-        self.assertEqual(schedule.allowed_slots(date(2026, 12, 22)), {"feature"})
+        self.assertEqual(schedule.allowed_slots(date(2026, 12, 22)), {"website", "feature"})
         self.assertEqual(schedule.allowed_slots(date(2026, 12, 23)), frozenset())
         self.assertEqual(schedule.allowed_slots(date(2026, 12, 31)), frozenset())
         self.assertEqual(schedule.allowed_slots(date(2026, 12, 25)), frozenset())  # Friday
         self.assertEqual(schedule.allowed_slots(date(2027, 1, 1)), frozenset())  # Friday
-        self.assertEqual(schedule.allowed_slots(date(2026, 12, 29)), {"feature"})
+        self.assertEqual(schedule.allowed_slots(date(2026, 12, 29)), {"website", "feature"})
         # 5 Jan 2027 is a Tuesday, 6 Jan the first Wednesday back.
-        self.assertEqual(schedule.allowed_slots(date(2027, 1, 6)), {"field_note"})
+        self.assertEqual(schedule.allowed_slots(date(2027, 1, 6)), {"website"})
+        # The AIREP grid's own Christmas gap still holds after the quarter ends.
+        self.assertEqual(schedule.allowed_slots(date(2027, 12, 22)), frozenset())
 
     def test_weekday_slots(self) -> None:
         self.assertEqual(schedule.allowed_slots(date(2026, 11, 17)), {"feature"})
@@ -46,6 +59,23 @@ class CadenceTests(unittest.TestCase):
         self.assertEqual(schedule.allowed_slots(date(2026, 11, 20)), {"website"})  # Friday
         self.assertEqual(schedule.allowed_slots(date(2026, 11, 21)), frozenset())  # Saturday
         self.assertEqual(schedule.allowed_slots(date(2026, 11, 16)), frozenset())  # Monday
+
+    def test_website_led_quarter_slots(self) -> None:
+        # Tue may be a website post or an AIREP feature; Wed and Thu are websites only;
+        # no Friday, which the AIREP grid gave the websites before.
+        self.assertEqual(schedule.allowed_slots(date(2026, 11, 24)), {"website", "feature"})
+        self.assertEqual(schedule.allowed_slots(date(2026, 11, 25)), {"website"})
+        self.assertEqual(schedule.allowed_slots(date(2026, 11, 26)), {"website"})
+        self.assertEqual(schedule.allowed_slots(date(2026, 11, 27)), frozenset())  # Friday
+        self.assertEqual(schedule.allowed_slots(date(2027, 2, 25)), {"website"})  # last day
+        self.assertEqual(schedule.allowed_slots(date(2027, 2, 26)), frozenset())  # Friday
+        # From March the AIREP grid is back.
+        self.assertEqual(schedule.allowed_slots(date(2027, 3, 2)), {"feature"})
+        self.assertEqual(schedule.allowed_slots(date(2027, 3, 5)), {"website"})
+        self.assertTrue(
+            {"website", "feature", "field_note", "pain", "price", "shipped", "date_post"}
+            <= schedule.SLOTS
+        )
 
 
 class HashtagTests(unittest.TestCase):
@@ -93,7 +123,7 @@ class PlanTests(unittest.TestCase):
         for channel in schedule.CHANNELS:
             self.assertEqual(sum(1 for p in plan if p.channel == channel), 6)
         self.assertEqual(plan[0].slug, "2026-11-17")
-        self.assertEqual(plan[-1].date, date(2026, 11, 25))  # Thu 26 and Fri 27 wait a week
+        self.assertEqual(plan[-1].date, date(2026, 11, 25))  # Thu 26 waits a week
         self.assertTrue(all(p.date <= date(2026, 11, 29) for p in plan))
         # Keiran's rule: never more than six queued a channel (the Free plan holds ten).
         self.assertLessEqual(schedule.CHANNEL_CAP, 6)
@@ -108,9 +138,10 @@ class PlanTests(unittest.TestCase):
         second = schedule.plan(self.posts, next_sunday, pushed)
         for channel in schedule.CHANNELS:
             self.assertEqual(sum(1 for p in second if p.channel == channel), 4)
+        # Three a week from 23 Nov: Thu 26 Nov, then Tue-Thu 1-3 Dec.
         self.assertEqual(
             sorted({p.slug for p in second}),
-            ["2026-11-26", "2026-11-27", "2026-12-01", "2026-12-02"],
+            ["2026-11-26", "2026-12-01", "2026-12-02", "2026-12-03"],
         )
 
     def test_weekly_runs_never_queue_more_than_the_cap_and_miss_nothing(self) -> None:

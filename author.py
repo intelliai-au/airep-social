@@ -139,8 +139,9 @@ def missing_days(
     existing: Iterable[date], today: date, months_ahead: int = MONTHS_AHEAD
 ) -> list[date]:
     """Posting days after *today* with no content yet, up to the end of the month
-    *months_ahead* after this one. Past days are never written: a missed post is gone."""
-    have = set(existing)
+    *months_ahead* after this one. Past days are never written: a missed post is gone,
+    and a day held for a film still being made (schedule.RESERVED) is left for it."""
+    have = set(existing) | schedule.RESERVED
     horizon = month_end(*add_months(today, months_ahead))
     return [d for d in schedule.cadence() if today < d <= horizon and d not in have]
 

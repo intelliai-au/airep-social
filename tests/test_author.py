@@ -22,9 +22,12 @@ class PlanningTests(unittest.TestCase):
         days = author.missing_days(have, date(2026, 11, 8))
         self.assertEqual(days[0], date(2026, 11, 20))  # the next unwritten day: a Friday
         self.assertEqual(days[1], date(2026, 11, 24))  # then the Tuesday
-        self.assertEqual(days[-1], date(2027, 1, 29))  # last Friday of January
+        self.assertEqual(days[-1], date(2027, 1, 28))  # last Thursday of January (Tue-Thu)
         self.assertTrue(all(schedule.allowed_slots(d) for d in days))
         self.assertNotIn(date(2026, 11, 17), days)
+        # A day held for a front-page film is never handed to a writer.
+        self.assertNotIn(date(2026, 12, 2), days)
+        self.assertIn(date(2026, 12, 3), days)
         # Christmas keeps Tuesdays only: 22 and 29 Dec, nothing on 23/24 or 30/31.
         december = [d for d in days if d.month == 12 and d.day >= 22]
         self.assertEqual(december, [date(2026, 12, 22), date(2026, 12, 29)])

@@ -20,8 +20,8 @@ TEMPLATES_DIR = ROOT / "templates"
 SITE_DIR = ROOT / "site"
 LEGACY_DIR = ROOT / "assets" / "legacy"
 
-# CSS pixels; Playwright renders at device scale 2, so 1080 -> 2160. The pain series
-# is the one landscape format (plan doc: 2160 x 1130).
+# CSS pixels; Playwright renders at device scale 2, so 1080 -> 2160. The pain template
+# is the one landscape format (plan doc: 2160 x 1130), whichever slot uses it.
 DEFAULT_SIZE = (1080, 1080)
 SIZES: dict[str, tuple[int, int]] = {"pain": (1080, 565)}
 DEVICE_SCALE = 2
@@ -29,12 +29,12 @@ DEVICE_SCALE = 2
 Renderer = Callable[[str, Path, tuple[int, int]], None]
 
 # A template's placeholders that get a value when the post names none, so the AIREP
-# formats keep their footer and a Friday website post can point the same template at
-# intelliai.au/websites instead.
+# formats keep their footer and a website post can point the same template at
+# intelliai.au (the websites page is the front page since 16 Nov 2026) instead.
 TEMPLATE_DEFAULTS: dict[str, dict[str, str]] = {
     "field_note": {"foot_link": "by AIREP · save this →"},
     "price": {"foot_link": "intelliai.au/pricing →"},
-    "website": {"foot_link": "intelliai.au/websites →", "frame": "phone"},
+    "website": {"foot_link": "intelliai.au →", "frame": "phone"},
 }
 
 # Fields that name an image under site/ (a screenshot from shots.py). Playwright renders
@@ -237,7 +237,8 @@ def _build_one(
 
 
 def _size(post: posts_mod.Post) -> tuple[int, int]:
-    return SIZES.get(post.slot, DEFAULT_SIZE)
+    # By template, not slot: a website post can use the landscape pain sheet too.
+    return SIZES.get(post.template or "", DEFAULT_SIZE)
 
 
 def main(argv: list[str] | None = None) -> int:

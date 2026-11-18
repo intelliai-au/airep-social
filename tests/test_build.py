@@ -40,8 +40,8 @@ class RenderHtmlTests(unittest.TestCase):
     def test_foot_link_defaults_per_template_and_can_be_overridden(self) -> None:
         self.assertIn("by AIREP · save this →", build.render_html("field_note", {"rows": []}))
         self.assertIn("intelliai.au/pricing →", build.render_html("price", {"rows": []}))
-        out = build.render_html("field_note", {"rows": [], "foot_link": "intelliai.au/websites →"})
-        self.assertIn("intelliai.au/websites →", out)
+        out = build.render_html("field_note", {"rows": [], "foot_link": "intelliai.au/#build →"})
+        self.assertIn("intelliai.au/#build →", out)
         self.assertNotIn("by AIREP", out)
 
     def test_website_template_inlines_the_screenshot(self) -> None:
@@ -57,7 +57,9 @@ class RenderHtmlTests(unittest.TestCase):
             self.assertIn('src="data:image/png;base64,iVBORw0K', out)
             self.assertIn('class="page site-phone"', out)  # frame defaults to phone
             self.assertIn('<span class="chip">Bookings</span>', out)
-            self.assertIn("intelliai.au/websites →", out)
+            # The websites page is intelliai.au's front page since 16 Nov 2026.
+            self.assertIn("intelliai.au →", out)
+            self.assertNotIn("/websites", out)
             with self.assertRaisesRegex(build.BuildError, "run shots.py"):
                 build.render_html("website", {"shot": "shots/missing.png"}, site_dir=site)
 
@@ -113,6 +115,13 @@ class BuildTests(unittest.TestCase):
     def test_pain_is_landscape(self) -> None:
         p = _post("p", "images/p.png", template="pain")
         p.slot = "pain"
+        build.build([p], self.site, renderer=self._renderer, log=lambda _: None)
+        self.assertEqual(self.calls[0][1], (1080, 565))
+
+    def test_the_pain_sheet_is_landscape_in_any_slot(self) -> None:
+        # The size follows the template: a website post can use the pain sheet too.
+        p = _post("w", "images/w.png", template="pain")
+        p.slot = "website"
         build.build([p], self.site, renderer=self._renderer, log=lambda _: None)
         self.assertEqual(self.calls[0][1], (1080, 565))
 

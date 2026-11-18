@@ -1,4 +1,4 @@
-"""Cadence, due times and the 14-day push plan for AIREP's social calendar.
+"""Cadence, due times and the 14-day push plan for Intelli AI's social calendar.
 
 Pure functions only: no network, no files. push.py and the tests drive it.
 """
@@ -27,15 +27,37 @@ WEEKDAY_SLOTS: dict[int, frozenset[str]] = {
     3: frozenset({"pain", "price", "shipped", "date_post"}),
     4: frozenset({"website"}),
 }
-SLOTS: frozenset[str] = frozenset().union(*WEEKDAY_SLOTS.values())
+
+# The website-led quarter (Keiran, 2026-11-18): from 23 Nov 2026 to 26 Feb 2027 the plan
+# sells the website-build service first (intelliai.au's front page since 16 Nov), three
+# posts a week. Tue may carry an AIREP `feature` instead (at most one a fortnight, linking
+# intelliai.au/airep/: an editorial rule, not enforced here); Wed and Thu are websites
+# only. After the window the AIREP grid above resumes unless this window is extended.
+WEBSITE_LED_FROM = date(2026, 11, 23)
+WEBSITE_LED_UNTIL = date(2027, 2, 26)
+WEBSITE_LED_SLOTS: dict[int, frozenset[str]] = {
+    1: frozenset({"website", "feature"}),
+    2: frozenset({"website"}),
+    3: frozenset({"website"}),
+}
+
+# Posting days held empty for films still being made, so neither a writer nor the author
+# run fills them: the four intelliai.au front-page films (slugs `spreadsheets`,
+# `software`, `one-invoice`, `demo`), one about every three weeks. Keiran picks which film
+# runs on which day; posts.py accepts a post on a reserved day as on any other.
+RESERVED: frozenset[date] = frozenset(
+    {date(2026, 12, 2), date(2026, 12, 16), date(2027, 1, 13), date(2027, 2, 3)}
+)
+
+SLOTS: frozenset[str] = frozenset().union(*WEEKDAY_SLOTS.values(), *WEBSITE_LED_SLOTS.values())
 
 PLAN_START = date(2026, 11, 17)
 PLAN_END = date(2027, 11, 11)
 
 # push.py looks a fortnight ahead but never leaves more than six posts queued a channel
 # (Keiran's rule; the Free plan holds ten, so a hand-made post still fits). The cap counts
-# what earlier Sundays already queued: four posts go out a week, so each run tops the
-# queue back up to six and every post is still scheduled before its day.
+# what earlier Sundays already queued: three or four posts go out a week, so each run
+# tops the queue back up to six and every post is still scheduled before its day.
 HORIZON_DAYS = 14
 CHANNEL_CAP = 6
 
@@ -43,8 +65,8 @@ CHANNEL_CAP = 6
 # the box's Max login) is overdue for the next month (plan doc, "Writing ahead").
 WRITE_AHEAD_WEEKS = 6
 
-# The plan's recommended LinkedIn hashtags; Facebook gets none. The Friday website posts
-# are not about the ERP, so they carry their own set unless the file says otherwise.
+# The plan's recommended LinkedIn hashtags; Facebook gets none. The website posts are not
+# about the ERP, so they carry their own set unless the file says otherwise.
 DEFAULT_HASHTAGS: tuple[str, ...] = ("ERP", "SmallBusiness", "Australia")
 SLOT_HASHTAGS: dict[str, tuple[str, ...]] = {
     "website": ("WebDesign", "SmallBusiness", "Australia"),
@@ -57,16 +79,22 @@ def default_hashtags(slot: str) -> tuple[str, ...]:
 
 
 def christmas_quiet(day: date) -> bool:
-    """True inside the 22 Dec to 4 Jan window, when only Tuesday posts (no Friday either)."""
+    """True inside the 22 Dec to 4 Jan window, when only Tuesday posts."""
     year = day.year
     return date(year, 12, 22) <= day <= date(year, 12, 31) or date(year, 1, 1) <= day <= date(
         year, 1, 4
     )
 
 
+def website_led(day: date) -> bool:
+    """True inside the website-led quarter (23 Nov 2026 to 26 Feb 2027)."""
+    return WEBSITE_LED_FROM <= day <= WEBSITE_LED_UNTIL
+
+
 def allowed_slots(day: date) -> frozenset[str]:
     """Slot kinds a post dated *day* may use; empty when the day never posts."""
-    slots = WEEKDAY_SLOTS.get(day.weekday(), frozenset())
+    grid = WEBSITE_LED_SLOTS if website_led(day) else WEEKDAY_SLOTS
+    slots = grid.get(day.weekday(), frozenset())
     if slots and christmas_quiet(day) and day.weekday() != 1:
         return frozenset()
     return slots
