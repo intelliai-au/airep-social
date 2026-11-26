@@ -16,7 +16,7 @@ sites a post may show in `sites.yaml`).
 of those posts are written already, so the rows below for 2026-11 to 2027-02 no longer
 describe what runs. Each week has three posts:
 
-- Tuesday is a website post, or an AIREP feature at most once a fortnight.
+- Tuesday is a website post. No AIREP posts run in the quarter (Keiran, 26 Nov 2026).
 - Wednesday and Thursday are website posts.
 
 Four Wednesdays in `schedule.RESERVED` carry the front page's four films (filled 18 Nov

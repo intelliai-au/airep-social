@@ -51,8 +51,9 @@ Four slots a week, the same asset on both pages, LinkedIn at 07:30 and Facebook 
 **The website-led quarter, 23 Nov 2026 to 26 Feb 2027** (`schedule.WEBSITE_LED_SLOTS`)
 has three posts a week, and about half are films:
 
-- Tuesday is `website`, or an AIREP `feature` at most once a fortnight, linking
-  <https://intelliai.au/airep/>.
+- Tuesday is `website`. The code still accepts an AIREP `feature` there, but Keiran
+  took every AIREP post out of the quarter on 26 Nov 2026 (websites only), so none is
+  written; the five Tuesdays that had one (8 Dec, 5 Jan, 19 Jan, 2 Feb, 16 Feb) are empty.
 - Wednesday and Thursday are `website`.
 
 Four Wednesdays in `schedule.RESERVED` carry the front page's four films: 2 Dec

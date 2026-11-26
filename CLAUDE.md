@@ -55,10 +55,10 @@ by GitHub Pages so Buffer can fetch each asset from a public URL. See README.md.
 Keiran's call on 18 Nov 2026: three months that lead with website sales. The posts are
 all written already, about half of them films.
 
-- **Slots** (`schedule.WEBSITE_LED_SLOTS`): Tue is `website` or `feature`, and Wed and
-  Thu are `website`. An AIREP `feature` runs at most once a fortnight, on a Tuesday, and
-  links `https://intelliai.au/airep/`. That is an editorial rule; the code doesn't
-  enforce it.
+- **Slots** (`schedule.WEBSITE_LED_SLOTS`): Tue, Wed and Thu are `website`. **No AIREP
+  posts at all** (Keiran, 26 Nov 2026: "I just want to sell the custom website
+  services"); the five AIREP `feature` films were deleted, leaving 8 Dec, 5 Jan, 19 Jan,
+  2 Feb and 16 Feb empty. The code still accepts `feature` on a Tuesday; don't write one.
 - **Reserved days** (`schedule.RESERVED`): Wed 2 Dec, Wed 16 Dec, Wed 13 Jan and Wed 3 Feb
   carry the four intelliai.au front-page films (`website-film-spreadsheets`,
   `-one-invoice`, `-software`, `-demo` in airep `core/static/core/video/`, in that order),
