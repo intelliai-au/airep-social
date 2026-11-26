@@ -1,0 +1,23 @@
+# HELD for Keiran's review, not scheduled. push.py and author.py read content/*.yaml only,
+# so nothing here reaches Buffer. To approve, move this file up into content/ (keep the
+# name; change the date in both places if the day has gone).
+# Film: tools/website-film-enquiry (rendered 26 Nov 2026). This post sends the 4:5 cut;
+# the 9:16 cut for Reels and Stories is site/video/website_film_enquiry_9x16.mp4.
+# Prices are baked into the frames, taken from intelliai.au's front page and the
+# website-pitch skill on 26 Nov 2026: re-render the film if they change.
+# Bluegum Hollow Landscapes is made up, and the film says so.
+# 2.8 s in is its hook: "Out on a job? The enquiry still lands." over two notifications.
+date: 2026-12-08
+slot: website
+video: video/website_film_enquiry_4x5.mp4
+thumbnail_offset_ms: 2800
+hashtags: [WebDesign, SmallBusiness, Ipswich]
+alt: "Silent film from Intelli AI. An example business, Bluegum Hollow Landscapes: a customer fills in the enquiry form on its website and the enquiry lands in the owner's inbox; another customer books a time from real availability and gets a confirmation and a reminder by email. Built in for $2,500 + GST once; Email that arrives adds $15 + GST a month on top of Hosting and fixes at $120 + GST a month."
+linkedin: |
+  Out on a job when a customer asks for a quote? On the websites we build, the enquiry form lands in your inbox with their name, email and message in one place, and customers can book online by picking a time from your real availability.
+  They get a confirmation email and a reminder, and the booking is on your list for the day. Bluegum Hollow Landscapes in the film is an example business, made up to show how it works.
+  It's all in the $2,500 + GST build. Email that arrives, which sends those emails from your own domain so they land in the inbox and not in spam, adds $15 + GST a month on top of Hosting and fixes at $120 + GST a month.
+  https://intelliai.au/
+facebook: |
+  Out on a job? Enquiries and bookings from your website still land on your phone, and your customers get a confirmation and a reminder by email. The landscaper in the film is an example business.
+  https://intelliai.au/

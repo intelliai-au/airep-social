@@ -1,0 +1,25 @@
+# HELD for Keiran's review, not scheduled. push.py and author.py read content/*.yaml only,
+# so nothing here reaches Buffer. To approve, move this file up into content/ (keep the
+# name; change the date in both places if the day has gone).
+# Film: tools/website-film-month (rendered 26 Nov 2026). This post sends the 4:5 cut;
+# the 9:16 cut for Reels and Stories is site/video/website_film_month_9x16.mp4.
+# Suggested for the first website Friday after the website-led quarter ends (26 Feb).
+# Every item is from the front page's Hosting and fixes list; the diary's days are
+# illustrative ("An example month"). No lock-in, 30 days' notice and the CPI + 3% cap are
+# the front page's. Prices from the front page and the website-pitch skill, 26 Nov 2026
+# (baked into frames). Silky Oak Plumbing is made up, and the film says so.
+# 3.6 s in is its opening: "What Hosting and fixes covers." under the month's diary.
+date: 2027-03-05
+slot: website
+video: video/website_film_month_4x5.mp4
+thumbnail_offset_ms: 3600
+hashtags: [WebDesign, SmallBusiness, Ipswich]
+alt: "Silent film from Intelli AI. One example month of Hosting and fixes on the website of an example business, Silky Oak Plumbing: watched for outages, security updates done, every version backed up, the security padlock renewed, and a quote form that stopped sending fixed at no extra cost. One invoice of $120 + GST a month, no lock-in, 30 days' notice either side, and any yearly rise capped at CPI + 3%."
+linkedin: |
+  What does Hosting and fixes cover in a month? We watch your website for outages, apply its security updates, back up every version and renew the security padlock before it's due.
+  If something breaks, like a quote form that stops sending because something outside the site changed, we fix it at no extra cost. Silky Oak Plumbing in the film is an example business.
+  One invoice, $120 + GST a month, with the running costs included. No lock-in: either side can stop with 30 days' notice, and everything is handed over.
+  https://intelliai.au/
+facebook: |
+  What $120 + GST a month covers: hosting and its running costs, security updates, backups, the padlock renewed, and anything that breaks fixed at no extra cost. The plumber in the film is an example business.
+  https://intelliai.au/

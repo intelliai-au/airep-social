@@ -18,6 +18,7 @@ early, which is fine.
 | Path | What |
 |------|------|
 | `content/YYYY-MM-DD-slug.yaml` | One post: date, slot, both captions, the asset (image + template fields, or a film) |
+| `content/held/*.yaml` | Posts waiting for Keiran's approval. `push.py` and `author.py` read only `content/*.yaml`, so nothing here is scheduled; approve one by moving it up into `content/` (fix the date in the name and the file if that day has passed) |
 | `templates/` | The HTML templates (`field_note`, `feature`, `pain`, `shipped`, `price`, `date_post`, `website`) and `base.css` |
 | `site/images/` | Rendered PNGs (2160 × 2160; the pain series is 2160 × 1130), committed |
 | `site/shots/` | Phone and laptop screenshots of the client sites in `sites.yaml`, retaken by `shots.py` before each writing run |

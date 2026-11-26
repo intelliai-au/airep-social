@@ -1,0 +1,24 @@
+# HELD for Keiran's review, not scheduled. push.py and author.py read content/*.yaml only,
+# so nothing here reaches Buffer. To approve, move this file up into content/ (keep the
+# name; change the date in both places if the day has gone).
+# Film: tools/website-film-change (rendered 26 Nov 2026). This post sends the 4:5 cut;
+# the 9:16 cut for Reels and Stories is site/video/website_film_change_9x16.mp4.
+# The next day (3 Feb) is the front-page demo film; this one is about after launch, so
+# the two don't overlap. "Usually fifteen minutes" and "within one business day" are the
+# front page's own words. Prices from the front page and the website-pitch skill,
+# 26 Nov 2026 (baked into frames). Fernhill Hair Studio is made up, and the film says so.
+# 2.0 s in is its opening: "Fernhill Hair Studio needs a change." over its website.
+date: 2027-02-02
+slot: website
+video: video/website_film_change_4x5.mp4
+thumbnail_offset_ms: 2000
+hashtags: [WebDesign, SmallBusiness, Ipswich]
+alt: "Silent film from Intelli AI. An example business, Fernhill Hair Studio, emails asking for new Saturday hours and a photo of a new chair. Intelli AI replies within one business day with a quote at $100 + GST an hour, the owner says yes, and the change goes live with every version backed up. Anything that breaks is fixed at no extra cost as part of Hosting and fixes, $120 + GST a month."
+linkedin: |
+  What happens when you email us a change to your website? We reply within one business day with a quote before we start: changes are $100 + GST an hour, and a new photo or phone number is usually fifteen minutes.
+  Say yes and we get to work. The change goes live, and every version is backed up. Fernhill Hair Studio in the film is an example business.
+  If something breaks, that isn't a change: it's fixed at no extra cost as part of Hosting and fixes, $120 + GST a month.
+  https://intelliai.au/
+facebook: |
+  Need a change to your website? Email us. We quote before we start, at $100 + GST an hour, and anything that breaks is fixed at no extra cost. The hair studio in the film is an example business.
+  https://intelliai.au/

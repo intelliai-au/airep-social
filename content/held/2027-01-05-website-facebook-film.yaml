@@ -1,0 +1,25 @@
+# HELD for Keiran's review, not scheduled. push.py and author.py read content/*.yaml only,
+# so nothing here reaches Buffer. To approve, move this file up into content/ (keep the
+# name; change the date in both places if the day has gone).
+# Film: tools/website-film-facebook (rendered 26 Nov 2026). This post sends the 4:5 cut;
+# the 9:16 cut for Reels and Stories is site/video/website_film_facebook_9x16.mp4.
+# The demo form on intelliai.au has no Facebook field: its "Your current website address"
+# box takes a facebook.com address (airep core/services/contact_form._tidy_url), and the
+# film and captions say to put it there. Confirm we will build a demo from a Facebook page.
+# Prices from the front page and the website-pitch skill, 26 Nov 2026 (baked into frames).
+# Wattle & Wren Florals is made up, and the film says so. First post after the Christmas gap.
+# 2.6 s in is its hook: "No website? Your Facebook page will do."
+date: 2027-01-05
+slot: website
+video: video/website_film_facebook_4x5.mp4
+thumbnail_offset_ms: 2600
+hashtags: [WebDesign, SmallBusiness, Ipswich]
+alt: "Silent film from Intelli AI. An example business, Wattle & Wren Florals, has a Facebook page and no website. Its address goes into the website box of Intelli AI's free demo form; Intelli AI takes the logo, colours and wording from the page, and within 48 hours a live demo website is on the owner's phone. Free before you pay anything; if you like it, $2,500 + GST once."
+linkedin: |
+  Starting the year with a Facebook page and no website? That's enough for a free demo. Fill in the demo form on our website and, where it asks for your current website, put your Facebook page's address.
+  We take your logo, colours and wording from the page, and within 48 hours you're trying a live demo of your own website on your phone. No payment, no sign-up. Wattle & Wren Florals in the film is an example business.
+  If you like it, we build it for $2,500 + GST once, every feature included, and it's live within two weeks of having your content.
+  https://intelliai.au/
+facebook: |
+  No website? Your Facebook page will do. Put its address in our free demo form and within 48 hours you're trying your own website on your phone. No payment, no sign-up. The florist in the film is an example business.
+  https://intelliai.au/

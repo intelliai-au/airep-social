@@ -1,0 +1,24 @@
+# HELD for Keiran's review, not scheduled. push.py and author.py read content/*.yaml only,
+# so nothing here reaches Buffer. To approve, move this file up into content/ (keep the
+# name; change the date in both places if the day has gone).
+# Film: tools/website-film-two-weeks (rendered 26 Nov 2026). This post sends the 4:5 cut;
+# the 9:16 cut for Reels and Stories is site/video/website_film_two-weeks_9x16.mp4.
+# The steps are the front page's own: reply within one business day, demo in 48 hours,
+# half on approval, live within two weeks of having your content, half once live and happy.
+# Prices from the front page and the website-pitch skill, 26 Nov 2026 (baked into frames).
+# Blackbutt Joinery is made up, and the film says so.
+# 3.7 s in is its opening: "From the first email to a live website." over the step track.
+date: 2027-02-16
+slot: website
+video: video/website_film_two-weeks_4x5.mp4
+thumbnail_offset_ms: 3700
+hashtags: [WebDesign, SmallBusiness, Ipswich]
+alt: "Silent film from Intelli AI. An example business, Blackbutt Joinery, goes from its first email to a live website: a reply within one business day, a free live demo within 48 hours, a first invoice of $1,250 + GST on approval, words, photos and logins sent, changes made on a private link, live at its own web address within two weeks of its content, then the other $1,250 + GST and $120 + GST a month for Hosting and fixes."
+linkedin: |
+  From the first email to a live website, step by step. We reply within one business day, and within 48 hours you're trying a free live demo of your new site on your phone.
+  When you approve it, the first invoice is $1,250 + GST, half of a fixed $2,500 + GST. You send your words, photos and logins, check the site on a private link and ask for changes until you're happy, and it goes live at your own web address within two weeks of having your content.
+  The other $1,250 + GST is due once it's live and you're happy, then $120 + GST a month for Hosting and fixes. Blackbutt Joinery in the film is an example business.
+  https://intelliai.au/
+facebook: |
+  From one email to a live website: a free demo on your phone in 48 hours, then live within two weeks of having your content. The joinery in the film is an example business.
+  https://intelliai.au/

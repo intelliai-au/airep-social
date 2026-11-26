@@ -1,0 +1,24 @@
+# HELD for Keiran's review, not scheduled. push.py and author.py read content/*.yaml only,
+# so nothing here reaches Buffer. To approve, move this file up into content/ (keep the
+# name; change the date in both places if the day has gone).
+# Film: tools/website-film-move (rendered 26 Nov 2026). This post sends the 4:5 cut;
+# the 9:16 cut for Reels and Stories is site/video/website_film_move_9x16.mp4.
+# Never name the old platform: it is "a website builder" on screen and here.
+# "No orders lost" holds because the old shop keeps selling until the switch.
+# Prices from the front page and the website-pitch skill, 26 Nov 2026 (baked into frames).
+# Saltbush Candle Co. is made up, and the film says so.
+# 2.9 s in is its hook: "Saltbush Candle Co. is moving its shop."
+date: 2027-01-19
+slot: website
+video: video/website_film_move_4x5.mp4
+thumbnail_offset_ms: 2900
+hashtags: [WebDesign, Ecommerce, SmallBusiness]
+alt: "Silent film from Intelli AI. An example business, Saltbush Candle Co., moves its online shop off a website builder: products, prices, photos and pages move across while the old shop keeps selling, then the switch keeps the same web address and business email, old links go to their new pages, and the new shop takes card, Apple Pay and Google Pay. $2,500 + GST once, then $120 + GST a month for Hosting and fixes."
+linkedin: |
+  Moving your online shop off a website builder? We move your products, prices, photos and pages across while the old shop keeps selling, so no orders are lost on the way.
+  Then we switch over: the same web address, your business email still works, and every old page link goes to its new page, so Google and saved links still find you. The new shop takes card, Apple Pay and Google Pay. Saltbush Candle Co. in the film is an example business.
+  $2,500 + GST once, every feature included, then $120 + GST a month for Hosting and fixes.
+  https://intelliai.au/
+facebook: |
+  Moving your shop off a website builder? The old shop keeps selling until we switch over, and you keep your web address, your email and your old links. The candle shop in the film is an example business.
+  https://intelliai.au/
